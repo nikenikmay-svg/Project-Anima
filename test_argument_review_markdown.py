@@ -33,6 +33,7 @@ class ArgumentReviewMarkdownTests(unittest.TestCase):
         self.assertIn("Assumption A", output)
         self.assertIn("Counterexample A", output)
         self.assertIn("not_assessed", output)
+        self.assertIn("## Input warnings", output)
         self.assertIn("Human review is required", output)
 
     def test_empty_lists_are_explicit(self):
