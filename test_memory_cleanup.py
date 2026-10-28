@@ -35,10 +35,18 @@ class MemoryCleanupTests(unittest.TestCase):
 
     def test_preserves_changed_content_as_separate_record(self):
         first = self.observation("web-001", digest="a" * 64)
-        changed = self.observation("web-002", digest="b" * 64)
+        changed = self.observation("web-002", digest="b" * 64, text="The page content has changed substantially.")
         cleaned, report = cleanup_preview([first, changed])
         self.assertEqual(len(cleaned), 2)
         self.assertIn("No eligible exact-duplicate clusters", report)
+
+    def test_same_extracted_text_collapses_when_raw_html_hash_changes(self):
+        first = self.observation("web-001", digest="a" * 64, text="Same visible page text")
+        refetched = self.observation("web-002", digest="b" * 64, text="Same visible page text")
+        cleaned, report = cleanup_preview([first, refetched])
+        self.assertEqual([record["id"] for record in cleaned], ["web-001"])
+        self.assertIn("Normalized extracted-text SHA-256", report)
+        self.assertIn("Original response-body SHA-256 values", report)
 
     def test_preserves_different_review_statuses(self):
         first = self.observation("web-001", review_status="unreviewed")
