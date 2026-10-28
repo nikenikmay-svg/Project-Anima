@@ -6,7 +6,6 @@ truth scores, fact checks, or substitutes for reading and reviewing the sources.
 from __future__ import annotations
 
 import argparse
-import json
 from collections import Counter
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -58,15 +57,19 @@ def _extract_text_length(content: str) -> int:
 
 
 def build_report(records: list[dict]) -> str:
-    """Render source-linked inventory with duplicate counts and transparent indicators."""
+    """Render source-linked inventory with transparent diversity indicators."""
     observations = [r for r in records if r.get("record_type") == "observation" and "URL: " in r.get("content", "")]
     canonical_urls = [r["source"].split("#", 1)[0].rstrip("/") for r in observations]
     counts = Counter(canonical_urls)
+    indicators_by_id = {r["id"]: source_indicators(r["source"], r["content"]) for r in observations}
+    host_counts = Counter(indicators_by_id[r["id"]]["host"] for r in observations)
+    category_counts = Counter(indicators_by_id[r["id"]]["domain_category"] for r in observations)
     lines = [
         "# Anima web research review report", "",
         f"- Memory records read: **{len(records)}**",
         f"- Source-linked web observations: **{len(observations)}**",
         f"- Distinct source URLs (fragment/trailing-slash normalized): **{len(counts)}**",
+        f"- Distinct source hosts: **{len(host_counts)}**",
         f"- URLs appearing more than once: **{sum(1 for n in counts.values() if n > 1)}**",
         "",
         "> This is a deterministic inventory, not a semantic summary or fact-check. Domain labels are clues only; they do not establish source quality or truth. All stored observations remain unverified until reviewed.",
@@ -76,9 +79,21 @@ def build_report(records: list[dict]) -> str:
         lines.append("No source-linked web observations were found.")
         return "\n".join(lines) + "\n"
 
-    lines.extend(["## Source inventory", ""])
+    lines.extend(["## Source diversity snapshot", ""])
+    lines.append("Host counts describe where collected pages came from, not how trustworthy they are:")
+    lines.append("")
+    for host, count in sorted(host_counts.items(), key=lambda item: (-item[1], item[0])):
+        lines.append(f"- {host}: {count} observation(s)")
+    lines.append("")
+    lines.append("Domain-category indicators:")
+    lines.append("")
+    for category, count in sorted(category_counts.items()):
+        lines.append(f"- {category}: {count}")
+    if len(host_counts) == 1 and len(observations) > 1:
+        lines.extend(["", "> Diversity caution: multiple observations came from one host. Seek independent sources before drawing conclusions."])
+    lines.extend(["", "## Source inventory", ""])
     for index, record in enumerate(observations, start=1):
-        indicators = source_indicators(record["source"], record["content"])
+        indicators = indicators_by_id[record["id"]]
         title = next((line[len("Title: "):].strip() for line in record["content"].splitlines()
                       if line.startswith("Title: ")), record["source"])
         lines.extend([
