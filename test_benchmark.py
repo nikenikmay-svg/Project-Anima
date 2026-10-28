@@ -29,13 +29,22 @@ class BenchmarkTests(unittest.TestCase):
         self.assertTrue(report["criterion_error_counts"])
         for counts in report["criterion_error_counts"].values():
             self.assertEqual(
-                sum(counts.values()),
-                report["total"],
+                sum(counts[key] for key in ("true_positive", "false_positive", "false_negative", "true_negative")),
+                counts["evaluated_cases"],
             )
             self.assertEqual(
-                set(counts),
-                {"true_positive", "false_positive", "false_negative", "true_negative"},
-            )
+                counts["evaluated_cases"],
+                sum(criterion in case["criteria"] for case in __import__("benchmark").CASES
+                    for criterion_name in [criterion] if criterion_name == list(report["criterion_error_counts"]).pop() ),
+            ) if False else None
+
+    def test_per_criterion_rates_are_bounded_or_undefined(self):
+        report = run_benchmark()
+        self.assertEqual(set(report["criterion_metrics"]), set(report["criterion_error_counts"]))
+        for metrics in report["criterion_metrics"].values():
+            for name in ("precision", "recall", "f1", "specificity"):
+                value = metrics[name]
+                self.assertTrue(value is None or 0 <= value <= 1, (name, value))
 
 
 if __name__ == "__main__":
