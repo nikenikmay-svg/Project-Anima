@@ -6,28 +6,32 @@
       "evidence",
       "reasoning",
       "uncertainty"
-    ]
+    ],
+    "label_rationale": "Contains evidence-related wording (“Evidence”), a reasoning connector (“Therefore”), and uncertainty wording (“may” and “estimate”)."
   },
   {
     "id": "evidence_study",
     "answer": "The study measured outcomes.",
     "expected_detected": [
       "evidence"
-    ]
+    ],
+    "label_rationale": "The word “study” is a configured evidence indicator."
   },
   {
     "id": "evidence_sources",
     "answer": "Sources describe the observations.",
     "expected_detected": [
       "evidence"
-    ]
+    ],
+    "label_rationale": "“Sources” and “observations” are configured evidence indicators."
   },
   {
     "id": "reasoning_because",
     "answer": "The result changed because conditions changed.",
     "expected_detected": [
       "reasoning"
-    ]
+    ],
+    "label_rationale": "The word “because” is a configured reasoning indicator."
   },
   {
     "id": "reasoning_therefore",
@@ -36,45 +40,52 @@
       "evidence",
       "reasoning",
       "uncertainty"
-    ]
+    ],
+    "label_rationale": "“Data” is an evidence indicator, “thus” is a reasoning indicator, and “may” is an uncertainty indicator."
   },
   {
     "id": "uncertainty_might",
     "answer": "The estimate might be inaccurate.",
     "expected_detected": [
       "uncertainty"
-    ]
+    ],
+    "label_rationale": "“Estimate” and “might” are configured uncertainty indicators."
   },
   {
     "id": "uncertainty_limitation",
     "answer": "A limitation remains unknown.",
     "expected_detected": [
       "uncertainty"
-    ]
+    ],
+    "label_rationale": "“Limitation” and “unknown” are configured uncertainty indicators."
   },
   {
     "id": "no_indicators",
     "answer": "The sky is blue.",
-    "expected_detected": []
+    "expected_detected": [],
+    "label_rationale": "No configured evidence, reasoning, or uncertainty indicator appears in the answer."
   },
   {
     "id": "negated_indicator_still_detected",
     "answer": "There is no evidence for the claim.",
     "expected_detected": [
       "evidence"
-    ]
+    ],
+    "label_rationale": "The literal word “evidence” appears, so the lexical checklist detects it despite the negation (“no”)."
   },
   {
     "id": "embedded_data_word_boundary",
     "answer": "The database was updated.",
-    "expected_detected": []
+    "expected_detected": [],
+    "label_rationale": "“Database” contains the letters data but not the standalone indicator “data”; the word-boundary rule prevents a match."
   },
   {
     "id": "indicator_in_later_clause",
     "answer": "The claim is clear. The observations support it.",
     "expected_detected": [
       "evidence"
-    ]
+    ],
+    "label_rationale": "The later clause contains the configured evidence indicator “observations”."
   },
   {
     "id": "reasoning_word_form",
@@ -82,99 +93,114 @@
     "expected_detected": [
       "evidence",
       "reasoning"
-    ]
+    ],
+    "label_rationale": "“Inference” is a reasoning indicator; “measurements” is an evidence indicator."
   },
   {
     "id": "evidence_data_term",
     "answer": "The data were collected last week.",
     "expected_detected": [
       "evidence"
-    ]
+    ],
+    "label_rationale": "The standalone word “data” is a configured evidence indicator."
   },
   {
     "id": "evidence_measurement_plural",
     "answer": "Measurements varied across groups.",
     "expected_detected": [
       "evidence"
-    ]
+    ],
+    "label_rationale": "“Measurements” is a configured evidence indicator."
   },
   {
     "id": "evidence_experiment_term",
     "answer": "The experiment was repeated twice.",
     "expected_detected": [
       "evidence"
-    ]
+    ],
+    "label_rationale": "“Experiment” is a configured evidence indicator."
   },
   {
     "id": "evidence_word_in_negated_claim",
     "answer": "The report says evidence is not available.",
     "expected_detected": [
       "evidence"
-    ]
+    ],
+    "label_rationale": "The literal word “evidence” appears; the checklist still detects it even though the sentence says it is not available."
   },
   {
     "id": "evidence_without_evidence_word",
     "answer": "The explanation relies only on intuition.",
-    "expected_detected": []
+    "expected_detected": [],
+    "label_rationale": "The answer mentions intuition but contains no configured indicator from any category."
   },
   {
     "id": "reasoning_implies_term",
     "answer": "A higher score implies a larger difference.",
     "expected_detected": [
       "reasoning"
-    ]
+    ],
+    "label_rationale": "“Implies” is a configured reasoning indicator."
   },
   {
     "id": "reasoning_logic_term",
     "answer": "The logic is difficult to follow.",
     "expected_detected": [
       "reasoning"
-    ]
+    ],
+    "label_rationale": "“Logic” is a configured reasoning indicator."
   },
   {
     "id": "reasoning_consequently_term",
     "answer": "Consequently, the result changed.",
     "expected_detected": [
       "reasoning"
-    ]
+    ],
+    "label_rationale": "“Consequently” is a configured reasoning indicator."
   },
   {
     "id": "reasoning_without_connector",
     "answer": "The two results differ by three points.",
-    "expected_detected": []
+    "expected_detected": [],
+    "label_rationale": "The answer describes a difference but contains no configured reasoning indicator."
   },
   {
     "id": "uncertainty_likely_term",
     "answer": "The estimate is likely to change.",
     "expected_detected": [
       "uncertainty"
-    ]
+    ],
+    "label_rationale": "“Likely” and “estimate” are configured uncertainty indicators."
   },
   {
     "id": "uncertainty_possibly_term",
     "answer": "Possibly, the sample was too small.",
     "expected_detected": [
       "uncertainty"
-    ]
+    ],
+    "label_rationale": "“Possibly” is a configured uncertainty indicator."
   },
   {
     "id": "uncertainty_confidence_term",
     "answer": "Confidence in this estimate remains limited.",
     "expected_detected": [
       "uncertainty"
-    ]
+    ],
+    "label_rationale": "“Confidence” and “limited” are configured uncertainty indicators."
   },
   {
     "id": "uncertainty_may_in_unrelated_context",
     "answer": "The meeting may begin at noon.",
     "expected_detected": [
       "uncertainty"
-    ]
+    ],
+    "label_rationale": "The modal “may” is a configured uncertainty indicator, even in a scheduling context unrelated to reasoning quality."
   },
   {
     "id": "uncertainty_no_marker",
     "answer": "The result was exactly twelve.",
-    "expected_detected": []
+    "expected_detected": [],
+    "label_rationale": "The answer contains no configured uncertainty indicator."
   },
   {
     "id": "multiple_categories_same_sentence",
@@ -183,39 +209,45 @@
       "evidence",
       "reasoning",
       "uncertainty"
-    ]
+    ],
+    "label_rationale": "“Data” is an evidence indicator, “suggest” is a reasoning indicator, and “estimate”/“might” are uncertainty indicators."
   },
   {
     "id": "indicator_in_newline_clause",
     "answer": "The first result was recorded.\nThe study supports the claim.",
     "expected_detected": [
       "evidence"
-    ]
+    ],
+    "label_rationale": "The second line contains the configured evidence indicator “study”."
   },
   {
     "id": "plural_observation_variant",
     "answer": "Observations were recorded independently.",
     "expected_detected": [
       "evidence"
-    ]
+    ],
+    "label_rationale": "“Observations” is a configured evidence indicator."
   },
   {
     "id": "reasoning_suggests_term",
     "answer": "The pattern suggests a possible effect.",
     "expected_detected": [
       "reasoning"
-    ]
+    ],
+    "label_rationale": "“Suggests” is a configured reasoning indicator."
   },
   {
     "id": "uncertainty_unlikely_term",
     "answer": "A large effect is unlikely.",
     "expected_detected": [
       "uncertainty"
-    ]
+    ],
+    "label_rationale": "“Unlikely” is a configured uncertainty indicator."
   },
   {
     "id": "unrelated_word_database",
     "answer": "The database contains several tables.",
-    "expected_detected": []
+    "expected_detected": [],
+    "label_rationale": "“Database” is not a standalone configured indicator; word-boundary matching avoids treating it as “data”."
   }
 ]
