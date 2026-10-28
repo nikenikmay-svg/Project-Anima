@@ -5,7 +5,7 @@
     "criteria": [
       "evidence"
     ],
-    "observed_status": "contradicted",
+    "observed_status": "matched",
     "review_question": "Does the double negation affirm relevance despite the lexical contradiction marker?",
     "review_status": "pending_human_review"
   },
