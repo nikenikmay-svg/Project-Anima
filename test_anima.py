@@ -145,6 +145,15 @@ class EvaluateAnswerTests(unittest.TestCase):
         self.assertEqual(result["score"], 100)
 
 
+    def test_semicolon_separates_unrelated_negation_from_criterion(self):
+        result = evaluate_answer(
+            "The claim is not established; evidence supports the result.",
+            ["evidence"],
+        )
+        self.assertEqual(result["score"], 100)
+        self.assertEqual(result["contradicted_points"], [])
+        self.assertEqual(result["matched_points"], ["evidence"])
+
     def test_plain_irrelevant_remains_flagged(self):
         result = evaluate_answer("Evidence is irrelevant to the conclusion.", ["evidence"])
         self.assertEqual(result["score"], 0)
