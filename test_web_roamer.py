@@ -42,6 +42,19 @@ class WebRoamerTests(unittest.TestCase):
         self.assertEqual(parser.results[0]["title"], "Example result")
         self.assertEqual(parser.results[0]["url"], "https://example.com")
 
+    def test_search_parser_accepts_alternate_result_link_class(self):
+        parser = web_roamer.SearchExtractor()
+        parser.feed('<a class="result-link" href="https://example.com">Alternate result</a>')
+        self.assertEqual(parser.results[0]["title"], "Alternate result")
+        self.assertEqual(parser.results[0]["url"], "https://example.com")
+
+    def test_query_with_no_search_results_reports_search_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            store = Path(directory) / "memory.jsonl"
+            with patch.object(web_roamer, "search_web", return_value=[]):
+                with self.assertRaisesRegex(ValueError, "search returned no usable results"):
+                    web_roamer.research("test query", [], store)
+
     def test_research_saves_unreviewed_source_linked_record(self):
         page = {"url": "https://example.com/", "title": "Example", "text": "Observed text",
                 "content_sha256": "abc123"}
