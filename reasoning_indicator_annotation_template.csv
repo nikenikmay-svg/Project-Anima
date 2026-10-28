@@ -9,11 +9,11 @@ study_as_verb,"I study every evening.",context,evidence,,,,,,,,,,,,,
 confidence_without_calibration,"I have confidence that the answer is correct.",ambiguous_term,uncertainty,,,,,,,,,,,,,
 reasoning_without_marker,"The temperature rose from 10 to 15 degrees, a five-degree increase.",implicit_reasoning,none,,,,,,,,,,,,,
 possibly_rhetorical,"Possibly the most obvious answer of all.",ambiguous_context,uncertainty,,,,,,,,,,,,,
-"quoted_negation_stress","The comment says, ""There is no evidence for that claim.""","negation","evidence""","","","","","","","","","","","",""
-"could_past_ability_stress","As a child, he could solve these puzzles quickly.","ambiguous_modal","uncertainty""","","","","","","","","","","","",""
-"since_temporal_stress","Since the start of the trial, scores have increased.","ambiguous_connector","reasoning""","","","","","","","","","","","",""
-"therefore_unsupported_stress","Therefore, every treatment will work for everyone.","invalid_inference","reasoning""","","","","","","","","","","","",""
-"confidence_overstatement_stress","I am completely confident; there is no uncertainty.","ambiguous_term","uncertainty""","","","","","","","","","","","",""
-"implicit_change_after_event_stress","Scores rose from four to eight after the workshop.","implicit_reasoning","none""","","","","","","","","","","","",""
-"mixed_signals_stress","The study data suggest improvement, but the estimate might be unreliable.","ambiguous_context","evidence;reasoning;uncertainty""","","","","","","","","","","","",""
-"database_modal_stress","The database may fail during the next update.","context","uncertainty""","","","","","","","","","","","",""
+"quoted_negation_stress","The comment says, ""There is no evidence for that claim.""","negation","evidence","","","","","","","","","","","","",""
+"could_past_ability_stress","As a child, he could solve these puzzles quickly.","ambiguous_modal","uncertainty","","","","","","","","","","","","",""
+"since_temporal_stress","Since the start of the trial, scores have increased.","ambiguous_connector","reasoning","","","","","","","","","","","","",""
+"therefore_unsupported_stress","Therefore, every treatment will work for everyone.","invalid_inference","reasoning","","","","","","","","","","","","",""
+"confidence_overstatement_stress","I am completely confident; there is no uncertainty.","ambiguous_term","uncertainty","","","","","","","","","","","","",""
+"implicit_change_after_event_stress","Scores rose from four to eight after the workshop.","implicit_reasoning","none","","","","","","","","","","","","",""
+"mixed_signals_stress","The study data suggest improvement, but the estimate might be unreliable.","ambiguous_context","evidence;reasoning;uncertainty","","","","","","","","","","","","",""
+"database_modal_stress","The database may fail during the next update.","context","uncertainty","","","","","","","","","","","","",""
