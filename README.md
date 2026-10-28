@@ -49,7 +49,7 @@ python -m unittest
 python benchmark.py
 ```
 
-The benchmark writes `benchmark-results.json`, including per-criterion evidence traces. It includes baseline and adversarial cases for repeated mentions, negation markers, contrast clauses, semicolon scope, and word-boundary matching. These are hand-written regression examples, not a representative language dataset. Some adversarial cases intentionally preserve known heuristic failure modes so the report makes them measurable rather than hiding them. A passing benchmark means the program matched those expected labels—not that it understood the answer.
+The benchmark writes `benchmark-results.json`, including per-criterion evidence traces and an `error_counts` summary. Each case includes an `error_analysis` classification: correct, false positive, false negative, mixed contradiction errors, or score mismatch. These classifications compare program output with hand-written expected labels; they do not independently establish semantic truth. The cases cover repeated mentions, negation markers, contrast clauses, semicolon scope, and word-boundary matching. This is a small regression set, not a representative language dataset.
 
 ## Current limitations
 
