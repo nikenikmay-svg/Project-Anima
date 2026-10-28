@@ -100,7 +100,7 @@
     ],
     "expected_score": 100,
     "expected_contradicted": [],
-    "category": "other"
+    "category": "repeated_mentions"
   },
   {
     "id": "contrast_clause_scope",
