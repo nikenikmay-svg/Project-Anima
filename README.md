@@ -382,3 +382,22 @@ The suite checks that the current lexical output is reproducible and records a q
 ### Negation-handling limitation
 
 The evaluator has one intentionally narrow exception for the exact phrase `not irrelevant`, which it treats as non-contradictory rather than flagging the word `irrelevant`. This is a targeted lexical rule, not general double-negation understanding. Other contradiction markers in the same clause still trigger a flag, and the result still requires human interpretation.
+
+
+## Append-only experience memory
+
+`experience_store.py` provides a local JSON Lines store for observations, experiment outcomes, and lessons. Records preserve provenance, confidence, and review status; new records remain `unreviewed` by default. The store rejects duplicate IDs and malformed existing records, and does not claim that saved content is true or change evaluator behavior.
+
+See [EXPERIENCE_MEMORY.md](EXPERIENCE_MEMORY.md) for scope and safeguards.
+
+Add and list records:
+
+```bash
+python experience_store.py add --id exp-001 --type experiment --source "benchmark run 12" --content "Semicolon-separated clauses should be evaluated independently." --outcome observed --confidence medium --tag clause-scope
+python experience_store.py list
+python experience_store.py list --format json
+```
+
+The default runtime file is `anima-memory.jsonl`; it is not committed automatically. Run `python -m unittest test_experience_store -v` to test the memory-store validation and persistence behavior.
+
+This is a storage foundation only: it does not fetch external information, call a model, independently verify claims, or run a background learning process. Human review remains required before using a stored lesson to change system behavior.
