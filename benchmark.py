@@ -67,6 +67,13 @@ CASES = [
         "expected_contradicted": [],
     },
     {
+        "id": "repeated_criterion_mixed_mentions",
+        "answer": "Evidence is not available yet. Later evidence supports the conclusion.",
+        "criteria": ["evidence"],
+        "expected_score": 100,
+        "expected_contradicted": [],
+    },
+    {
         "id": "contrast_clause_scope",
         "answer": "There is no evidence for the claim, but reasoning supports the conclusion.",
         "criteria": ["evidence", "reasoning"],

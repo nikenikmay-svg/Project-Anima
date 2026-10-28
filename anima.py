@@ -7,8 +7,8 @@ for endorsement. Review the source answer when a contradiction is flagged.
 import re
 
 
-# Conservative sentence-level markers. If one appears in a clause, criteria
-# found in that clause are flagged for review rather than counted as affirmed.
+# Conservative lexical markers. A criterion is flagged only when every clause
+# mentioning it contains a marker; one clean mention prevents an automatic flag.
 _CONTRADICTION_MARKERS = re.compile(
     r"\b(?:not|no|never|without|irrelevant|unnecessary|false|reject(?:s|ed)?|"
     r"disregard(?:s|ed)?|unsupported|lacks?|lack of|cannot|can't|isn't|aren't|"
@@ -93,7 +93,9 @@ def evaluate_answer(answer, required_points):
         matching_clauses = [clause for clause in clauses if _contains_phrase(clause, point)]
         if not matching_clauses:
             continue
-        if any(_CONTRADICTION_MARKERS.search(clause) for clause in matching_clauses):
+        # Repeated mentions may differ: do not let one flagged mention override
+        # another mention in a clause without a contradiction marker.
+        if all(_CONTRADICTION_MARKERS.search(clause) for clause in matching_clauses):
             contradicted.append(point)
         else:
             mentioned.append(point)

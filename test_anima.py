@@ -87,5 +87,16 @@ class EvaluateAnswerTests(unittest.TestCase):
         self.assertEqual(result["score"], 100)
 
 
+    def test_clean_repeated_mention_prevents_automatic_contradiction_flag(self):
+        result = evaluate_answer(
+            "Evidence is not available yet. Later evidence supports the conclusion.",
+            ["evidence"],
+        )
+        self.assertEqual(result["contradicted_points"], [])
+        self.assertEqual(result["matched_points"], ["evidence"])
+        self.assertEqual(result["score"], 100)
+
+
+
 if __name__ == "__main__":
     unittest.main()
