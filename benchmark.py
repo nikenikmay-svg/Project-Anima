@@ -172,9 +172,13 @@ def run_benchmark():
         for point in case["criteria"]
     })
     criterion_error_counts = {}
+    criterion_metrics = {}
     for criterion in criterion_names:
         true_positive = false_positive = false_negative = true_negative = 0
         for case, item in zip(CASES, results):
+            # Only score a criterion in cases where it was requested.
+            if criterion not in case["criteria"]:
+                continue
             expected = criterion in case["expected_contradicted"]
             predicted = criterion in item["actual_contradicted"]
             if expected and predicted:
@@ -190,6 +194,24 @@ def run_benchmark():
             "false_positive": false_positive,
             "false_negative": false_negative,
             "true_negative": true_negative,
+            "evaluated_cases": true_positive + false_positive + false_negative + true_negative,
+        }
+        precision_denominator = true_positive + false_positive
+        recall_denominator = true_positive + false_negative
+        specificity_denominator = true_negative + false_positive
+        precision = true_positive / precision_denominator if precision_denominator else None
+        recall = true_positive / recall_denominator if recall_denominator else None
+        specificity = true_negative / specificity_denominator if specificity_denominator else None
+        f1 = (
+            2 * precision * recall / (precision + recall)
+            if precision is not None and recall is not None and precision + recall
+            else (0.0 if precision == 0 or recall == 0 else None)
+        )
+        criterion_metrics[criterion] = {
+            "precision": round(precision, 4) if precision is not None else None,
+            "recall": round(recall, 4) if recall is not None else None,
+            "f1": round(f1, 4) if f1 is not None else None,
+            "specificity": round(specificity, 4) if specificity is not None else None,
         }
 
     report = {
@@ -199,6 +221,7 @@ def run_benchmark():
         "pass_rate_percent": round(passed_count / len(results) * 100) if results else 0,
         "error_counts": error_counts,
         "criterion_error_counts": criterion_error_counts,
+        "criterion_metrics": criterion_metrics,
         "results": results,
         "limitations": [
             "Cases are hand-written and small; they are not a representative language dataset.",

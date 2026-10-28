@@ -49,7 +49,7 @@ python -m unittest
 python benchmark.py
 ```
 
-The benchmark writes `benchmark-results.json`, including per-criterion evidence traces, an `error_counts` summary, and `criterion_error_counts`. The latter reports true positives, false positives, false negatives, and true negatives for contradiction detection, separately for each criterion. Each case also includes an `error_analysis` classification: correct, false positive, false negative, mixed contradiction errors, or score mismatch. These counts compare program output with hand-written expected labels; they do not independently establish semantic truth. The cases cover repeated mentions, negation markers, contrast clauses, semicolon scope, and word-boundary matching. This is a small regression set, not a representative language dataset.
+The benchmark writes `benchmark-results.json`, including per-criterion evidence traces, an `error_counts` summary, `criterion_error_counts`, and `criterion_metrics`. Per-criterion confusion counts report true positives, false positives, false negatives, and true negatives only across cases that request that criterion. The metrics report precision, recall, F1, and specificity; a metric is `null` when its denominator is zero. Each case also includes an `error_analysis` classification: correct, false positive, false negative, mixed contradiction errors, or score mismatch. These counts compare program output with hand-written expected labels; they do not independently establish semantic truth. The cases cover repeated mentions, negation markers, contrast clauses, semicolon scope, and word-boundary matching. This is a small regression set, not a representative language dataset.
 
 ## Current limitations
 
