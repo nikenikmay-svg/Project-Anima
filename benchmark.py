@@ -78,6 +78,13 @@ def run_benchmark():
                 kind: sum(item["error_analysis"]["type"] == kind for item in category_results)
                 for kind in ("correct", "false_positive", "false_negative", "mixed_contradiction_errors", "score_mismatch")
             },
+            "case_ids_by_error_type": {
+                kind: [
+                    item["id"] for item in category_results
+                    if item["error_analysis"]["type"] == kind
+                ]
+                for kind in ("correct", "false_positive", "false_negative", "mixed_contradiction_errors", "score_mismatch")
+            },
         }
 
     criterion_names = sorted({
