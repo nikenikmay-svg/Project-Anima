@@ -45,7 +45,7 @@ class EvaluateAnswerTests(unittest.TestCase):
 
     def test_other_contradiction_marker_still_flags_double_negative_clause(self):
         result = evaluate_answer(
-            "Evidence is not irrelevant, but it is unsupported.",
+            "Evidence is not irrelevant and unsupported.",
             ["evidence"],
         )
         self.assertEqual(result["score"], 0)
