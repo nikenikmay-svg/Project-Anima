@@ -1,0 +1,92 @@
+[
+  {
+    "id": "sample_size_description",
+    "prompt": "A study included 40 participants and measured sleep duration.",
+    "claim": "The study measured sleep duration in 40 participants.",
+    "context": "No outcome comparison or causal claim is supplied.",
+    "review_focus": "descriptive_claim",
+    "review_question": "Does the claim stay within what the stated method and sample establish?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "post_workshop_causality",
+    "prompt": "Attendance rose after a workshop was introduced.",
+    "claim": "The workshop caused attendance to rise.",
+    "context": "No comparison group or alternative-explanation information is provided.",
+    "review_focus": "causal_inference",
+    "review_question": "What additional evidence would be needed to attribute the increase to the workshop?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "correlation_to_causation",
+    "prompt": "Students who slept longer tended to report higher scores.",
+    "claim": "Sleeping longer improves academic performance.",
+    "context": "The statement describes an association but gives no experimental or confounder information.",
+    "review_focus": "correlation_causation",
+    "review_question": "Does the evidence establish causation, or only an association?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "small_sample_generalization",
+    "prompt": "Eight volunteers at one clinic reported that a service was helpful.",
+    "claim": "The service is helpful for everyone.",
+    "context": "The sample is small, self-selected, and drawn from one clinic.",
+    "review_focus": "overgeneralization",
+    "review_question": "Is the scope of the conclusion justified by the sample and recruitment method?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "alternative_explanation",
+    "prompt": "A team's output increased after a new software tool was adopted, and staffing also increased that week.",
+    "claim": "The software tool alone explains the increase in output.",
+    "context": "Staffing changed at the same time, so multiple explanations are plausible.",
+    "review_focus": "confounding",
+    "review_question": "Does the claim account for the concurrent staffing change?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "unsupported_specific_claim",
+    "prompt": "The report says only that a person missed two appointments.",
+    "claim": "The person missed appointments because they do not care about treatment.",
+    "context": "No reason for the missed appointments is reported.",
+    "review_focus": "unsupported_motive",
+    "review_question": "Is the proposed motive supported, or is it an assumption beyond the information given?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "qualified_uncertainty",
+    "prompt": "A preliminary estimate from a small sample has a wide confidence interval.",
+    "claim": "The true effect may be smaller or larger than the point estimate suggests.",
+    "context": "The claim is qualified and should be judged against the study design and interval details if available.",
+    "review_focus": "uncertainty_calibration",
+    "review_question": "Is the uncertainty appropriately represented, and what information is still missing?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "quote_not_endorsement",
+    "prompt": "A participant said, 'There is no evidence that the program works.'",
+    "claim": "The evaluator concluded that the program does not work.",
+    "context": "The sentence reports a participant's statement; it does not say the evaluator agrees.",
+    "review_focus": "attribution",
+    "review_question": "Does the claim preserve the distinction between a quoted opinion and the evaluator's conclusion?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "premise_conclusion_mismatch",
+    "prompt": "The first group scored higher than the second group on one test.",
+    "claim": "The first group is more intelligent in every respect.",
+    "context": "Only one measure and one comparison are described.",
+    "review_focus": "scope_mismatch",
+    "review_question": "Does the conclusion extend beyond the construct and comparison actually measured?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "insufficient_context",
+    "prompt": "A person's score changed from 12 to 15 between two assessments.",
+    "claim": "The person's condition has meaningfully improved.",
+    "context": "No scale, measurement error, timing, clinical context, or threshold is supplied.",
+    "review_focus": "insufficient_context",
+    "review_question": "What additional context is required before judging whether the change is meaningful?",
+    "review_status": "pending_human_review"
+  }
+]
