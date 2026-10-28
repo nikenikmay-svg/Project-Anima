@@ -165,12 +165,40 @@ def run_benchmark():
         kind: sum(item["error_analysis"]["type"] == kind for item in results)
         for kind in ("correct", "false_positive", "false_negative", "mixed_contradiction_errors", "score_mismatch")
     }
+
+    criterion_names = sorted({
+        point
+        for case in CASES
+        for point in case["criteria"]
+    })
+    criterion_error_counts = {}
+    for criterion in criterion_names:
+        true_positive = false_positive = false_negative = true_negative = 0
+        for case, item in zip(CASES, results):
+            expected = criterion in case["expected_contradicted"]
+            predicted = criterion in item["actual_contradicted"]
+            if expected and predicted:
+                true_positive += 1
+            elif predicted and not expected:
+                false_positive += 1
+            elif expected and not predicted:
+                false_negative += 1
+            else:
+                true_negative += 1
+        criterion_error_counts[criterion] = {
+            "true_positive": true_positive,
+            "false_positive": false_positive,
+            "false_negative": false_negative,
+            "true_negative": true_negative,
+        }
+
     report = {
         "benchmark": "Anima lexical evaluator baseline",
         "passed": passed_count,
         "total": len(results),
         "pass_rate_percent": round(passed_count / len(results) * 100) if results else 0,
         "error_counts": error_counts,
+        "criterion_error_counts": criterion_error_counts,
         "results": results,
         "limitations": [
             "Cases are hand-written and small; they are not a representative language dataset.",
