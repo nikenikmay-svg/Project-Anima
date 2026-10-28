@@ -59,6 +59,18 @@ class CompareAnnotationsTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "case IDs differ"):
                 compare_annotations(a, b)
 
+    def test_missing_required_annotation_columns_raise_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            for path in (a, b):
+                with path.open("w", encoding="utf-8", newline="") as handle:
+                    writer = csv.DictWriter(handle, fieldnames=["case_id", "confidence"])
+                    writer.writeheader()
+                    writer.writerow({"case_id": "one", "confidence": "high"})
+            with self.assertRaisesRegex(ValueError, "missing required columns"):
+                compare_annotations(a, b)
+
     def test_duplicate_case_ids_raise_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             a = Path(tmp) / "a.csv"
