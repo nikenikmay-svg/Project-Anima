@@ -236,3 +236,6 @@ The reviewer comparison tool now checks that both CSV worksheets contain every r
 
 
 The reviewer worksheet comparator now validates nonblank annotation values against the review protocol's allowed labels: present/absent/ambiguous, the documented evidence-support and inference-quality labels, and high/medium/low confidence. Blank values remain permitted for incomplete reviews. Invalid labels stop comparison with a clear error; this guards data consistency but does not validate the substance of any judgement.
+
+
+The worksheet comparator also rejects duplicate or blank CSV column names. Duplicate headers can cause a CSV parser to overwrite one column silently, so these malformed files are stopped before any agreement metrics are calculated. This is structural validation only.

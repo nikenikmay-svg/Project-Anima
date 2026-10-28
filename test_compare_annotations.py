@@ -90,6 +90,26 @@ class CompareAnnotationsTests(unittest.TestCase):
             self.assertEqual(report["field_metrics"]["evidence_support"]["raw_agreement"], 1.0)
             self.assertIsNone(report["field_metrics"]["contextual_evidence"]["raw_agreement"])
 
+    def test_duplicate_column_names_raise_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            header = ",".join(FIELDS + ["confidence"]) + chr(10)
+            for path in (a, b):
+                path.write_text(header, encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "duplicate column names"):
+                compare_annotations(a, b)
+
+    def test_blank_column_name_raises_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            header = ",".join(FIELDS) + "," + chr(10)
+            for path in (a, b):
+                path.write_text(header, encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "blank column name"):
+                compare_annotations(a, b)
+
     def test_duplicate_case_ids_raise_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             a = Path(tmp) / "a.csv"
