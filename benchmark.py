@@ -123,26 +123,54 @@ def run_benchmark():
     for case in CASES:
         actual = evaluate_answer(case["answer"], case["criteria"])
         actual_contradicted = actual["contradicted_points"]
-        passed = (
-            actual["score"] == case["expected_score"]
-            and actual_contradicted == case["expected_contradicted"]
-        )
+        expected_contradicted = case["expected_contradicted"]
+        false_positive_points = [
+            point for point in actual_contradicted if point not in expected_contradicted
+        ]
+        false_negative_points = [
+            point for point in expected_contradicted if point not in actual_contradicted
+        ]
+        score_mismatch = actual["score"] != case["expected_score"]
+        passed = not false_positive_points and not false_negative_points and not score_mismatch
+
+        if false_positive_points and false_negative_points:
+            error_type = "mixed_contradiction_errors"
+        elif false_positive_points:
+            error_type = "false_positive"
+        elif false_negative_points:
+            error_type = "false_negative"
+        elif score_mismatch:
+            error_type = "score_mismatch"
+        else:
+            error_type = "correct"
+
         results.append({
             "id": case["id"],
             "passed": passed,
             "expected_score": case["expected_score"],
             "actual_score": actual["score"],
-            "expected_contradicted": case["expected_contradicted"],
+            "expected_contradicted": expected_contradicted,
             "actual_contradicted": actual_contradicted,
+            "error_analysis": {
+                "type": error_type,
+                "false_positive_points": false_positive_points,
+                "false_negative_points": false_negative_points,
+                "score_mismatch": score_mismatch,
+            },
             "criterion_analysis": actual["criterion_analysis"],
         })
 
     passed_count = sum(item["passed"] for item in results)
+    error_counts = {
+        kind: sum(item["error_analysis"]["type"] == kind for item in results)
+        for kind in ("correct", "false_positive", "false_negative", "mixed_contradiction_errors", "score_mismatch")
+    }
     report = {
         "benchmark": "Anima lexical evaluator baseline",
         "passed": passed_count,
         "total": len(results),
         "pass_rate_percent": round(passed_count / len(results) * 100) if results else 0,
+        "error_counts": error_counts,
         "results": results,
         "limitations": [
             "Cases are hand-written and small; they are not a representative language dataset.",
