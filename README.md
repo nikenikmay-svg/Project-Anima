@@ -88,3 +88,7 @@ Run `python reasoning_indicator_benchmark.py` to check the evidence, reasoning, 
 ### Contextual stress review cases
 
 The review set now also includes additional stress cases for quoted negation, past-ability uses of modal words, temporal uses of connectors, unsupported conclusions, conflicting confidence language, implicit comparisons, mixed indicator signals, and word-boundary edge cases. Their `lexical_expected_detected` values record the current detector output only; they are **not gold-standard semantic labels**. All cases remain `pending_human_review`, and the existing benchmark scores are unchanged until an independently designed evaluation is justified.
+
+## Reasoning-quality review cases
+
+`reasoning_quality_review_cases.json` is a separate set of 10 prompts for future human evaluation of evidence support and inference quality. Cases cover causal attribution, correlation versus causation, overgeneralization, confounding, unsupported motive attribution, uncertainty calibration, quotation attribution, scope mismatch, and insufficient context. Each case supplies the prompt, a claim to assess, context, and a review question; it deliberately contains **no pre-filled correctness or reasoning-quality label**. All cases remain `pending_human_review`. This is a review instrument, not an automated evaluator or a validated gold-standard dataset. Use `HUMAN_REVIEW_PROTOCOL.md` and independent reviewers before drawing conclusions.
