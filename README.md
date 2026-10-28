@@ -25,6 +25,23 @@ The separate `reasoning.py` module offers `analyze_reasoning_indicators(answer)`
 
 The result shows detected/not-detected categories and the exact clauses that triggered each category. This is a modular inspection aid, not a semantic reasoning engine: terms can appear in misleading contexts, and sound reasoning may use different wording. Detection does not validate a source, prove an inference, or establish that uncertainty is appropriately calibrated.
 
+## Combined reasoning report
+
+The `reasoning_pipeline.py` module offers `evaluate_reasoning(answer, required_points)`, which combines the existing criterion-coverage report with the reasoning-indicator checklist in one result. It keeps both component reports separate so readers can inspect what each heuristic found. It does not replace the original `evaluate_answer` function or claim semantic understanding.
+
+Example:
+
+```python
+from reasoning_pipeline import evaluate_reasoning
+
+report = evaluate_reasoning(
+    "Evidence supports the claim. The reasoning follows because data were collected. The estimate may remain uncertain.",
+    ["evidence", "reasoning", "uncertainty"],
+)
+print(report["criterion_evaluation"]["score"])
+print(report["reasoning_indicators"]["detected_categories"])
+```
+
 ## Run the checks
 
 ```bash
