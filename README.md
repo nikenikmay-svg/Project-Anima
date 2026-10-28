@@ -401,3 +401,8 @@ python experience_store.py list --format json
 The default runtime file is `anima-memory.jsonl`; it is not committed automatically. Run `python -m unittest test_experience_store -v` to test the memory-store validation and persistence behavior.
 
 This is a storage foundation only: it does not fetch external information, call a model, independently verify claims, or run a background learning process. Human review remains required before using a stored lesson to change system behavior.
+
+
+### Recording controlled experiment outcomes
+
+The integrated improvement-cycle runner can optionally append its observed outcome to the experience store. Pass `--memory-store anima-memory.jsonl` to `run_improvement_cycle.py`. Each run creates an `unreviewed` record with the hypothesis, target case IDs, gate result, and a low confidence label. A passing regression gate is recorded as an observed outcome, not as proof of a semantic improvement. Reusing the same experiment ID in the same store is rejected to avoid duplicate records.
