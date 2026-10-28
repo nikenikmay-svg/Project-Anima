@@ -219,6 +219,6 @@ To create both machine-readable JSON and readable Markdown from the same review 
 python argument_review_cli.py argument_review_example.json --format bundle --output review-bundle
 ```
 
-This writes `review-bundle.json` and `review-bundle.md`. The JSON report is suitable for further processing; the Markdown report is convenient for human review. Bundle mode requires an output prefix so two formats are not mixed on standard output. Both reports preserve the same supplied review data and limitations; bundle export does not add semantic validation. Regression tests verify both files are written and bundle mode rejects a missing output prefix.
+This writes `review-bundle.json`, `review-bundle.md`, and `review-bundle.manifest.json`. The manifest records SHA-256 hashes for the JSON and Markdown file contents so consumers can detect accidental changes and verify the bundle's files match the manifest. Hashes establish file integrity only, not source trustworthiness or reasoning quality. Bundle mode requires an output prefix so two formats are not mixed on standard output. Both reports preserve the same supplied review data and limitations; bundle export does not add semantic validation. Regression tests verify the files, hashes, and missing-prefix behavior.
 
 Strict-input mode also works with bundle export: the CLI writes both diagnostic reports and then returns exit code `3` when input-shape warnings are present. Consumers should treat that code as a review-needed signal, not as a semantic verdict.

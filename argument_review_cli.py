@@ -6,6 +6,7 @@ counterexamples (optional). Output may be JSON or readable Markdown.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -64,8 +65,20 @@ def main(argv: list[str] | None = None) -> int:
             if not args.output:
                 raise ValueError("--format bundle requires --output as a filename prefix")
             prefix = Path(args.output)
-            Path(str(prefix) + ".json").write_text(json_rendered, encoding="utf-8")
-            Path(str(prefix) + ".md").write_text(markdown_rendered, encoding="utf-8")
+            json_path = Path(str(prefix) + ".json")
+            markdown_path = Path(str(prefix) + ".md")
+            manifest_path = Path(str(prefix) + ".manifest.json")
+            json_path.write_text(json_rendered, encoding="utf-8")
+            markdown_path.write_text(markdown_rendered, encoding="utf-8")
+            manifest = {
+                "manifest_version": "1.0",
+                "files": {
+                    json_path.name: hashlib.sha256(json_rendered.encode("utf-8")).hexdigest(),
+                    markdown_path.name: hashlib.sha256(markdown_rendered.encode("utf-8")).hexdigest(),
+                },
+                "notice": "Hashes identify file contents only; they do not validate sources or reasoning.",
+            }
+            manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
         else:
             rendered = markdown_rendered if args.format == "markdown" else json_rendered
             if args.output:
