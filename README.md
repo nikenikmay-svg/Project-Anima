@@ -319,3 +319,21 @@ python experiment_ledger.py experiment_ledger_template.json
 ```
 
 The validator writes a validated JSON ledger and a Markdown report. Experiment IDs and target case IDs must be unique. A record marked `accepted` requires `human_verified: true`, a reviewer identity, and a rationale. These fields record a declared review decision; they do not cryptographically authenticate a reviewer or prove that a change is correct. Keep proposals pending until the actual reports and tests have been inspected.
+
+
+## Integrated improvement cycle
+
+`run_improvement_cycle.py` connects the controlled experiment runner to the traceable ledger. Supply a saved baseline, an experiment ID, a hypothesis, and one or more target case IDs:
+
+```bash
+python benchmark.py
+cp benchmark-results.json baseline-results.json
+python run_improvement_cycle.py baseline-results.json \
+  --experiment-id exp-001 \
+  --hypothesis "A narrowly scoped change may fix case-17 without regressions" \
+  --target-case-id case-17 \
+  --command "python benchmark.py" \
+  --output-dir improvement-cycle-output
+```
+
+The command writes the controlled experiment's JSON/Markdown reports plus a JSON/Markdown ledger record. A passing gate records the experiment as `tested`, not `accepted`; a failed gate records `needs_revision`. The reviewer remains pending and `human_verified` remains false. The tool does not generate patches, approve changes, or merge pull requests. Use only trusted candidate commands because the temporary working directory is not a security sandbox.
