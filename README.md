@@ -337,3 +337,15 @@ python run_improvement_cycle.py baseline-results.json \
 ```
 
 The command writes the controlled experiment's JSON/Markdown reports plus a JSON/Markdown ledger record. A passing gate records the experiment as `tested`, not `accepted`; a failed gate records `needs_revision`. The reviewer remains pending and `human_verified` remains false. The tool does not generate patches, approve changes, or merge pull requests. Use only trusted candidate commands because the temporary working directory is not a security sandbox.
+
+
+## Prioritized experiment candidates
+
+After running the benchmark, generate a deterministic ranked queue of failing cases:
+
+```bash
+python benchmark.py
+python prioritize_experiments.py benchmark-results.json --limit 10
+```
+
+The tool groups failures by error type and category, ranks mixed contradiction errors first, then false positives/negatives, then score mismatches, and emits suggested hypotheses and next-step experiment ideas in JSON and Markdown. The ranking is only a triage heuristic; a human must inspect the case and approve any proposed change. It does not change source code, labels, or baselines.
