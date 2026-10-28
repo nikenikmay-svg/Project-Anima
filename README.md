@@ -222,3 +222,11 @@ python argument_review_cli.py argument_review_example.json --format bundle --out
 This writes `review-bundle.json`, `review-bundle.md`, and `review-bundle.manifest.json`. The manifest records SHA-256 hashes for the JSON and Markdown file contents so consumers can detect accidental changes and verify the bundle's files match the manifest. Hashes establish file integrity only, not source trustworthiness or reasoning quality. Bundle mode requires an output prefix so two formats are not mixed on standard output. Both reports preserve the same supplied review data and limitations; bundle export does not add semantic validation. Regression tests verify the files, hashes, and missing-prefix behavior.
 
 Strict-input mode also works with bundle export: the CLI writes both diagnostic reports and then returns exit code `3` when input-shape warnings are present. Consumers should treat that code as a review-needed signal, not as a semantic verdict.
+
+To verify that the paired files still match their manifest, run:
+
+```bash
+python verify_review_bundle.py review-bundle
+```
+
+The verifier exits `0` when both file hashes match and `1` when the manifest is missing, malformed, or a report differs. It checks integrity only; it does not authenticate the report's author, verify cited sources, or assess reasoning quality. Run `python -m unittest discover -v` to test valid bundles, altered files, malformed manifests, and missing manifests.
