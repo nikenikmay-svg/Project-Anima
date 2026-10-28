@@ -367,3 +367,14 @@ python run_improvement_cycle.py baseline-results.json \
 ```
 
 This runs the supplied trusted command in the controlled experiment's temporary repository copy and writes the experiment report and ledger. An empty queue is rejected rather than guessed around. A passing gate is recorded as `tested`, never automatically `accepted`; human review remains required.
+
+
+## Contextual stress cases
+
+`contextual_stress_cases.json` is a separate adversarial suite for negation scope, repeated mentions, neighboring sentences, and conflicting descriptions of evidence. Run it with:
+
+```bash
+python -m unittest test_contextual_stress -v
+```
+
+The suite checks that the current lexical output is reproducible and records a question for human contextual review. Cases remain `pending_human_review`; observed detector status is not a semantic gold label. For example, the lexical marker can flag “not irrelevant” as contradicted even though double negation often affirms relevance, and the current detector may not recognize “contradicts” as a contradiction marker. These are documented limitations to investigate, not claims that the heuristic understands context.
