@@ -37,16 +37,6 @@ def _contains_phrase(text, phrase):
 
 
 def _has_contradiction_marker(clause):
-    """Detect configured markers, excluding the narrow phrase ``not irrelevant``.
-
-    This handles one common double-negative false positive only; it is not a
-    general negation parser and makes no claim about semantic interpretation.
-    """
-    normalized = re.sub(r"\bnot\s+irrelevant\b", " ", clause, flags=re.IGNORECASE)
-    return _CONTRADICTION_MARKERS.search(normalized) is not None
-
-
-def _has_contradiction_marker(clause):
     """Detect lexical markers, excluding the one supported double-negative phrase."""
     # Narrow exception: "not irrelevant" affirms relevance in ordinary usage.
     # This does not attempt to resolve other forms of double negation.
