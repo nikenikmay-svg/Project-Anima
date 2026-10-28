@@ -10,6 +10,8 @@ class ReasoningIndicatorBenchmarkTests(unittest.TestCase):
         self.assertEqual(len(ids), len(set(ids)))
         for case in CASES:
             self.assertTrue(set(case["expected_detected"]).issubset(CATEGORIES))
+            self.assertIsInstance(case.get("label_rationale"), str)
+            self.assertTrue(case["label_rationale"].strip(), case["id"])
 
     def test_dataset_has_diverse_regression_examples(self):
         self.assertGreaterEqual(len(CASES), 30)
