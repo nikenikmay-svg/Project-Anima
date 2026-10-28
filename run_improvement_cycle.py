@@ -12,6 +12,34 @@ from controlled_experiment import run_experiment
 from experiment_ledger import validate_ledger, render_markdown
 
 
+def resolve_candidate_inputs(queue, hypothesis=None, target_case_ids=None):
+    """Resolve explicit inputs or default to the highest-ranked queue candidate."""
+    target_case_ids = list(target_case_ids or [])
+    if queue is not None:
+        if not isinstance(queue, dict) or not isinstance(queue.get("candidates"), list):
+            raise ValueError("candidate queue must be an object containing a candidates list")
+        if not queue["candidates"]:
+            raise ValueError("candidate queue is empty; no experiment candidate is available")
+        first = queue["candidates"][0]
+        if not isinstance(first, dict):
+            raise ValueError("top candidate must be an object")
+        case_id = first.get("case_id")
+        candidate_hypothesis = first.get("hypothesis")
+        if not isinstance(case_id, str) or not case_id.strip():
+            raise ValueError("top candidate must contain a nonblank case_id")
+        if not isinstance(candidate_hypothesis, str) or not candidate_hypothesis.strip():
+            raise ValueError("top candidate must contain a nonblank hypothesis")
+        if not target_case_ids:
+            target_case_ids = [case_id]
+        if not hypothesis:
+            hypothesis = candidate_hypothesis
+    if not hypothesis or not hypothesis.strip():
+        raise ValueError("provide --hypothesis or a valid --candidate-queue")
+    if not target_case_ids:
+        raise ValueError("provide at least one --target-case-id or a valid --candidate-queue")
+    return hypothesis, target_case_ids
+
+
 def run_cycle(baseline, experiment_id, hypothesis, target_case_ids, command, output_dir, timeout=300):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -60,18 +88,27 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("baseline", help="saved baseline benchmark-results.json")
     parser.add_argument("--experiment-id", required=True)
-    parser.add_argument("--hypothesis", required=True)
-    parser.add_argument("--target-case-id", action="append", required=True, dest="target_case_ids",
+    parser.add_argument("--hypothesis", help="experiment hypothesis; defaults to the top candidate when --candidate-queue is used")
+    parser.add_argument("--target-case-id", action="append", dest="target_case_ids",
                         help="target case ID; repeat for multiple cases")
+    parser.add_argument("--candidate-queue",
+                        help="prioritized-candidates.json; uses its first-ranked candidate when hypothesis/target IDs are omitted")
     parser.add_argument("--command", default="python benchmark.py",
                         help="trusted candidate command to run in a temporary repository copy")
     parser.add_argument("--output-dir", default="improvement-cycle-output")
     parser.add_argument("--timeout", type=int, default=300)
     args = parser.parse_args(argv)
     try:
+        queue = (
+            json.loads(Path(args.candidate_queue).read_text(encoding="utf-8"))
+            if args.candidate_queue else None
+        )
+        hypothesis, target_case_ids = resolve_candidate_inputs(
+            queue, args.hypothesis, args.target_case_ids
+        )
         result = run_cycle(
-            args.baseline, args.experiment_id, args.hypothesis,
-            args.target_case_ids, args.command, args.output_dir, args.timeout,
+            args.baseline, args.experiment_id, hypothesis,
+            target_case_ids, args.command, args.output_dir, args.timeout,
         )
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         parser.error(str(exc))
