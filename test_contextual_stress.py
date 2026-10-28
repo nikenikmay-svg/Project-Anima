@@ -27,6 +27,12 @@ class ContextualStressTests(unittest.TestCase):
                     expected = {case["criteria"][0]: case["observed_status"]}
                 self.assertEqual(actual, expected)
 
+    def test_double_negation_case_has_updated_observed_status(self):
+        case = next(item for item in CASES if item["id"] == "double_negation_not_irrelevant")
+        result = evaluate_answer(case["answer"], case["criteria"])
+        self.assertEqual(result["criterion_analysis"][0]["status"], "matched")
+        self.assertEqual(case["review_status"], "pending_human_review")
+
     def test_dataset_explicitly_does_not_claim_semantic_validation(self):
         for case in CASES:
             self.assertIn("review_question", case)

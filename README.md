@@ -378,3 +378,8 @@ python -m unittest test_contextual_stress -v
 ```
 
 The suite checks that the current lexical output is reproducible and records a question for human contextual review. Cases remain `pending_human_review`; observed detector status is not a semantic gold label. For example, the lexical marker can flag “not irrelevant” as contradicted even though double negation often affirms relevance, and the current detector may not recognize “contradicts” as a contradiction marker. These are documented limitations to investigate, not claims that the heuristic understands context.
+
+
+## Narrow double-negation exception
+
+The lexical contradiction detector now exempts the specific phrase `not irrelevant` from its contradiction marker, so “Evidence is not irrelevant” is counted as a matched keyword rather than automatically contradicted. This is a narrow rule, not general negation understanding; other double negatives, irony, and context can still be misclassified. The benchmark case records the new observed behavior, while the contextual case remains pending human review. Run `python -m unittest discover -v` and `python benchmark.py` to check the change against the curated suite.

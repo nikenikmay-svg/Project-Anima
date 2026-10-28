@@ -29,6 +29,7 @@ class BenchmarkTests(unittest.TestCase):
         allowed_categories = {
             "baseline",
             "negation",
+            "double_negation",
             "phrase_matching",
             "input_edges",
             "context",

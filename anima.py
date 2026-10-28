@@ -36,6 +36,16 @@ def _contains_phrase(text, phrase):
     return re.search(r"(?<!\w)" + escaped + r"(?!\w)", text, re.IGNORECASE) is not None
 
 
+def _has_contradiction_marker(clause):
+    """Detect configured markers while exempting the narrow phrase 'not irrelevant'.
+
+    This exception is intentionally narrow; other forms of negation and double
+    negation remain heuristic and may require contextual human review.
+    """
+    normalized = re.sub(r"\bnot\s+irrelevant\b", "relevant", clause, flags=re.IGNORECASE)
+    return _CONTRADICTION_MARKERS.search(normalized) is not None
+
+
 def _split_clauses(answer):
     """Split sentences, then conservatively separate common contrast clauses."""
     sentences = re.split(r"(?<=[.!?])\s+|\n+", answer)
@@ -98,7 +108,7 @@ def evaluate_answer(answer, required_points):
     for point in points:
         matching_clauses = [clause for clause in clauses if _contains_phrase(clause, point)]
         flagged_clauses = [
-            clause for clause in matching_clauses if _CONTRADICTION_MARKERS.search(clause)
+            clause for clause in matching_clauses if _has_contradiction_marker(clause)
         ]
         # Repeated mentions may differ: do not let one flagged mention override
         # another mention in a clause without a contradiction marker.
