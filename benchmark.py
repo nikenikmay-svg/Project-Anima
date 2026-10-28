@@ -95,11 +95,11 @@ CASES = [
         "expected_contradicted": [],
     },
     {
-        "id": "contradiction_marker_without_criterion",
+        "id": "semicolon_does_not_scope_marker",
         "answer": "The claim is not established; evidence supports the result.",
         "criteria": ["evidence"],
-        "expected_score": 100,
-        "expected_contradicted": [],
+        "expected_score": 0,
+        "expected_contradicted": ["evidence"],
     },
     {
         "id": "multiple_criteria_with_mixed_polarity",
