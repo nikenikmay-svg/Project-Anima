@@ -110,7 +110,7 @@ class EvaluateAnswerTests(unittest.TestCase):
 
     def test_other_contradiction_marker_survives_double_negation_exception(self):
         result = evaluate_answer(
-            "Evidence is not irrelevant, but remains unsupported.",
+            "Evidence is not irrelevant and remains unsupported.",
             ["evidence"],
         )
         self.assertEqual(result["contradicted_points"], ["evidence"])
