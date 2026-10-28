@@ -74,6 +74,10 @@ def evaluate_answer(answer, required_points):
             "matched_points": [],
             "missing_points": points.copy(),
             "contradicted_points": [],
+            "criterion_analysis": [
+                {"criterion": point, "status": "missing", "evidence_clauses": [], "flagged_clauses": []}
+                for point in points
+            ],
             "feedback": "No answer provided.",
         }
 
@@ -83,22 +87,35 @@ def evaluate_answer(answer, required_points):
             "matched_points": [],
             "missing_points": [],
             "contradicted_points": [],
+            "criterion_analysis": [],
             "feedback": "No evaluation criteria provided; score is 0%.",
         }
 
     clauses = _split_clauses(answer)
     mentioned = []
     contradicted = []
+    criterion_analysis = []
     for point in points:
         matching_clauses = [clause for clause in clauses if _contains_phrase(clause, point)]
-        if not matching_clauses:
-            continue
+        flagged_clauses = [
+            clause for clause in matching_clauses if _CONTRADICTION_MARKERS.search(clause)
+        ]
         # Repeated mentions may differ: do not let one flagged mention override
         # another mention in a clause without a contradiction marker.
-        if all(_CONTRADICTION_MARKERS.search(clause) for clause in matching_clauses):
+        if not matching_clauses:
+            status = "missing"
+        elif len(flagged_clauses) == len(matching_clauses):
             contradicted.append(point)
+            status = "contradicted"
         else:
             mentioned.append(point)
+            status = "matched"
+        criterion_analysis.append({
+            "criterion": point,
+            "status": status,
+            "evidence_clauses": matching_clauses,
+            "flagged_clauses": flagged_clauses,
+        })
 
     matched_set = {p.casefold() for p in mentioned}
     contradicted_set = {p.casefold() for p in contradicted}
@@ -113,6 +130,7 @@ def evaluate_answer(answer, required_points):
         "matched_points": mentioned,
         "missing_points": missing,
         "contradicted_points": contradicted,
+        "criterion_analysis": criterion_analysis,
         "feedback": (
             f"{score}% affirmed keyword coverage. "
             f"{len(contradicted)} criterion/criteria flagged for possible contradiction. "

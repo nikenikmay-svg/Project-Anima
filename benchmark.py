@@ -99,6 +99,7 @@ def run_benchmark():
             "actual_score": actual["score"],
             "expected_contradicted": case["expected_contradicted"],
             "actual_contradicted": actual_contradicted,
+            "criterion_analysis": actual["criterion_analysis"],
         })
 
     passed_count = sum(item["passed"] for item in results)

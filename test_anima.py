@@ -97,6 +97,21 @@ class EvaluateAnswerTests(unittest.TestCase):
         self.assertEqual(result["score"], 100)
 
 
+    def test_criterion_analysis_explains_each_status_with_source_clauses(self):
+        result = evaluate_answer(
+            "There is no evidence for the claim, but reasoning supports it.",
+            ["evidence", "reasoning", "uncertainty"],
+        )
+        analysis = {item["criterion"]: item for item in result["criterion_analysis"]}
+        self.assertEqual(analysis["evidence"]["status"], "contradicted")
+        self.assertEqual(analysis["evidence"]["evidence_clauses"], ["There is no evidence for the claim"])
+        self.assertEqual(analysis["reasoning"]["status"], "matched")
+        self.assertEqual(analysis["reasoning"]["flagged_clauses"], [])
+        self.assertEqual(analysis["uncertainty"]["status"], "missing")
+        self.assertEqual(analysis["uncertainty"]["evidence_clauses"], [])
+
+
+
 
 if __name__ == "__main__":
     unittest.main()
