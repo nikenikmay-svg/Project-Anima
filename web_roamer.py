@@ -161,38 +161,55 @@ class SearchExtractor(HTMLParser):
 
 
 def search_web(query: str, limit: int = DEFAULT_RESULTS) -> list[dict]:
-    """Search the public web via DuckDuckGo's HTML endpoint."""
+    """Search via DuckDuckGo HTML, then its lightweight endpoint as a fallback."""
     if not query.strip():
         raise ValueError("search query must not be blank")
     if not 1 <= limit <= 10:
         raise ValueError("result limit must be between 1 and 10")
-    search_url = "https://html.duckduckgo.com/html/?" + urllib.parse.urlencode({"q": query})
-    _, body, charset = fetch_bytes(search_url, max_bytes=MAX_BYTES)
-    parser = SearchExtractor()
-    parser.feed(body.decode(charset, errors="replace"))
-    found = []
-    seen = set()
-    for item in parser.results:
-        target = item["url"]
-        if target.startswith("//"):
-            target = "https:" + target
-        if target.startswith("/l/?"):
-            params = urllib.parse.parse_qs(urllib.parse.urlsplit(target).query)
-            target = params.get("uddg", [target])[0]
+
+    endpoints = (
+        "https://html.duckduckgo.com/html/?",
+        "https://lite.duckduckgo.com/lite/?",
+    )
+    failures = []
+    for endpoint in endpoints:
+        search_url = endpoint + urllib.parse.urlencode({"q": query})
         try:
-            target = validate_public_url(target)
-        except ValueError:
+            _, body, charset = fetch_bytes(search_url, max_bytes=MAX_BYTES)
+        except (OSError, ValueError, urllib.error.URLError) as exc:
+            failures.append(str(exc))
             continue
-        if target in seen:
-            continue
-        seen.add(target)
-        found.append({"url": target, "title": html.unescape(item["title"]).strip(),
-                      "snippet": html.unescape(item.get("snippet", "")).strip()})
-        if len(found) >= limit:
-            break
-    return found
 
+        parser = SearchExtractor()
+        parser.feed(body.decode(charset, errors="replace"))
+        found = []
+        seen = set()
+        for item in parser.results:
+            target = item["url"]
+            if target.startswith("//"):
+                target = "https:" + target
+            if target.startswith("/l/?"):
+                params = urllib.parse.parse_qs(urllib.parse.urlsplit(target).query)
+                target = params.get("uddg", [target])[0]
+            try:
+                target = validate_public_url(target)
+            except ValueError:
+                continue
+            if target in seen:
+                continue
+            seen.add(target)
+            found.append({"url": target, "title": html.unescape(item["title"]).strip(),
+                          "snippet": html.unescape(item.get("snippet", "")).strip()})
+            if len(found) >= limit:
+                break
+        if found:
+            return found
+        failures.append(f"{endpoint} returned no parseable result links")
 
+    raise ValueError(
+        "public web search returned no usable results from either DuckDuckGo endpoint; "
+        + "; ".join(failures)
+    )
 def read_page(url: str) -> dict:
     final_url, body, charset = fetch_bytes(url)
     parser = TextExtractor()
