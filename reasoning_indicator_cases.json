@@ -1,0 +1,87 @@
+[
+  {
+    "id": "all_three_categories",
+    "answer": "Evidence from the study supports the claim. Therefore, the conclusion follows. The estimate may be uncertain.",
+    "expected_detected": [
+      "evidence",
+      "reasoning",
+      "uncertainty"
+    ]
+  },
+  {
+    "id": "evidence_study",
+    "answer": "The study measured outcomes.",
+    "expected_detected": [
+      "evidence"
+    ]
+  },
+  {
+    "id": "evidence_sources",
+    "answer": "Sources describe the observations.",
+    "expected_detected": [
+      "evidence"
+    ]
+  },
+  {
+    "id": "reasoning_because",
+    "answer": "The result changed because conditions changed.",
+    "expected_detected": [
+      "reasoning"
+    ]
+  },
+  {
+    "id": "reasoning_therefore",
+    "answer": "The data changed; thus, the result may differ.",
+    "expected_detected": [
+      "evidence",
+      "reasoning",
+      "uncertainty"
+    ]
+  },
+  {
+    "id": "uncertainty_might",
+    "answer": "The estimate might be inaccurate.",
+    "expected_detected": [
+      "uncertainty"
+    ]
+  },
+  {
+    "id": "uncertainty_limitation",
+    "answer": "A limitation remains unknown.",
+    "expected_detected": [
+      "uncertainty"
+    ]
+  },
+  {
+    "id": "no_indicators",
+    "answer": "The sky is blue.",
+    "expected_detected": []
+  },
+  {
+    "id": "negated_indicator_still_detected",
+    "answer": "There is no evidence for the claim.",
+    "expected_detected": [
+      "evidence"
+    ]
+  },
+  {
+    "id": "embedded_data_word_boundary",
+    "answer": "The database was updated.",
+    "expected_detected": []
+  },
+  {
+    "id": "indicator_in_later_clause",
+    "answer": "The claim is clear. The observations support it.",
+    "expected_detected": [
+      "evidence"
+    ]
+  },
+  {
+    "id": "reasoning_word_form",
+    "answer": "The inference follows from the measurements.",
+    "expected_detected": [
+      "evidence",
+      "reasoning"
+    ]
+  }
+]
