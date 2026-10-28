@@ -148,6 +148,15 @@ class EvaluateAnswerTests(unittest.TestCase):
         result = evaluate_answer("Evidence matters.", ["evidence", "reasoning"])
         self.assertTrue({"score", "matched_points", "missing_points", "feedback"} <= set(result))
 
+    def test_semicolon_separates_unrelated_negation_from_evidence(self):
+        result = evaluate_answer(
+            "The claim is not established; evidence supports the result.",
+            ["evidence"],
+        )
+        self.assertEqual(result["score"], 100)
+        self.assertEqual(result["matched_points"], ["evidence"])
+        self.assertEqual(result["contradicted_points"], [])
+
     def test_negation_in_contrast_clause_does_not_flag_other_criterion(self):
         result = evaluate_answer(
             "There is no evidence for the claim, but reasoning supports the conclusion.",

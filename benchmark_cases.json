@@ -141,10 +141,8 @@
     "criteria": [
       "evidence"
     ],
-    "expected_score": 0,
-    "expected_contradicted": [
-      "evidence"
-    ],
+    "expected_score": 100,
+    "expected_contradicted": [],
     "category": "clause_scope"
   },
   {

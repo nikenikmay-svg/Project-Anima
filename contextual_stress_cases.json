@@ -62,5 +62,15 @@
     "observed_status": "matched",
     "review_question": "Does punctuation prevent a negation marker from leaking into the neighboring sentence?",
     "review_status": "pending_human_review"
+  },
+  {
+    "id": "semicolon_boundary_separates_negation",
+    "answer": "The claim is not established; evidence supports the result.",
+    "criteria": [
+      "evidence"
+    ],
+    "observed_status": "matched",
+    "review_question": "Does semicolon splitting prevent an unrelated negation marker from contaminating the evidence clause?",
+    "review_status": "pending_human_review"
   }
 ]

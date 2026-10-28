@@ -56,7 +56,7 @@ def _has_contradiction_marker(clause):
 
 def _split_clauses(answer):
     """Split sentences, then conservatively separate common contrast clauses."""
-    sentences = re.split(r"(?<=[.!?])\s+|\n+", answer)
+    sentences = re.split(r"(?<=[.!?;])\s+|\n+", answer)
     clauses = []
     for sentence in sentences:
         clauses.extend(part.strip() for part in _CONTRAST_BOUNDARY.split(sentence) if part.strip())
