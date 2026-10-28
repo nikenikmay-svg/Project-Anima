@@ -308,3 +308,14 @@ python controlled_experiment.py baseline-results.json --command "python benchmar
 The candidate command must create `benchmark-results.json` in the temporary copy. The original checkout is not edited by the runner. The experiment exits successfully only if the command exits successfully and the comparison gate passes. If the candidate report is missing or the case sets differ, the experiment fails closed.
 
 **Safety and scope:** run trusted commands only. The temporary directory is not a security sandbox. The runner does not invent code changes, apply patches, merge pull requests, or validate semantic truth. Treat reports as evidence for a human reviewer, not automatic approval.
+
+
+## Traceable experiment ledger
+
+Use `experiment_ledger_template.json` as a starting point for recording a proposed improvement. Fill in the target case IDs, hypothesis, baseline and candidate report paths, test summary, and reviewer decision, then validate and render it:
+
+```bash
+python experiment_ledger.py experiment_ledger_template.json
+```
+
+The validator writes a validated JSON ledger and a Markdown report. Experiment IDs and target case IDs must be unique. A record marked `accepted` requires `human_verified: true`, a reviewer identity, and a rationale. These fields record a declared review decision; they do not cryptographically authenticate a reviewer or prove that a change is correct. Keep proposals pending until the actual reports and tests have been inspected.
