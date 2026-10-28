@@ -31,7 +31,7 @@ class WebResearchReportTests(unittest.TestCase):
         report = build_report([self.record])
         self.assertIn(self.record["source"], report)
         self.assertIn("not a semantic summary or fact-check", report)
-        self.assertIn("review_status", report)
+        self.assertIn("Review status: unreviewed", report)
         self.assertIn("Source inventory", report)
 
     def test_report_counts_repeated_normalized_source_urls(self):
