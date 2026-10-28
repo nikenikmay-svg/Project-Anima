@@ -281,11 +281,17 @@ def research(query: str | None, urls: list[str], store_path: str | Path,
     saved, skipped, errors = [], [], []
     for candidate in candidates[:limit + len(urls)]:
         try:
+            canonical_candidate_url = canonical_source_url(candidate["url"])
+            if canonical_candidate_url in seen_candidate_urls:
+                skipped.append({"url": candidate["url"], "reason": "duplicate URL in this research batch"})
+                continue
+            seen_candidate_urls.add(canonical_candidate_url)
             page = read_page(candidate["url"])
             digest = page["content_sha256"]
-            record_id = "web-" + hashlib.sha256((page["url"] + "\n" + digest).encode()).hexdigest()[:24]
-            if record_id in known_ids:
-                skipped.append({"url": page["url"], "reason": "unchanged page already in memory", "record_id": record_id})
+            canonical_page_url = canonical_source_url(page["url"])
+            record_id = "web-" + hashlib.sha256((canonical_page_url + "\n" + digest).encode()).hexdigest()[:24]
+            if record_id in known_ids or (canonical_page_url, digest) in known_source_hashes:
+                skipped.append({"url": page["url"], "reason": "same normalized source and content already in memory", "record_id": record_id})
                 continue
             content = (
                 f"Title: {page['title']}\nURL: {page['url']}\n"
