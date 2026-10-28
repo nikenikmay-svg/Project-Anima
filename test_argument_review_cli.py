@@ -119,6 +119,26 @@ class ArgumentReviewCliTests(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 2)
             self.assertIn("--format bundle requires --output", result.stderr)
+    def test_strict_input_bundle_writes_both_reports_before_returning_three(self):
+        payload = dict(self.payload)
+        payload["evidence_by_premise"] = {"9": ["Unmatched item"]}
+        with tempfile.TemporaryDirectory() as temp:
+            input_path = Path(temp) / "input.json"
+            prefix = Path(temp) / "bundle"
+            input_path.write_text(json.dumps(payload), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "argument_review_cli.py", str(input_path),
+                 "--format", "bundle", "--strict-input", "--output", str(prefix)],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 3, result.stderr)
+            json_path = Path(str(prefix) + ".json")
+            markdown_path = Path(str(prefix) + ".md")
+            self.assertTrue(json_path.is_file())
+            self.assertTrue(markdown_path.is_file())
+            report = json.loads(json_path.read_text(encoding="utf-8"))
+            self.assertTrue(report["review"]["input_warnings"])
+            self.assertIn("input", markdown_path.read_text(encoding="utf-8").lower())
     def test_cli_reports_invalid_json_with_nonzero_exit(self):
         with tempfile.TemporaryDirectory() as temp:
             input_path = Path(temp) / "bad.json"
