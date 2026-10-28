@@ -231,6 +231,32 @@ def read_page(url: str) -> dict:
             "content_sha256": hashlib.sha256(body).hexdigest()}
 
 
+def canonical_source_url(url: str) -> str:
+    """Normalize superficial URL differences for duplicate detection only."""
+    parsed = urllib.parse.urlsplit(url)
+    host = (parsed.hostname or "").lower().rstrip(".")
+    port = parsed.port
+    netloc = host
+    if port and not ((parsed.scheme == "http" and port == 80) or (parsed.scheme == "https" and port == 443)):
+        netloc = f"{host}:{port}"
+    tracking_keys = {"fbclid", "gclid", "ref", "source"}
+    query_pairs = [
+        (key, value) for key, value in urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
+        if not key.casefold().startswith("utm_") and key.casefold() not in tracking_keys
+    ]
+    query = urllib.parse.urlencode(sorted(query_pairs))
+    path = parsed.path or "/"
+    if path != "/":
+        path = path.rstrip("/")
+    return urllib.parse.urlunsplit((parsed.scheme.lower(), netloc, path, query, ""))
+
+
+def _stored_page_hash(record: dict) -> str | None:
+    """Read the content hash marker from an existing web observation, if present."""
+    match = re.search(r"(?m)^Page SHA-256: ([0-9a-f]{64})$", record.get("content", ""))
+    return match.group(1) if match else None
+
+
 def research(query: str | None, urls: list[str], store_path: str | Path,
              limit: int = DEFAULT_RESULTS) -> dict:
     """Search and/or fetch pages, then save source-linked observations as unreviewed."""
@@ -247,6 +273,11 @@ def research(query: str | None, urls: list[str], store_path: str | Path,
         raise ValueError("provide --query and/or one or more --url values")
     existing = read_records(store_path)
     known_ids = {record["id"] for record in existing}
+    known_source_hashes = {
+        (canonical_source_url(record["source"]), _stored_page_hash(record))
+        for record in existing if _stored_page_hash(record)
+    }
+    seen_candidate_urls = set()
     saved, skipped, errors = [], [], []
     for candidate in candidates[:limit + len(urls)]:
         try:
@@ -271,6 +302,7 @@ def research(query: str | None, urls: list[str], store_path: str | Path,
             )
             append_record(store_path, record)
             known_ids.add(record_id)
+            known_source_hashes.add((canonical_page_url, digest))
             saved.append({"record_id": record_id, "url": page["url"], "title": page["title"],
                           "characters": len(page["text"]), "review_status": "unreviewed"})
         except (OSError, ValueError, UnicodeError) as exc:
