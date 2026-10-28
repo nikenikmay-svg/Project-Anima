@@ -1,0 +1,30 @@
+
+name: Anima Background Checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Anima code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check Python syntax
+        run: python -m py_compile anima.py
+
+      - name: Report status
+        run: echo "Anima syntax check completed successfully."
