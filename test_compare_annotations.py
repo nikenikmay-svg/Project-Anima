@@ -76,6 +76,38 @@ class CompareAnnotationsTests(unittest.TestCase):
             self.assertEqual(counts["total_missing_values"], 11)
             self.assertEqual(counts["possible_values"], 12)
 
+    def test_overview_aggregates_agreement_missingness_and_disagreements(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            self.write_csv(a, [
+                {"case_id": "one", "contextual_evidence": "present"},
+                {"case_id": "two", "contextual_evidence": ""},
+            ])
+            self.write_csv(b, [
+                {"case_id": "one", "contextual_evidence": "present"},
+                {"case_id": "two", "contextual_evidence": "absent"},
+            ])
+            overview = compare_annotations(a, b)["worksheet_comparison_overview"]
+            self.assertEqual(overview["fields_compared"], 6)
+            self.assertEqual(overview["total_case_field_pairs"], 12)
+            self.assertEqual(overview["completed_pairs_compared"], 1)
+            self.assertEqual(overview["agreements"], 1)
+            self.assertEqual(overview["disagreements_requiring_human_review"], 0)
+            self.assertEqual(overview["missing_pairs"], 11)
+            self.assertEqual(overview["raw_agreement"], 1.0)
+            self.assertIn("not chance-corrected", overview["interpretation"])
+
+    def test_overview_raw_agreement_is_none_when_every_pair_is_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            self.write_csv(a, [{"case_id": "one"}])
+            self.write_csv(b, [{"case_id": "one"}])
+            overview = compare_annotations(a, b)["worksheet_comparison_overview"]
+            self.assertEqual(overview["completed_pairs_compared"], 0)
+            self.assertIsNone(overview["raw_agreement"])
+
     def test_mismatched_case_ids_raise_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             a = Path(tmp) / "a.csv"
