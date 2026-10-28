@@ -20,7 +20,7 @@ from experience_store import read_records
 from web_roamer import canonical_source_url
 
 PAGE_HASH = re.compile(r"(?m)^Page SHA-256: ([0-9a-f]{64})$")
-TEXT_MARKER = "Extracted page text (untrusted; not independently verified):\\n"
+TEXT_MARKER = "Extracted page text (untrusted; not independently verified):\n"
 
 
 def _page_hash(record: dict) -> str | None:
