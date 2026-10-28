@@ -64,6 +64,18 @@ class CompareAnnotationsTests(unittest.TestCase):
                 "reviewer_b_missing": False,
             }, report["missing_annotations"])
 
+    def test_missing_value_counts_are_reported_per_reviewer(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            self.write_csv(a, [{"case_id": "one", "contextual_evidence": ""}])
+            self.write_csv(b, [{"case_id": "one", "contextual_evidence": "present", "confidence": ""}])
+            counts = compare_annotations(a, b)["missing_value_counts"]
+            self.assertEqual(counts["reviewer_a"], 6)
+            self.assertEqual(counts["reviewer_b"], 6)
+            self.assertEqual(counts["total_missing_values"], 12)
+            self.assertEqual(counts["possible_values"], 12)
+
     def test_mismatched_case_ids_raise_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             a = Path(tmp) / "a.csv"
