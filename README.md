@@ -286,3 +286,10 @@ python benchmark_gate.py baseline-results.json benchmark-results.json --output b
 The gate requires both reports to contain exactly the same unique case IDs and boolean pass/fail outcomes. It lists cases that regressed from pass to fail, improved from fail to pass, and any changed `actual_score` values. It exits with status 1 if any previously passing case regresses; malformed reports or changed case sets are rejected. Keep the baseline report from the earlier revision before regenerating the candidate report.
 
 This is a deterministic comparison tool, not an automatic improvement system. A pass means agreement with the project's hand-written expected labels, not semantic correctness. The gate does not itself check out two revisions, generate both reports, or replace human review.
+
+
+## Human-reviewable improvement proposal queue
+
+Run `python improvement_proposal.py benchmark-results.json` after generating a benchmark report. The tool creates `improvement-proposals.json` and `improvement-proposals.md`, listing failed cases, their recorded error types, score differences, and suggested investigation steps. The pull-request benchmark workflow generates and uploads this queue as the `anima-improvement-proposals` artifact so a reviewer can inspect it.
+
+The queue is intentionally advisory: it does not write patches, change evaluator behavior, or approve its own suggestions. Reviewers should reproduce a failing case, verify the expected label, implement one small change, add a regression test, and let the baseline-versus-candidate gate evaluate the proposal. If no failures appear, the queue says so while reminding readers that matching a small hand-written benchmark is not proof of semantic reasoning.
