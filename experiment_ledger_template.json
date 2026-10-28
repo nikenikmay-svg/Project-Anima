@@ -1,0 +1,17 @@
+[
+  {
+    "experiment_id": "exp-001",
+    "hypothesis": "A narrowly scoped evaluator change may fix one reproducible benchmark case without causing regressions.",
+    "target_case_ids": ["replace-with-reviewed-case-id"],
+    "baseline_report": "baseline-results.json",
+    "candidate_report": "candidate-results.json",
+    "test_summary": "Record focused test and full-suite outcomes here.",
+    "gate_passed": false,
+    "reviewer_decision": {
+      "status": "proposed",
+      "reviewed_by": "pending",
+      "rationale": "Awaiting human review of the hypothesis and evidence.",
+      "human_verified": false
+    }
+  }
+]
