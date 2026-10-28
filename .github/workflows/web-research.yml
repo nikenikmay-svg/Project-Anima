@@ -73,7 +73,10 @@ jobs:
               if [ "$RESULT" -ne 0 ]; then echo "Topic returned no new records; continuing."; fi
             done < research_topics.txt
           fi
-          exit 0
+          if [ ! -s anima-memory.jsonl ]; then
+            echo "::error::Research finished without saving any observations. Check the search output above."
+            exit 1
+          fi
 
       - name: Upload accumulated experience memory
         uses: actions/upload-artifact@v4
