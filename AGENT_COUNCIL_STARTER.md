@@ -1,49 +1,46 @@
-# Agent council starter guide
+# Anima first-run: Gemini API
 
-This starter kit helps you connect Anima to real AI services, but it does not contain credentials and will not contact any provider until you run the council yourself.
+This is the simplest first connection for the current multi-agent council. It uses Google's OpenAI-compatible Gemini endpoint and one environment variable for the key. The three roles are separate prompts, but they use the same model/provider, so their answers are not fully independent.
 
-## 1. Choose compatible services
+## 1. Create an API key
 
-The current adapter expects an OpenAI-compatible Chat Completions endpoint. For each agent, check the provider's current documentation for:
-- the exact HTTPS Chat Completions endpoint;
-- the exact model identifier;
-- whether it accepts a Bearer API key and supports the expected response shape;
-- pricing, free-tier limits, and data-retention terms.
+1. Open [Google AI Studio](https://aistudio.google.com/apikey).
+2. Sign in and create an API key for a project eligible for the Gemini API free tier.
+3. Keep the key private. Do not paste it into GitHub files, commits, issues, screenshots, or this chat.
 
-You can use two different services, or two models from one service. Different model names do not guarantee independent reasoning.
+Google's free tier is limited to eligible models and quotas; eligibility and limits can vary. Review [current Gemini API pricing](https://ai.google.dev/gemini-api/docs/pricing) and [billing information](https://ai.google.dev/gemini-api/docs/billing) before using it. Free-tier data may be used to improve Google's products, so do not submit confidential or sensitive information.
 
-## 2. Prepare a private config
+## 2. Configure the local environment
 
-Copy `agents.example.json` to `agents.local.json` on the computer where Python will run, then replace the example endpoints and model names with values from your chosen provider documentation. Do not commit `agents.local.json`.
+The ready-to-edit `agents.example.json` uses the documented endpoint `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`, model `gemini-3.8-flash`, and the environment variable `ANIMA_GEMINI_API_KEY`.
 
-## 3. Add API keys to the environment
-
-Set each key as an environment variable matching `api_key_env` in your config:
-- `ANIMA_RESEARCHER_API_KEY`
-- `ANIMA_SKEPTIC_API_KEY`
-- `ANIMA_SYNTH_API_KEY`
-
-Keep keys in your local environment or a secret manager. Never put them in a Python file, JSON config, chat message, screenshot, GitHub commit, or report. You may reuse a provider key for more than one agent if its terms allow it, but usage can still incur charges.
-
-Example for a temporary Linux/macOS terminal session:
+On a computer with Python, set the key in your terminal environment, then run:
 
 ```bash
-export ANIMA_RESEARCHER_API_KEY='paste-key-in-your-own-terminal'
-export ANIMA_SKEPTIC_API_KEY='paste-key-in-your-own-terminal'
-export ANIMA_SYNTH_API_KEY='paste-key-in-your-own-terminal'
-python agent_council.py --config agents.local.json --question "What evidence would change our view of this claim?" --output council-report.json
+export ANIMA_GEMINI_API_KEY='your-key-pasted-locally'
+python agent_council.py --config agents.example.json --question "Give three arguments for and against the claim that daily routines build resilience. State uncertainty." --output council-report.json
 ```
 
-Do not paste real keys into this guide or into the repository. The sample values above are instructional placeholders, not credentials.
+On Windows PowerShell, the temporary-session equivalent is:
 
-## 4. Check the output
+```powershell
+$env:ANIMA_GEMINI_API_KEY = "your-key-pasted-locally"
+python agent_council.py --config agents.example.json --question "Give three arguments for and against the claim that daily routines build resilience. State uncertainty." --output council-report.json
+```
 
-Open `council-report.json`. It records each agent's status and response, plus the synthesizer's comparison if configured. A skipped or failed agent is not evidence that the other agents are correct. Treat all responses as hypotheses until sources and claims are checked independently.
+Do not commit the key. The JSON config contains only the name of the environment variable, not the key itself.
 
-## Important limits
+## 3. Understand the result
 
-- This is an operator-run tool, not a background process. It does not run automatically or discover agents on the internet.
-- It sends your question to each configured provider. Do not include private client, health, financial, or other confidential information unless you have permission and have checked the provider's terms.
-- Provider calls may cost money. Run a short test first and check your provider's current pricing.
-- The council does not automatically add its transcript to Anima's long-term memory.
-- If you only have an Android phone, you will need a Python-capable environment such as a trusted cloud development environment or Termux. The GitHub mobile app alone does not run this Python CLI.
+Open `council-report.json`. Researcher and Skeptic answer independently first; Synthesizer then receives the other completed answers and compares them. This run makes four model requests when all three agents respond (three initial answers plus one synthesis), so check the provider's current limits. The council does not automatically save the report into long-term memory.
+
+## Android note
+
+The GitHub Android app can view the code but does not run the Python CLI. To execute this first test, use a trusted Python environment you control (for example, a local Termux setup or a private cloud development environment). If you use a cloud environment, store the key in its secret/environment settings, never in the repository.
+
+## Safety and limitations
+
+- The CLI only runs when you start it; no scheduled workflow calls this API.
+- The example uses the same model/provider for all three roles. This tests the interaction flow but does not provide independent provider diversity.
+- Model output is not verified fact; check important claims and sources independently.
+- API usage may be restricted by account eligibility and quota. Do not enable paid billing unless you knowingly choose to.
