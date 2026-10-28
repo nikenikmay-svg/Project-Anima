@@ -7,7 +7,7 @@ from reasoning_pipeline import evaluate_reasoning
 class CombinedReasoningReportTests(unittest.TestCase):
     def test_combines_existing_criterion_and_indicator_reports(self):
         result = evaluate_reasoning(
-            "Evidence supports the claim because the study measured outcomes. "
+            "Evidence supports the claim; the reasoning follows because the study measured outcomes. "
             "The estimate may remain uncertain.",
             ["evidence", "reasoning", "uncertainty"],
         )
