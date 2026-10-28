@@ -1,4 +1,4 @@
-"""Tests for JSON review document construction and CLI behavior."""
+"""Tests for JSON and Markdown review report output."""
 import json
 import subprocess
 import sys
@@ -43,13 +43,27 @@ class ArgumentReviewCliTests(unittest.TestCase):
             input_path.write_text(json.dumps(self.payload), encoding="utf-8")
             result = subprocess.run(
                 [sys.executable, "argument_review_cli.py", str(input_path), "--output", str(output_path)],
-                capture_output=True,
-                text=True,
-                check=False,
+                capture_output=True, text=True, check=False,
             )
             self.assertEqual(result.returncode, 0, result.stderr)
             output = json.loads(output_path.read_text(encoding="utf-8"))
             self.assertEqual(output["summary"]["evidence_items_supplied"], 1)
+
+    def test_cli_writes_markdown_output_file(self):
+        with tempfile.TemporaryDirectory() as temp:
+            input_path = Path(temp) / "input.json"
+            output_path = Path(temp) / "output.md"
+            input_path.write_text(json.dumps(self.payload), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "argument_review_cli.py", str(input_path),
+                 "--format", "markdown", "--output", str(output_path)],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            output = output_path.read_text(encoding="utf-8")
+            self.assertIn("# Argument Review Report", output)
+            self.assertIn("Source A", output)
+            self.assertIn("not_assessed", output)
 
     def test_cli_reports_invalid_json_with_nonzero_exit(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -57,9 +71,7 @@ class ArgumentReviewCliTests(unittest.TestCase):
             input_path.write_text("{broken", encoding="utf-8")
             result = subprocess.run(
                 [sys.executable, "argument_review_cli.py", str(input_path)],
-                capture_output=True,
-                text=True,
-                check=False,
+                capture_output=True, text=True, check=False,
             )
             self.assertEqual(result.returncode, 2)
             self.assertIn("argument-review:", result.stderr)
