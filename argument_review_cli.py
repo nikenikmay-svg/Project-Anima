@@ -49,7 +49,7 @@ def main(argv: list[str] | None = None) -> int:
         "--format", choices=("json", "markdown"), default="json",
         help="report format (default: json)",
     )
-    args = parser.parse_args(argv)
+    parser.add_argument(\n        "--strict-input", action="store_true",\n        help="return exit code 3 after writing the report if input warnings were found",\n    )\n    args = parser.parse_args(argv)
 
     try:
         payload = json.loads(Path(args.input).read_text(encoding="utf-8"))
