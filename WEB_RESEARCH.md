@@ -72,3 +72,8 @@ To create a preview locally:
 python memory_cleanup.py --store anima-memory.jsonl --output anima-memory-cleaned.jsonl --report anima-memory-cleanup-report.md
 python -m unittest -v test_memory_cleanup.py
 ```
+
+
+## Research diversity and previously visited sources
+
+For query-based expeditions, Anima inspects a wider result pool (up to 10 links) than the number it plans to fetch. It skips normalized source URLs already present in memory and duplicate URLs within the current result batch, then prefers one result per hostname before selecting a second result from a host. This is a simple diversity heuristic, not a guarantee of source independence or quality: different hostnames can share ownership, and search results can still be incomplete. Saved observations remain unreviewed.

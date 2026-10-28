@@ -86,6 +86,44 @@ class WebRoamerTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "search returned no usable results"):
                     web_roamer.research("test query", [], store)
 
+    def test_select_diverse_candidates_prefers_unseen_hosts(self):
+        candidates = [
+            {"url": "https://already.example/page", "title": "Known"},
+            {"url": "https://alpha.example/a", "title": "A"},
+            {"url": "https://alpha.example/b", "title": "A2"},
+            {"url": "https://beta.example/c", "title": "B"},
+            {"url": "https://gamma.example/d", "title": "C"},
+        ]
+        chosen, skipped = web_roamer.select_diverse_candidates(
+            candidates, {"https://already.example/page"}, limit=3
+        )
+        self.assertEqual(
+            [item["url"] for item in chosen],
+            ["https://alpha.example/a", "https://beta.example/c", "https://gamma.example/d"],
+        )
+        self.assertEqual(len(skipped), 1)
+        self.assertIn("already exists", skipped[0]["reason"])
+
+    def test_research_query_skips_known_sources_and_uses_alternate_host(self):
+        candidates = [
+            {"url": "https://known.example/page", "title": "Known", "snippet": ""},
+            {"url": "https://new.example/page", "title": "New", "snippet": ""},
+        ]
+        page = {"url": "https://new.example/page", "title": "New", "text": "New content",
+                "content_sha256": "b" * 64}
+        with tempfile.TemporaryDirectory() as directory:
+            store = Path(directory) / "memory.jsonl"
+            with patch.object(web_roamer, "read_page", return_value={
+                "url": "https://known.example/page", "title": "Known", "text": "Known content",
+                "content_sha256": "a" * 64
+            }):
+                web_roamer.research(None, ["https://known.example/page"], store)
+            with patch.object(web_roamer, "search_web", return_value=candidates), \
+                 patch.object(web_roamer, "read_page", return_value=page):
+                result = web_roamer.research("topic", [], store, limit=1)
+        self.assertEqual([item["url"] for item in result["saved"]], ["https://new.example/page"])
+        self.assertTrue(any("already exists" in item["reason"] for item in result["skipped"]))
+
     def test_research_saves_unreviewed_source_linked_record(self):
         page = {"url": "https://example.com/", "title": "Example", "text": "Observed text",
                 "content_sha256": "abc123"}
