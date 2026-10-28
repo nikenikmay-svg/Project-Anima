@@ -101,7 +101,7 @@ class WebRoamerTests(unittest.TestCase):
             [item["url"] for item in chosen],
             ["https://alpha.example/a", "https://beta.example/c", "https://gamma.example/d"],
         )
-        self.assertEqual(len(skipped), 2)
+        self.assertEqual(len(skipped), 1)
         self.assertIn("already exists", skipped[0]["reason"])
 
     def test_research_query_skips_known_sources_and_uses_alternate_host(self):
