@@ -1,0 +1,66 @@
+[
+  {
+    "id": "double_negation_not_irrelevant",
+    "answer": "Evidence is not irrelevant to the conclusion.",
+    "criteria": [
+      "evidence"
+    ],
+    "observed_status": "contradicted",
+    "review_question": "Does the double negation affirm relevance despite the lexical contradiction marker?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "negated_then_supported_repeated_mention",
+    "answer": "Evidence is not available yet, but later evidence supports the conclusion.",
+    "criteria": [
+      "evidence"
+    ],
+    "observed_status": "matched",
+    "review_question": "Does the later affirmative mention appropriately change the overall interpretation?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "negative_clause_separate_from_reasoning",
+    "answer": "There is no evidence for the claim, but reasoning supports the conclusion.",
+    "criteria": [
+      "evidence",
+      "reasoning"
+    ],
+    "observed_statuses": {
+      "evidence": "contradicted",
+      "reasoning": "matched"
+    },
+    "review_question": "Does clause splitting keep the negative evidence claim separate from the positive reasoning claim?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "conflicting_evidence_across_sentences",
+    "answer": "Evidence supports the hypothesis. Later evidence contradicts the hypothesis.",
+    "criteria": [
+      "evidence"
+    ],
+    "observed_status": "matched",
+    "review_question": "Does the criterion-level score hide the fact that evidence is described in conflicting ways across sentences?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "lack_of_evidence_then_positive_evidence",
+    "answer": "There is a lack of evidence initially. New evidence later supports the conclusion.",
+    "criteria": [
+      "evidence"
+    ],
+    "observed_status": "matched",
+    "review_question": "Does a clean repeated mention prevent a false blanket contradiction flag?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "unrelated_negation_in_neighbor_sentence",
+    "answer": "The claim is not established. Evidence supports a separate observation.",
+    "criteria": [
+      "evidence"
+    ],
+    "observed_status": "matched",
+    "review_question": "Does punctuation prevent a negation marker from leaking into the neighboring sentence?",
+    "review_status": "pending_human_review"
+  }
+]
