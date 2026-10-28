@@ -50,6 +50,20 @@ class CompareAnnotationsTests(unittest.TestCase):
             self.assertEqual(metric["missing_from_at_least_one_reviewer"], 1)
             self.assertIsNone(metric["raw_agreement"])
 
+    def test_missing_annotation_report_identifies_case_field_and_reviewer(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            self.write_csv(a, [{"case_id": "one", "contextual_evidence": ""}])
+            self.write_csv(b, [{"case_id": "one", "contextual_evidence": "present"}])
+            report = compare_annotations(a, b)
+            self.assertIn({
+                "case_id": "one",
+                "field": "contextual_evidence",
+                "reviewer_a_missing": True,
+                "reviewer_b_missing": False,
+            }, report["missing_annotations"])
+
     def test_mismatched_case_ids_raise_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             a = Path(tmp) / "a.csv"
