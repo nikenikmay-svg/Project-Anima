@@ -66,6 +66,8 @@ def main(argv: list[str] | None = None) -> int:
             Path(args.output).write_text(rendered, encoding="utf-8")
         else:
             sys.stdout.write(rendered)
+        if args.strict_input and document["review"].get("input_warnings"):
+            return 3
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         print(f"argument-review: {exc}", file=sys.stderr)
         return 2
