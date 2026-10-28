@@ -194,3 +194,8 @@ python argument_review_cli.py argument_review_example.json --format markdown --o
 ```
 
 Omit `--output` to print to the terminal. The Markdown view shows the argument ID, premises, supplied evidence items, assumptions, counterexamples, inventory counts, and limitation notice. It preserves `not_assessed` states rather than presenting counts as proof of quality. This is a presentation/export feature only; it does not change the review logic or validate sources and inference. Tests cover key sections, empty lists, malformed documents, and CLI file output.
+
+
+## Evidence input validation
+
+The evidence review layer now emits `input_warnings` when the evidence map has the wrong type, a key does not match a 1-based premise position, a premise's evidence value is not a list, or an evidence item is empty/non-text. Invalid entries are ignored rather than silently treated as valid evidence. The Markdown export includes these warnings so they remain visible in a human-readable report. Warnings identify input-shape problems only; they do not assess evidence quality or logical validity. Run `python -m unittest discover -v` to test the cases.
