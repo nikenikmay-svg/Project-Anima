@@ -1,0 +1,91 @@
+[
+  {
+    "id": "quoted_evidence",
+    "answer": "The reviewer wrote, “there is no evidence.”",
+    "review_focus": "quoted_negation",
+    "observed_lexical_matches": [
+      "evidence"
+    ],
+    "review_question": "Should quoted or attributed language count as the answer's own evidence claim?",
+    "interpretation_note": "The lexical detector sees evidence inside quoted text and does not model attribution.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "not_because",
+    "answer": "The result is not because of the intervention; the groups differed at baseline.",
+    "review_focus": "negated_connector",
+    "observed_lexical_matches": [
+      "reasoning"
+    ],
+    "review_question": "Does the word because signal a valid explanation in this sentence?",
+    "interpretation_note": "A connector match does not identify the scope of negation or validate the explanation.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "may_not_replicate",
+    "answer": "The finding may not replicate in a larger sample.",
+    "review_focus": "uncertainty_scope",
+    "observed_lexical_matches": [
+      "uncertainty"
+    ],
+    "review_question": "Is the uncertainty appropriately calibrated to the available evidence?",
+    "interpretation_note": "The matcher detects may but does not assess the strength or appropriateness of the caveat.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "data_without_conclusion",
+    "answer": "Data were collected from 40 participants, but no conclusion follows from these data alone.",
+    "review_focus": "evidence_without_support",
+    "observed_lexical_matches": [
+      "evidence"
+    ],
+    "review_question": "Does mentioning data provide adequate evidence for a specific conclusion?",
+    "interpretation_note": "A lexical evidence signal is present even though the sentence explicitly limits inference.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "since_intervention",
+    "answer": "Since the intervention began, attendance has increased.",
+    "review_focus": "ambiguous_connector",
+    "observed_lexical_matches": [
+      "reasoning"
+    ],
+    "review_question": "Is since causal here, temporal, or ambiguous without more context?",
+    "interpretation_note": "The detector flags since regardless of its temporal or causal use.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "study_may_because",
+    "answer": "The study may be flawed because the sample was selected from one clinic.",
+    "review_focus": "multiple_categories",
+    "observed_lexical_matches": [
+      "evidence",
+      "reasoning",
+      "uncertainty"
+    ],
+    "review_question": "Do these signals correspond to a well-supported, appropriately qualified argument?",
+    "interpretation_note": "All three categories match words, but the detector does not evaluate sampling bias or inferential strength.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "likely_fabricated_data",
+    "answer": "Likely, the data were fabricated.",
+    "review_focus": "unsupported_assertion",
+    "observed_lexical_matches": [
+      "evidence",
+      "uncertainty"
+    ],
+    "review_question": "Does hedging make an unsupported allegation adequately justified?",
+    "interpretation_note": "Likely and data trigger lexical categories without establishing any factual basis.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "contraction_couldnt",
+    "answer": "The team couldn't reproduce the result.",
+    "review_focus": "contraction_boundary",
+    "observed_lexical_matches": [],
+    "review_question": "Should a future detector recognize uncertainty markers inside contractions, and would that be appropriate here?",
+    "interpretation_note": "The current word-boundary pattern does not match could inside couldn't.",
+    "review_status": "pending_human_review"
+  }
+]
