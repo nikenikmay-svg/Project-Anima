@@ -16,7 +16,7 @@ class CombinedReasoningReportTests(unittest.TestCase):
             result["reasoning_indicators"]["detected_categories"],
             ["evidence", "reasoning", "uncertainty"],
         )
-        self.assertIn("does not establish", result["overall_notice"])
+        self.assertIn("do not establish", result["overall_notice"])
 
     def test_reports_missing_criterion_without_hiding_detected_indicators(self):
         result = evaluate_reasoning("Evidence supports the claim.", ["evidence", "uncertainty"])
