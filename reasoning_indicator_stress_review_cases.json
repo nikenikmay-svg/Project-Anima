@@ -61,7 +61,6 @@
     "review_focus": "negation_and_inference",
     "lexical_expected_detected": [
       "evidence",
-      "reasoning",
       "uncertainty"
     ],
     "review_question": "Does the sentence accurately infer that the result is unknown from the absence of a study?",
@@ -82,7 +81,6 @@
     "answer": "The confidence interval is wide, so the estimate may be imprecise.",
     "review_focus": "technical_term_and_uncertainty",
     "lexical_expected_detected": [
-      "reasoning",
       "uncertainty"
     ],
     "review_question": "Does the technical use of confidence indicate uncertainty, and is the conclusion warranted?",
