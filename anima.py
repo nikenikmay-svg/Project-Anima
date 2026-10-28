@@ -46,6 +46,14 @@ def _has_contradiction_marker(clause):
     return _CONTRADICTION_MARKERS.search(normalized) is not None
 
 
+def _has_contradiction_marker(clause):
+    """Detect lexical markers, excluding the one supported double-negative phrase."""
+    # Narrow exception: "not irrelevant" affirms relevance in ordinary usage.
+    # This does not attempt to resolve other forms of double negation.
+    marker_text = re.sub(r"\bnot\s+irrelevant\b", " ", clause, flags=re.IGNORECASE)
+    return _CONTRADICTION_MARKERS.search(marker_text) is not None
+
+
 def _split_clauses(answer):
     """Split sentences, then conservatively separate common contrast clauses."""
     sentences = re.split(r"(?<=[.!?])\s+|\n+", answer)
