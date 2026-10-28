@@ -132,9 +132,13 @@ class SearchExtractor(HTMLParser):
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         classes = attrs.get("class", "").split()
-        if tag == "a" and "result__a" in classes:
+        # DuckDuckGo has used both result__a and result-link across its HTML
+        # result pages. Accept either known result-link class.
+        if tag == "a" and ({"result__a", "result-link"} & set(classes)):
             self.active = {"url": attrs.get("href", ""), "title": ""}
-        elif self.active is not None and tag in {"div", "a"} and "result__snippet" in classes:
+        elif self.active is not None and tag in {"div", "a"} and (
+            {"result__snippet", "result-snippet"} & set(classes)
+        ):
             self.in_snippet = True
 
     def handle_endtag(self, tag):
@@ -208,6 +212,11 @@ def research(query: str | None, urls: list[str], store_path: str | Path,
         candidates.extend(search_web(query, limit=limit))
     candidates.extend({"url": url, "title": "", "snippet": ""} for url in urls)
     if not candidates:
+        if query and not urls:
+            raise ValueError(
+                "the search returned no usable results; the search page may have changed "
+                "or blocked automated requests"
+            )
         raise ValueError("provide --query and/or one or more --url values")
     existing = read_records(store_path)
     known_ids = {record["id"] for record in existing}
