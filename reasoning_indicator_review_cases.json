@@ -78,13 +78,13 @@
   },
   {
     "id": "confidence_without_calibration",
-    "answer": "I am confident that the answer is correct.",
+    "answer": "I have confidence that the answer is correct.",
     "review_focus": "ambiguous_term",
     "lexical_expected_detected": [
       "uncertainty"
     ],
     "review_question": "Should confidence language trigger an uncertainty category when it expresses certainty?",
-    "interpretation_note": "The current list treats confidence as an uncertainty indicator without interpreting polarity or calibration.",
+    "interpretation_note": "The word “confidence” triggers the uncertainty category even though the sentence expresses certainty.",
     "review_status": "pending_human_review"
   },
   {
