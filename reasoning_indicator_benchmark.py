@@ -31,6 +31,39 @@ def run_benchmark():
             "false_negative_categories": false_negative,
         })
     passed = sum(item["passed"] for item in results)
+    category_metrics = {}
+    for category in CATEGORIES:
+        true_positive = false_positive = false_negative = true_negative = 0
+        for case, item in zip(CASES, results):
+            expected = category in case["expected_detected"]
+            predicted = category in item["actual_detected"]
+            if expected and predicted:
+                true_positive += 1
+            elif predicted and not expected:
+                false_positive += 1
+            elif expected and not predicted:
+                false_negative += 1
+            else:
+                true_negative += 1
+        precision_denominator = true_positive + false_positive
+        recall_denominator = true_positive + false_negative
+        precision = true_positive / precision_denominator if precision_denominator else None
+        recall = true_positive / recall_denominator if recall_denominator else None
+        f1 = (
+            2 * precision * recall / (precision + recall)
+            if precision is not None and recall is not None and precision + recall
+            else (0.0 if precision == 0 or recall == 0 else None)
+        )
+        category_metrics[category] = {
+            "true_positive": true_positive,
+            "false_positive": false_positive,
+            "false_negative": false_negative,
+            "true_negative": true_negative,
+            "evaluated_cases": true_positive + false_positive + false_negative + true_negative,
+            "precision": round(precision, 4) if precision is not None else None,
+            "recall": round(recall, 4) if recall is not None else None,
+            "f1": round(f1, 4) if f1 is not None else None,
+        }
     error_case_ids = {
         "false_positive": [item["id"] for item in results if item["false_positive_categories"]],
         "false_negative": [item["id"] for item in results if item["false_negative_categories"]],
@@ -41,6 +74,7 @@ def run_benchmark():
         "total": len(results),
         "pass_rate_percent": round(passed / len(results) * 100) if results else 0,
         "error_case_ids": error_case_ids,
+        "category_metrics": category_metrics,
         "results": results,
         "limitations": [
             "Expected labels are hand-written and the dataset is small.",
