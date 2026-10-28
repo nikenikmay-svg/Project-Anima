@@ -46,6 +46,16 @@ def _has_contradiction_marker(clause):
     return _CONTRADICTION_MARKERS.search(normalized) is not None
 
 
+def _has_contradiction_marker(clause):
+    """Detect lexical contradiction markers with one narrow double-negative exception.
+
+    The exact phrase "not irrelevant" is not treated as a contradiction marker.
+    This exception is intentionally narrow; it is not a general negation parser.
+    """
+    normalized = re.sub(r"\\bnot\\s+irrelevant\\b", " ", clause, flags=re.IGNORECASE)
+    return _CONTRADICTION_MARKERS.search(normalized) is not None
+
+
 def _split_clauses(answer):
     """Split sentences, then conservatively separate common contrast clauses."""
     sentences = re.split(r"(?<=[.!?])\s+|\n+", answer)
