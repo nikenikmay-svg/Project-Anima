@@ -257,3 +257,15 @@ python compare_annotations.py reviewer_a.csv reviewer_b.csv --format markdown --
 ```
 
 The report contains the aggregate overview, per-field metrics, each disagreement requiring human review, missing annotations with reviewer identity, and the limitations. The JSON output remains the default and is unchanged in purpose. Markdown is a presentation format only: it does not adjudicate labels, verify sources, or establish semantic reasoning quality. Raw agreement is calculated only from nonblank paired labels and is not chance-corrected reliability.
+
+## Review-guided regression feedback (human approval required)
+
+Use `review_feedback_template.json` as a starting point to record a failure that a human reviewer has checked. Each record must include the exact answer and requested criteria, the expected score and contradiction labels, a status, an explicit `human_verified` boolean, and a rationale. Set `status` to `approved` and `human_verified` to `true` only after independently checking the expected labels. Pending or rejected records are not exported.
+
+Validate the feedback and export approved candidates to a separate file:
+
+```bash
+python review_feedback.py review_feedback_template.json --output proposed-regression-cases.json
+```
+
+The exporter checks required fields, unique IDs, score bounds, label consistency, and duplicate IDs against `benchmark_cases.json`. It does **not** edit the baseline benchmark or evaluator code. Review the generated candidates, then propose any baseline changes in a separate pull request and run the full test suite. CI remains the regression gate; a passing test suite only demonstrates consistency with the curated expected labels, not semantic correctness. The feedback status and `human_verified` flag are workflow declarations, not cryptographic proof of who reviewed the data.
