@@ -65,7 +65,7 @@ class AgentCouncilTests(unittest.TestCase):
         with patch.dict(os.environ, env, clear=True):
             report = run_council("What is the evidence?", cfg, opener=fake_opener)
         self.assertEqual(report["synthesis"]["status"], "completed")
-        self.assertIn("AGENT researcher", report["synthesis"]["response"] if False else json.dumps(report["synthesis"]))
+        self.assertIn("disagreement remains", report["synthesis"]["response"])
         self.assertEqual(sum(r["status"] == "completed" for r in report["responses"]), 3)
 
     def test_rejects_blank_or_oversized_question(self):
