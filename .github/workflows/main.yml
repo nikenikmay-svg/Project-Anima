@@ -23,7 +23,7 @@ jobs:
           python-version: "3.12"
 
       - name: Check Python syntax
-        run: python -m py_compile anima.py test_anima.py benchmark.py reasoning.py reasoning_pipeline.py reasoning_indicator_benchmark.py test_reasoning.py test_reasoning_pipeline.py test_reasoning_indicator_benchmark.py
+        run: python -m py_compile anima.py test_anima.py benchmark.py reasoning.py reasoning_pipeline.py reasoning_indicator_benchmark.py evaluate_summary.py test_evaluate_summary.py test_compare_annotations.py test_annotation_template.py test_reasoning.py test_reasoning_pipeline.py test_reasoning_indicator_benchmark.py
 
       - name: Run evaluation regression tests
         run: python -m unittest discover -v
@@ -40,7 +40,7 @@ jobs:
           name: anima-benchmark-results
           path: |
             benchmark-results.json
-            reasoning-indicator-benchmark-results.json
+            reasoning-indicator-benchmark-results.json\n            anima-evaluation-summary.json
           if-no-files-found: error
           retention-days: 30
 
