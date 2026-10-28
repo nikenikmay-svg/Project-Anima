@@ -1,0 +1,13 @@
+[
+  {
+    "id": "human_reviewed_example_001",
+    "answer": "Replace with the exact answer text that exposed a failure.",
+    "criteria": ["evidence"],
+    "expected_score": 0,
+    "expected_contradicted": [],
+    "category": "human_reviewed",
+    "status": "pending",
+    "human_verified": false,
+    "reviewer_rationale": "Replace with a concise explanation of the independently reviewed expected labels."
+  }
+]
