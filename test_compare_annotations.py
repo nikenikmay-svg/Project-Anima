@@ -72,8 +72,8 @@ class CompareAnnotationsTests(unittest.TestCase):
             self.write_csv(b, [{"case_id": "one", "contextual_evidence": "present", "confidence": ""}])
             counts = compare_annotations(a, b)["missing_value_counts"]
             self.assertEqual(counts["reviewer_a"], 6)
-            self.assertEqual(counts["reviewer_b"], 6)
-            self.assertEqual(counts["total_missing_values"], 12)
+            self.assertEqual(counts["reviewer_b"], 5)
+            self.assertEqual(counts["total_missing_values"], 11)
             self.assertEqual(counts["possible_values"], 12)
 
     def test_mismatched_case_ids_raise_error(self):
