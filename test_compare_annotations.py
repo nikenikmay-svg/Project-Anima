@@ -1,0 +1,72 @@
+"""Regression tests for independent reviewer annotation comparison."""
+import csv
+import tempfile
+import unittest
+from pathlib import Path
+
+from compare_annotations import compare_annotations
+
+FIELDS = [
+    "case_id", "contextual_evidence", "contextual_reasoning",
+    "contextual_uncertainty", "evidence_support", "inference_quality", "confidence",
+]
+
+class CompareAnnotationsTests(unittest.TestCase):
+    def write_csv(self, path, rows):
+        with path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=FIELDS)
+            writer.writeheader()
+            writer.writerows(rows)
+
+    def test_reports_raw_agreement_and_preserves_disagreements(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            self.write_csv(a, [
+                {"case_id": "one", "contextual_evidence": "present", "confidence": "high"},
+                {"case_id": "two", "contextual_evidence": "absent", "confidence": "medium"},
+            ])
+            self.write_csv(b, [
+                {"case_id": "one", "contextual_evidence": "present", "confidence": "high"},
+                {"case_id": "two", "contextual_evidence": "ambiguous", "confidence": "low"},
+            ])
+            report = compare_annotations(a, b)
+            evidence = report["field_metrics"]["contextual_evidence"]
+            self.assertEqual(evidence["compared_cases"], 2)
+            self.assertEqual(evidence["agreements"], 1)
+            self.assertEqual(evidence["disagreements"], 1)
+            self.assertEqual(evidence["raw_agreement"], 0.5)
+            self.assertEqual(len(report["disagreements"]), 2)
+            self.assertTrue(any("chance-corrected" in item for item in report["limitations"]))
+
+    def test_blank_values_are_excluded_not_treated_as_agreement(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            self.write_csv(a, [{"case_id": "one", "contextual_evidence": ""}])
+            self.write_csv(b, [{"case_id": "one", "contextual_evidence": "present"}])
+            metric = compare_annotations(a, b)["field_metrics"]["contextual_evidence"]
+            self.assertEqual(metric["compared_cases"], 0)
+            self.assertEqual(metric["missing_from_at_least_one_reviewer"], 1)
+            self.assertIsNone(metric["raw_agreement"])
+
+    def test_mismatched_case_ids_raise_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            self.write_csv(a, [{"case_id": "one"}])
+            self.write_csv(b, [{"case_id": "two"}])
+            with self.assertRaisesRegex(ValueError, "case IDs differ"):
+                compare_annotations(a, b)
+
+    def test_duplicate_case_ids_raise_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            self.write_csv(a, [{"case_id": "one"}, {"case_id": "one"}])
+            self.write_csv(b, [{"case_id": "one"}])
+            with self.assertRaisesRegex(ValueError, "duplicate case_id"):
+                compare_annotations(a, b)
+
+if __name__ == "__main__":
+    unittest.main()

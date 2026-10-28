@@ -65,6 +65,16 @@ Use this JSON-shaped record as a template; replace the placeholders during actua
 
 The example illustrates the format only. It is not a completed human annotation for the existing review case.
 
+## Comparing independent worksheets
+
+After at least two reviewers independently complete copies of the same CSV template, run:
+
+```bash
+python compare_annotations.py reviewer_a.csv reviewer_b.csv --output comparison.json
+```
+
+The script checks that both files contain the same case IDs, summarizes raw agreement separately for each annotation field, reports missing values, and lists every disagreement. It does not change either input file, choose a correct label, or calculate chance-corrected inter-rater reliability. Discuss disagreements using the protocol above and preserve both original worksheets and the adjudicated record.
+
 ## Readiness checklist
 
 Before using annotations to compare model versions, confirm:
