@@ -142,10 +142,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("reviewer_a_csv", help="First reviewer's completed worksheet")
     parser.add_argument("reviewer_b_csv", help="Second reviewer's completed worksheet")
-    parser.add_argument("--output", help="Optional path to save the JSON report")
+    parser.add_argument("--format", choices=("json", "markdown"), default="json",
+                        help="Output format (default: json)")
+    parser.add_argument("--output", help="Optional path to save the report")
     args = parser.parse_args()
     report = compare_annotations(args.reviewer_a_csv, args.reviewer_b_csv)
-    rendered = json.dumps(report, indent=2, ensure_ascii=False)
+    if args.format == "markdown":
+        from compare_annotations_markdown import render_comparison_markdown
+        rendered = render_comparison_markdown(report)
+    else:
+        rendered = json.dumps(report, indent=2, ensure_ascii=False)
     if args.output:
         Path(args.output).write_text(rendered + "\\n", encoding="utf-8")
     print(rendered)
