@@ -115,6 +115,34 @@ CASES = [
         "expected_score": 0,
         "expected_contradicted": [],
     },
+    {
+        "id": "multiword_criterion_phrase",
+        "answer": "Data quality affects the conclusion.",
+        "criteria": ["data quality"],
+        "expected_score": 100,
+        "expected_contradicted": [],
+    },
+    {
+        "id": "duplicate_criterion_is_counted_once",
+        "answer": "Evidence supports the claim.",
+        "criteria": ["evidence", "evidence"],
+        "expected_score": 100,
+        "expected_contradicted": [],
+    },
+    {
+        "id": "empty_criteria_list",
+        "answer": "Evidence supports the claim.",
+        "criteria": [],
+        "expected_score": 0,
+        "expected_contradicted": [],
+    },
+    {
+        "id": "without_marker_flags_criterion",
+        "answer": "The claim is presented without evidence.",
+        "criteria": ["evidence"],
+        "expected_score": 0,
+        "expected_contradicted": ["evidence"],
+    },
 ]
 
 
