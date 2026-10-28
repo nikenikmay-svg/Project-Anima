@@ -1,0 +1,6 @@
+# Anima's default public-web exploration topics.
+# One topic per line. Edit this file to change the scheduled research agenda.
+evidence-based reasoning, scientific uncertainty, and evaluating claims
+cognitive science and human learning research
+AI safety, evaluation, and reliable autonomous systems
+reproducible research, source quality, and scientific methods
