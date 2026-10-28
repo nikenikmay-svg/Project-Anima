@@ -427,3 +427,5 @@ Use `python experience_store.py search --store anima-memory.jsonl --query "claus
 ## Multi-agent research council
 
 `agent_council.py` can ask 2–4 explicitly configured OpenAI-compatible AI agents to answer a question independently, then optionally send their responses to a synthesizer for comparison. See [MULTI_AGENT_COUNCIL.md](MULTI_AGENT_COUNCIL.md) for configuration, environment-variable credentials, example usage, and safety limits. No external model is contacted unless the CLI is run with configured endpoints and credentials; the framework does not discover agents automatically or store transcripts in long-term memory.
+
+For a ready-to-copy placeholder config and a practical provider setup checklist, see [AGENT_COUNCIL_STARTER.md](AGENT_COUNCIL_STARTER.md) and [agents.example.json](agents.example.json). These files contain no API keys; replace provider placeholders locally and keep real credentials out of Git.
