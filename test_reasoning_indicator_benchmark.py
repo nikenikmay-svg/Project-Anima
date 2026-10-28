@@ -96,5 +96,15 @@ class ReasoningIndicatorBenchmarkTests(unittest.TestCase):
         self.assertIn("context", focuses)
         self.assertTrue(any(focus.startswith("ambiguous") for focus in focuses))
 
+    def test_human_review_protocol_separates_evaluation_questions(self):
+        protocol_path = Path(__file__).with_name("HUMAN_REVIEW_PROTOCOL.md")
+        protocol = protocol_path.read_text(encoding="utf-8")
+        for required_phrase in ("Lexical detection", "Contextual interpretation",
+                                "Reasoning quality", "reviewer_id",
+                                "adjudication_status", "pending_human_review"):
+            self.assertIn(required_phrase, protocol)
+        self.assertIn("At least two reviewers", protocol)
+        self.assertIn("No human review", protocol)
+
 if __name__ == "__main__":
     unittest.main()

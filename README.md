@@ -61,6 +61,10 @@ Benchmark cases are stored separately in `benchmark_cases.json` and labelled by 
 
 Review flagged clauses and use scores and indicator reports as debugging signals, not as stand-alone judgments of reasoning quality.
 
+## Human review protocol
+
+See [HUMAN_REVIEW_PROTOCOL.md](HUMAN_REVIEW_PROTOCOL.md) for a structured protocol that separates lexical detection, contextual interpretation, and reasoning quality. It defines annotation fields, independent review and adjudication steps, and a record template. The current review cases remain pending; no human validation or reviewer agreement is claimed.
+
 ## Reasoning-indicator review set
 
 `reasoning_indicator_review_cases.json` is a separate, focused review set for negation, context-sensitive words, ambiguous connectors, and indicator words that can appear in weak or invalid arguments. It records the detector's expected lexical output, a review question, and an interpretation note. Every case is deliberately marked `pending_human_review`: these notes are prompts for future review, not independent human-validated semantic labels. The tests verify the stated lexical outputs without changing detector behavior.
