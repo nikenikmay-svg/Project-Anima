@@ -239,3 +239,6 @@ The reviewer worksheet comparator now validates nonblank annotation values again
 
 
 The worksheet comparator also rejects duplicate or blank CSV column names. Duplicate headers can cause a CSV parser to overwrite one column silently, so these malformed files are stopped before any agreement metrics are calculated. This is structural validation only.
+
+
+The reviewer comparison JSON now includes a `missing_annotations` list identifying the case, field, and which reviewer left it blank. This makes follow-up work actionable while preserving the existing field-level missing counts. Blank entries remain missing data, not agreement or disagreement.
