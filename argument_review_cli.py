@@ -1,7 +1,7 @@
-"""JSON command-line interface for transparent argument review.
+"""Command-line interface for transparent argument review reports.
 
 Input JSON fields: argument (required), evidence_by_premise, unstated_assumptions,
-counterexamples (optional). Output contains the review report and inventory summary.
+counterexamples (optional). Output may be JSON or readable Markdown.
 """
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from argument_review import review_argument
+from argument_review_markdown import render_review_markdown
 from argument_review_summary import summarize_review
 
 
@@ -40,16 +41,23 @@ def build_review_document(payload: Any) -> dict[str, Any]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Create a JSON argument-review report without claiming semantic validation."
+        description="Create an argument-review report without claiming semantic validation."
     )
     parser.add_argument("input", help="path to a UTF-8 JSON input file")
     parser.add_argument("-o", "--output", help="output path; defaults to stdout")
+    parser.add_argument(
+        "--format", choices=("json", "markdown"), default="json",
+        help="report format (default: json)",
+    )
     args = parser.parse_args(argv)
 
     try:
         payload = json.loads(Path(args.input).read_text(encoding="utf-8"))
         document = build_review_document(payload)
-        rendered = json.dumps(document, indent=2, ensure_ascii=False) + "\n"
+        if args.format == "markdown":
+            rendered = render_review_markdown(document)
+        else:
+            rendered = json.dumps(document, indent=2, ensure_ascii=False) + "\\n"
         if args.output:
             Path(args.output).write_text(rendered, encoding="utf-8")
         else:
