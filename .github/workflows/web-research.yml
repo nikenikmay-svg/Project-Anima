@@ -78,6 +78,17 @@ jobs:
             exit 1
           fi
 
+      - name: Build source inventory report
+        run: python web_research_report.py --store anima-memory.jsonl --output anima-research-report.md
+
+      - name: Upload source inventory report
+        uses: actions/upload-artifact@v4
+        with:
+          name: anima-research-review
+          path: anima-research-report.md
+          if-no-files-found: error
+          retention-days: 90
+
       - name: Upload accumulated experience memory
         uses: actions/upload-artifact@v4
         with:
