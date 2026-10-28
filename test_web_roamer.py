@@ -60,6 +60,25 @@ class WebRoamerTests(unittest.TestCase):
         self.assertEqual(results[0]["url"], "https://example.com/")
         self.assertEqual(results[0]["title"], "Example result")
 
+    def test_search_parser_collects_wikipedia_result(self):
+        parser = web_roamer.SearchExtractor()
+        parser.feed('<div class="mw-search-result-heading"><a href="/wiki/Science">Science</a></div>')
+        self.assertEqual(parser.results[0]["title"], "Science")
+        self.assertEqual(parser.results[0]["url"], "/wiki/Science")
+
+    def test_search_web_falls_back_to_wikipedia(self):
+        responses = [
+            ("https://html.duckduckgo.com/html/", b"<html>blocked</html>", "utf-8"),
+            ("https://lite.duckduckgo.com/lite/", b"<html>blocked</html>", "utf-8"),
+            ("https://en.wikipedia.org/w/index.php?", b'<div class="mw-search-result-heading"><a href="/wiki/Science">Science</a></div>', "utf-8"),
+        ]
+        with patch.object(web_roamer, "fetch_bytes", side_effect=responses), \
+             patch.object(web_roamer, "validate_public_url", side_effect=lambda url: url):
+            results = web_roamer.search_web("science", limit=2)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["url"], "https://en.wikipedia.org/wiki/Science")
+        self.assertEqual(results[0]["title"], "Science")
+
     def test_query_with_no_search_results_reports_search_failure(self):
         with tempfile.TemporaryDirectory() as directory:
             store = Path(directory) / "memory.jsonl"
