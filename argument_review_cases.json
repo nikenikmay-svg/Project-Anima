@@ -1,0 +1,32 @@
+[
+  {
+    "id": "correlation_causation",
+    "argument": {
+      "id": "correlation_causation",
+      "premises": ["Students who sleep longer tend to score higher."],
+      "conclusion": "Sleeping longer causes higher scores."
+    },
+    "review_question": "What evidence or design would be needed to support the causal conclusion?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "alternative_explanation",
+    "argument": {
+      "id": "alternative_explanation",
+      "premises": ["Output increased after new software was introduced.", "Staffing also increased that week."],
+      "conclusion": "The software alone caused the output increase."
+    },
+    "review_question": "Could the staffing change or another factor explain the outcome?",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "universal_claim",
+    "argument": {
+      "id": "universal_claim",
+      "premises": ["Three people found the service helpful."],
+      "conclusion": "The service is helpful for everyone."
+    },
+    "review_question": "What counterexample or sampling limitation challenges the universal conclusion?",
+    "review_status": "pending_human_review"
+  }
+]
