@@ -61,7 +61,7 @@ Run `python evaluate_summary.py` to create `anima-evaluation-summary.json`. The 
 
 ## Current limitations
 
-- Contradiction detection relies on a small list of lexical markers; one narrow exception handles the exact phrase “not irrelevant” to reduce a known double-negative false positive.
+- Contradiction detection relies on a small list of lexical markers; one implemented narrow exception excludes the exact phrase “not irrelevant” from marker detection to reduce a known double-negative false positive.
 - Clause splitting recognizes only a few common contrast transitions.
 - Repeated mentions are handled conservatively, but complex negation and context can still be misclassified. The “not irrelevant” exception is deliberately narrow and does not handle general double negation or establish semantic meaning.
 - Evidence traces show which text triggered the heuristic; they do not prove that the text logically supports a claim.
