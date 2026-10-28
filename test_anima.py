@@ -97,6 +97,24 @@ class EvaluateAnswerTests(unittest.TestCase):
         self.assertEqual(result["score"], 100)
         self.assertEqual(result["matched_points"], ["evidence"])
 
+    def test_exact_not_irrelevant_phrase_is_not_flagged(self):
+        result = evaluate_answer("Evidence is not irrelevant to the conclusion.", ["evidence"])
+        self.assertEqual(result["score"], 100)
+        self.assertEqual(result["matched_points"], ["evidence"])
+        self.assertEqual(result["contradicted_points"], [])
+
+    def test_irrelevant_without_negation_still_flags(self):
+        result = evaluate_answer("Evidence is irrelevant to the conclusion.", ["evidence"])
+        self.assertEqual(result["score"], 0)
+        self.assertEqual(result["contradicted_points"], ["evidence"])
+
+    def test_other_contradiction_marker_survives_double_negation_exception(self):
+        result = evaluate_answer(
+            "Evidence is not irrelevant, but remains unsupported.",
+            ["evidence"],
+        )
+        self.assertEqual(result["contradicted_points"], ["evidence"])
+
     def test_invalid_inputs_are_rejected(self):
         with self.assertRaises(TypeError):
             evaluate_answer(None, CRITERIA)
