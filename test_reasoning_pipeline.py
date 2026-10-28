@@ -8,7 +8,7 @@ class CombinedReasoningReportTests(unittest.TestCase):
     def test_combines_existing_criterion_and_indicator_reports(self):
         result = evaluate_reasoning(
             "Evidence supports the claim; the reasoning follows because the study measured outcomes. "
-            "The estimate may remain uncertain.",
+            "Uncertainty remains around the estimate.",
             ["evidence", "reasoning", "uncertainty"],
         )
         self.assertEqual(result["criterion_evaluation"]["score"], 100)
