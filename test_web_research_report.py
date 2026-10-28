@@ -57,7 +57,7 @@ class WebResearchReportTests(unittest.TestCase):
         self.assertIn("Source diversity snapshot", report)
         self.assertIn("en.wikipedia.org: 1 observation(s)", report)
         self.assertIn("pubmed.ncbi.nlm.nih.gov: 1 observation(s)", report)
-        self.assertIn("research/publisher-domain indicator: 1", report)
+        self.assertIn("institutional-domain indicator: 1", report)
         self.assertIn("Host counts describe where collected pages came from", report)
 
     def test_single_host_with_multiple_observations_gets_caution(self):
