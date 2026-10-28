@@ -168,3 +168,18 @@ print(summarize_review(review))
 ```
 
 The summary does not verify sources, infer unstated assumptions, generate counterexamples, assess evidence quality, or decide whether a conclusion follows. Its tests cover count accuracy, malformed entries, and the invariant that inference quality remains `not_assessed`.
+
+
+## JSON command-line review reports
+
+Use `argument_review_cli.py` to turn a JSON input file into a shareable JSON review report containing both the review inventory and its compact summary. The CLI accepts an input file with an `argument` object and optional `evidence_by_premise`, `unstated_assumptions`, and `counterexamples` fields.
+
+Run the included example:
+
+```bash
+python argument_review_cli.py argument_review_example.json --output argument-review-report.json
+```
+
+Omit `--output` to print the report to standard output. Invalid JSON, unreadable files, and missing required input fields produce a clear error and a non-zero exit code. The example includes explicit placeholder evidence, not real citations; replace it with source details before any real review.
+
+The output uses schema version `1.0` and includes a limitation notice. It remains an inventory of caller-supplied material: the CLI does not fetch or verify sources, infer missing premises, generate counterexamples, or judge whether the conclusion follows. Conclusion evidence status and inference quality remain `not_assessed`. Tests cover JSON document shape, output-file writing, malformed JSON, and required fields.

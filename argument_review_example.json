@@ -1,0 +1,21 @@
+{
+  "argument": {
+    "id": "example-1",
+    "premises": [
+      "Students who sleep longer tend to score higher.",
+      "The study observed a relationship between sleep duration and scores."
+    ],
+    "conclusion": "Sleeping longer causes higher scores."
+  },
+  "evidence_by_premise": {
+    "1": [
+      "Example placeholder: replace with a real source and location before review."
+    ],
+    "2": [
+      "Example placeholder: replace with a real source and location before review."
+    ]
+  },
+  "unstated_assumptions": [],
+  "counterexamples": [],
+  "notice": "Example data only; placeholder evidence is not a real citation."
+}
