@@ -115,3 +115,32 @@ print(report)
 ```
 
 This validates only the data structure. The result deliberately reports `logical_validity: "not_assessed"`; it does not prove that premises are true or that a conclusion follows. `test_structured_arguments.py` covers valid structure, missing fields, empty values, malformed inputs, and duplicate IDs. `argument_review_worksheet.csv` is a blank worksheet for human reviewers to independently record premises, conclusions, evidence support, missing context, alternative explanations, inference quality, confidence, and notes. No reviewer labels are pre-filled. Run `python -m unittest discover -v` to run the regression suite.
+
+
+## Evidence mapping and counterexample review
+
+`argument_review.py` builds a structured review report from an argument and optional reviewer-supplied evidence items, unstated assumptions, and counterexamples. Evidence entries are attached to premise positions so reviewers can inspect which premise each item is meant to support. Missing entries mean only that no item was supplied to this report. The tool does not verify sources, decide whether evidence entails a premise, discover assumptions, or prove a conclusion. Support and inference quality remain explicitly `not_assessed`, and each report remains `pending_human_review`.
+
+Example:
+
+```python
+from argument_review import review_argument
+
+report = review_argument(
+    {
+        "id": "example-1",
+        "premises": ["All mammals are animals.", "Whales are mammals."],
+        "conclusion": "Whales are animals.",
+    },
+    evidence_by_premise={
+        "1": ["Reviewer-supplied source A, section 2"],
+        "2": ["Reviewer-supplied source B, paragraph 4"],
+    },
+    unstated_assumptions=[],
+    counterexamples=[],
+)
+print(report["premise_evidence"])
+print(report["review_prompts"])
+```
+
+`argument_review_cases.json` contains three prompts for future human review: correlation versus causation, alternative explanations, and universal claims from small samples. Their status is `pending_human_review`; no quality labels are pre-filled. The helper records only caller-provided evidence, assumptions, and counterexamples. It does not automatically generate or validate them. Run `python -m unittest discover -v` for regression tests.
