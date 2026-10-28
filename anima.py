@@ -66,6 +66,14 @@ def _has_contradiction_marker(clause):
     return _CONTRADICTION_MARKERS.search(without_known_double_negative) is not None
 
 
+def _has_contradiction_marker(clause):
+    """Detect markers while excluding one narrowly scoped double negative."""
+    without_known_double_negative = re.sub(
+        r"\bnot\s+irrelevant\b", " ", clause, flags=re.IGNORECASE
+    )
+    return _CONTRADICTION_MARKERS.search(without_known_double_negative) is not None
+
+
 def _split_clauses(answer):
     """Split sentences, then conservatively separate common contrast clauses."""
     sentences = re.split(r"(?<=[.!?])\s+|\n+", answer)
