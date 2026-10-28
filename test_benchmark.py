@@ -23,6 +23,23 @@ class BenchmarkTests(unittest.TestCase):
             "without_marker_flags_criterion",
         }.issubset(case_ids))
 
+    def test_category_metrics_cover_every_case(self):
+        report = run_benchmark()
+        self.assertTrue(all(case.get("category") for case in CASES))
+        self.assertEqual(
+            sum(item["total"] for item in report["category_metrics"].values()),
+            report["total"],
+        )
+        self.assertEqual(
+            set(report["category_metrics"]),
+            {case["category"] for case in CASES},
+        )
+        for metrics in report["category_metrics"].values():
+            self.assertEqual(metrics["passed"] + sum(
+                metrics["error_counts"][kind]
+                for kind in ("false_positive", "false_negative", "mixed_contradiction_errors", "score_mismatch")
+            ), metrics["total"])
+
     def test_error_analysis_classifies_each_case(self):
         report = run_benchmark()
         self.assertEqual(sum(report["error_counts"].values()), report["total"])
