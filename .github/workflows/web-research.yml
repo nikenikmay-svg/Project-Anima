@@ -29,8 +29,8 @@ jobs:
 
       - name: Test the research and memory components
         run: |
-          python -m py_compile web_roamer.py experience_store.py web_research_report.py
-          python -m unittest -v test_web_roamer.py test_web_research_report.py
+          python -m py_compile web_roamer.py experience_store.py web_research_report.py memory_cleanup.py
+          python -m unittest -v test_web_roamer.py test_web_research_report.py test_memory_cleanup.py
 
       - name: Restore the latest saved research memory
         env:
@@ -77,6 +77,21 @@ jobs:
             echo "::error::Research finished without saving any observations. Check the search output above."
             exit 1
           fi
+
+      - name: Build conservative cleanup preview
+        run: |
+          python memory_cleanup.py --store anima-memory.jsonl --output anima-memory-cleaned.jsonl --report anima-memory-cleanup-report.md
+          python -m experience_store list --store anima-memory-cleaned.jsonl --format json > /dev/null
+
+      - name: Upload cleanup preview and audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: anima-memory-cleanup-preview
+          path: |
+            anima-memory-cleaned.jsonl
+            anima-memory-cleanup-report.md
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Build source inventory report
         run: python web_research_report.py --store anima-memory.jsonl --output anima-research-report.md
