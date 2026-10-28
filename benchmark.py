@@ -80,6 +80,41 @@ CASES = [
         "expected_score": 50,
         "expected_contradicted": ["evidence"],
     },
+    {
+        "id": "negation_marker_in_same_clause",
+        "answer": "Evidence is not irrelevant to the conclusion.",
+        "criteria": ["evidence"],
+        "expected_score": 0,
+        "expected_contradicted": ["evidence"],
+    },
+    {
+        "id": "clean_repeat_offsets_flagged_repeat",
+        "answer": "Evidence is unavailable. New evidence supports the conclusion.",
+        "criteria": ["evidence"],
+        "expected_score": 100,
+        "expected_contradicted": [],
+    },
+    {
+        "id": "semicolon_does_not_scope_marker",
+        "answer": "The claim is not established; evidence supports the result.",
+        "criteria": ["evidence"],
+        "expected_score": 0,
+        "expected_contradicted": ["evidence"],
+    },
+    {
+        "id": "known_false_negative_absent_marker",
+        "answer": "Evidence is absent, but reasoning supports the conclusion.",
+        "criteria": ["evidence", "reasoning", "uncertainty"],
+        "expected_score": 67,
+        "expected_contradicted": [],
+    },
+    {
+        "id": "word_boundary_prevents_embedded_match",
+        "answer": "The artwork was discussed without scientific support.",
+        "criteria": ["art", "evidence"],
+        "expected_score": 0,
+        "expected_contradicted": [],
+    },
 ]
 
 
