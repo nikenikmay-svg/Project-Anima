@@ -293,3 +293,18 @@ This is a deterministic comparison tool, not an automatic improvement system. A 
 Run `python improvement_proposal.py benchmark-results.json` after generating a benchmark report. The tool creates `improvement-proposals.json` and `improvement-proposals.md`, listing failed cases, their recorded error types, score differences, and suggested investigation steps. The pull-request benchmark workflow generates and uploads this queue as the `anima-improvement-proposals` artifact so a reviewer can inspect it.
 
 The queue is intentionally advisory: it does not write patches, change evaluator behavior, or approve its own suggestions. Reviewers should reproduce a failing case, verify the expected label, implement one small change, add a regression test, and let the baseline-versus-candidate gate evaluate the proposal. If no failures appear, the queue says so while reminding readers that matching a small hand-written benchmark is not proof of semantic reasoning.
+
+
+## Controlled benchmark experiments
+
+The `controlled_experiment.py` utility runs a trusted candidate command in a temporary copy of the repository, compares the resulting `benchmark-results.json` with a saved baseline, and writes JSON and Markdown reports. Example:
+
+```bash
+python benchmark.py
+cp benchmark-results.json baseline-results.json
+python controlled_experiment.py baseline-results.json --command "python benchmark.py" --output-dir experiment-output
+```
+
+The candidate command must create `benchmark-results.json` in the temporary copy. The original checkout is not edited by the runner. The experiment exits successfully only if the command exits successfully and the comparison gate passes. If the candidate report is missing or the case sets differ, the experiment fails closed.
+
+**Safety and scope:** run trusted commands only. The temporary directory is not a security sandbox. The runner does not invent code changes, apply patches, merge pull requests, or validate semantic truth. Treat reports as evidence for a human reviewer, not automatic approval.
