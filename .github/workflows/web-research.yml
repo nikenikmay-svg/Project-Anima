@@ -29,8 +29,8 @@ jobs:
 
       - name: Test the research and memory components
         run: |
-          python -m py_compile web_roamer.py experience_store.py
-          python -m unittest -v test_web_roamer.py
+          python -m py_compile web_roamer.py experience_store.py web_research_report.py
+          python -m unittest -v test_web_roamer.py test_web_research_report.py
 
       - name: Restore the latest saved research memory
         env:
