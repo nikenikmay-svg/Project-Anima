@@ -68,6 +68,24 @@ class EvaluateAnswerTests(unittest.TestCase):
         result = evaluate_answer("Evidence matters.", ["evidence", "reasoning"])
         self.assertTrue({"score", "matched_points", "missing_points", "feedback"} <= set(result))
 
+    def test_negation_in_contrast_clause_does_not_flag_other_criterion(self):
+        result = evaluate_answer(
+            "There is no evidence for the claim, but reasoning supports the conclusion.",
+            ["evidence", "reasoning"],
+        )
+        self.assertEqual(result["contradicted_points"], ["evidence"])
+        self.assertEqual(result["matched_points"], ["reasoning"])
+        self.assertEqual(result["score"], 50)
+
+    def test_positive_claim_followed_by_contrastive_uncertainty(self):
+        result = evaluate_answer(
+            "Evidence supports the claim, however uncertainty remains about timing.",
+            ["evidence", "uncertainty"],
+        )
+        self.assertEqual(result["contradicted_points"], [])
+        self.assertEqual(result["matched_points"], ["evidence", "uncertainty"])
+        self.assertEqual(result["score"], 100)
+
 
 if __name__ == "__main__":
     unittest.main()

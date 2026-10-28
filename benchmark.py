@@ -66,6 +66,13 @@ CASES = [
         "expected_score": 100,
         "expected_contradicted": [],
     },
+    {
+        "id": "contrast_clause_scope",
+        "answer": "There is no evidence for the claim, but reasoning supports the conclusion.",
+        "criteria": ["evidence", "reasoning"],
+        "expected_score": 50,
+        "expected_contradicted": ["evidence"],
+    },
 ]
 
 
@@ -98,6 +105,7 @@ def run_benchmark():
             "Cases are hand-written and small; they are not a representative language dataset.",
             "Passing means matching expected labels, not understanding meaning.",
             "Negation and contradiction detection is heuristic and can make false positives or false negatives.",
+            "Contrast splitting handles a few common patterns only and does not resolve general linguistic scope.",
         ],
     }
     return report

@@ -7,12 +7,20 @@ for endorsement. Review the source answer when a contradiction is flagged.
 import re
 
 
-# Conservative sentence-level markers. If one appears in a sentence, criteria
-# found in that sentence are flagged for review rather than counted as affirmed.
+# Conservative sentence-level markers. If one appears in a clause, criteria
+# found in that clause are flagged for review rather than counted as affirmed.
 _CONTRADICTION_MARKERS = re.compile(
     r"\b(?:not|no|never|without|irrelevant|unnecessary|false|reject(?:s|ed)?|"
     r"disregard(?:s|ed)?|unsupported|lacks?|lack of|cannot|can't|isn't|aren't|"
     r"doesn't|don't|shouldn't)\b",
+    re.IGNORECASE,
+)
+
+# Split at common contrast transitions so a marker in one clause is less likely
+# to contaminate a separate claim in the same sentence.
+_CONTRAST_BOUNDARY = re.compile(
+    r",\s*(?=(?:but|however|yet|nevertheless)\b)|"
+    r"\b(?:however|nevertheless)\b",
     re.IGNORECASE,
 )
 
@@ -28,12 +36,21 @@ def _contains_phrase(text, phrase):
     return re.search(r"(?<!\w)" + escaped + r"(?!\w)", text, re.IGNORECASE) is not None
 
 
+def _split_clauses(answer):
+    """Split sentences, then conservatively separate common contrast clauses."""
+    sentences = re.split(r"(?<=[.!?])\s+|\n+", answer)
+    clauses = []
+    for sentence in sentences:
+        clauses.extend(part.strip() for part in _CONTRAST_BOUNDARY.split(sentence) if part.strip())
+    return clauses
+
+
 def evaluate_answer(answer, required_points):
     """Return keyword coverage plus conservative contradiction flags.
 
-    Score is the percentage of unique required points that were mentioned in
-    a sentence without a detected contradiction marker. This remains a
-    lexical heuristic; it does not assess whether the answer's reasoning is valid.
+    Score is the percentage of unique required points mentioned in a clause
+    without a detected contradiction marker. This remains a lexical heuristic;
+    it does not assess whether the answer's reasoning is valid.
     """
     if not isinstance(answer, str):
         raise TypeError("answer must be a string")
@@ -69,15 +86,14 @@ def evaluate_answer(answer, required_points):
             "feedback": "No evaluation criteria provided; score is 0%.",
         }
 
-    # Split conservatively at common sentence-ending punctuation.
-    sentences = re.split(r"(?<=[.!?])\s+|\n+", answer)
+    clauses = _split_clauses(answer)
     mentioned = []
     contradicted = []
     for point in points:
-        matching_sentences = [s for s in sentences if _contains_phrase(s, point)]
-        if not matching_sentences:
+        matching_clauses = [clause for clause in clauses if _contains_phrase(clause, point)]
+        if not matching_clauses:
             continue
-        if any(_CONTRADICTION_MARKERS.search(s) for s in matching_sentences):
+        if any(_CONTRADICTION_MARKERS.search(clause) for clause in matching_clauses):
             contradicted.append(point)
         else:
             mentioned.append(point)
