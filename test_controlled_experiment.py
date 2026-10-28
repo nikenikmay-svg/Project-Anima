@@ -3,7 +3,6 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 from controlled_experiment import render_markdown, run_experiment
 
@@ -34,16 +33,21 @@ class ControlledExperimentTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "positive number"):
                 run_experiment(baseline, "python benchmark.py", Path(temp) / "out", timeout=0)
 
-    def test_missing_candidate_report_fails_closed(self):
+    def test_runs_candidate_in_temporary_copy_and_writes_reports(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             baseline = root / "baseline.json"
-            baseline.write_text(json.dumps({"results": [{"id": "a", "passed": True}]}), encoding="utf-8")
-            with patch("controlled_experiment.Path") as mocked_path:
-                # Exercise missing report behavior with a controlled fake temporary execution.
-                mocked_path.resolve.return_value = root
-                # The full filesystem runner is integration-tested by the repository workflow.
-                self.assertTrue(True)
+            baseline.write_text(json.dumps({"results": [{"id": "a", "passed": True, "actual_score": 50}]}), encoding="utf-8")
+            command = (
+                "python -c \"import json; "
+                "open('benchmark-results.json', 'w').write(json.dumps("
+                "{'results': [{'id': 'a', 'passed': True, 'actual_score': 50}]}))\""
+            )
+            report = run_experiment(baseline, command, root / "out")
+            self.assertTrue(report["gate_passed"])
+            self.assertEqual(report["comparison"]["baseline"]["total"], 1)
+            self.assertTrue((root / "out" / "experiment-report.json").is_file())
+            self.assertTrue((root / "out" / "experiment-report.md").is_file())
 
 
 if __name__ == "__main__":
