@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 
 from controlled_experiment import run_experiment
+from experience_store import append_record, make_record
 from experiment_ledger import validate_ledger, render_markdown
 
 
@@ -40,7 +41,9 @@ def resolve_candidate_inputs(queue, hypothesis=None, target_case_ids=None):
     return hypothesis, target_case_ids
 
 
-def run_cycle(baseline, experiment_id, hypothesis, target_case_ids, command, output_dir, timeout=300):
+def run_cycle(baseline, experiment_id, hypothesis, target_case_ids, command, output_dir,
+              timeout=300, memory_store=None):
+    """Run a controlled experiment and optionally append its outcome to experience memory."""
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     report = run_experiment(baseline, command, output_dir / "experiment", timeout=timeout)
@@ -51,17 +54,18 @@ def run_cycle(baseline, experiment_id, hypothesis, target_case_ids, command, out
         if gate_passed
         else "Experiment did not satisfy the regression gate; inspect the report and revise before review."
     )
+    test_summary = (
+        f"Command exit code: {report.get('execution', {}).get('exit_code')}; "
+        f"timed out: {report.get('execution', {}).get('timed_out')}; "
+        f"gate passed: {gate_passed}; status: {report.get('status')}"
+    )
     record = {
         "experiment_id": experiment_id,
         "hypothesis": hypothesis,
         "target_case_ids": target_case_ids,
         "baseline_report": str(Path(baseline).resolve()),
         "candidate_report": str((output_dir / "experiment" / "experiment-report.json").resolve()),
-        "test_summary": (
-            f"Command exit code: {report.get('execution', {}).get('exit_code')}; "
-            f"timed out: {report.get('execution', {}).get('timed_out')}; "
-            f"gate passed: {gate_passed}; status: {report.get('status')}"
-        ),
+        "test_summary": test_summary,
         "gate_passed": gate_passed,
         "reviewer_decision": {
             "status": decision_status,
@@ -75,12 +79,33 @@ def run_cycle(baseline, experiment_id, hypothesis, target_case_ids, command, out
     markdown_path = output_dir / "experiment-ledger.md"
     json_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
     markdown_path.write_text(render_markdown(ledger), encoding="utf-8")
+
+    memory_record = None
+    if memory_store is not None:
+        memory_record = make_record(
+            record_id=f"experiment-{experiment_id}",
+            record_type="experiment",
+            source=f"run_improvement_cycle.py; experiment_id={experiment_id}",
+            content=(
+                f"Hypothesis: {hypothesis}\n"
+                f"Target cases: {', '.join(target_case_ids)}\n"
+                f"Test summary: {test_summary}\n"
+                "This records the observed gate outcome only; it does not establish semantic correctness."
+            ),
+            outcome="observed",
+            confidence="low",
+            tags=["controlled-experiment", "gate-passed" if gate_passed else "gate-failed"],
+        )
+        append_record(memory_store, memory_record)
+
     return {
         "gate_passed": gate_passed,
         "decision_status": decision_status,
         "experiment_report": str(output_dir / "experiment" / "experiment-report.json"),
         "ledger_json": str(json_path),
         "ledger_markdown": str(markdown_path),
+        "memory_record_id": memory_record["id"] if memory_record else None,
+        "memory_store": str(memory_store) if memory_store is not None else None,
     }
 
 
@@ -97,6 +122,8 @@ def main(argv=None):
                         help="trusted candidate command to run in a temporary repository copy")
     parser.add_argument("--output-dir", default="improvement-cycle-output")
     parser.add_argument("--timeout", type=int, default=300)
+    parser.add_argument("--memory-store",
+                        help="optional JSONL experience store to append this experiment's observed outcome")
     args = parser.parse_args(argv)
     try:
         queue = (
@@ -109,6 +136,7 @@ def main(argv=None):
         result = run_cycle(
             args.baseline, args.experiment_id, hypothesis,
             target_case_ids, args.command, args.output_dir, args.timeout,
+            memory_store=args.memory_store,
         )
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         parser.error(str(exc))
