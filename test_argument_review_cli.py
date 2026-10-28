@@ -1,4 +1,5 @@
 """Tests for JSON and Markdown review report output."""
+import hashlib
 import json
 import subprocess
 import sys
@@ -104,10 +105,19 @@ class ArgumentReviewCliTests(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, result.stderr)
             json_report = json.loads(Path(str(prefix) + ".json").read_text(encoding="utf-8"))
-            markdown_report = Path(str(prefix) + ".md").read_text(encoding="utf-8")
+            markdown_path = Path(str(prefix) + ".md")
+            markdown_report = markdown_path.read_text(encoding="utf-8")
+            manifest_path = Path(str(prefix) + ".manifest.json")
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
             self.assertEqual(json_report["schema_version"], "1.0")
             self.assertIn("# Argument Review Report", markdown_report)
             self.assertIn("not_assessed", markdown_report)
+            self.assertEqual(manifest["manifest_version"], "1.0")
+            self.assertEqual(manifest["files"][Path(str(prefix) + ".json").name],
+                             hashlib.sha256(Path(str(prefix) + ".json").read_bytes()).hexdigest())
+            self.assertEqual(manifest["files"][markdown_path.name],
+                             hashlib.sha256(markdown_path.read_bytes()).hexdigest())
+            self.assertIn("do not validate", manifest["notice"])
 
     def test_bundle_requires_output_prefix(self):
         with tempfile.TemporaryDirectory() as temp:
