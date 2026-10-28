@@ -2,24 +2,24 @@
   "agents": [
     {
       "name": "Researcher",
-      "role": "find relevant evidence, distinguish evidence from assumptions, and note source limitations",
-      "endpoint": "https://YOUR-PROVIDER/v1/chat/completions",
-      "model": "YOUR-MODEL",
-      "api_key_env": "ANIMA_RESEARCHER_API_KEY"
+      "role": "find relevant evidence, separate evidence from assumptions, and state source limitations",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+      "model": "gemini-3.8-flash",
+      "api_key_env": "ANIMA_GEMINI_API_KEY"
     },
     {
       "name": "Skeptic",
-      "role": "challenge assumptions, seek counterexamples, and identify alternative explanations",
-      "endpoint": "https://YOUR-SECOND-PROVIDER/v1/chat/completions",
-      "model": "YOUR-SECOND-MODEL",
-      "api_key_env": "ANIMA_SKEPTIC_API_KEY"
+      "role": "challenge assumptions, find counterexamples, and suggest alternative explanations",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+      "model": "gemini-3.8-flash",
+      "api_key_env": "ANIMA_GEMINI_API_KEY"
     },
     {
       "name": "Synthesizer",
-      "role": "compare the other agents' reasoning, flag unsupported claims, and summarize disagreement and uncertainty",
-      "endpoint": "https://YOUR-PROVIDER/v1/chat/completions",
-      "model": "YOUR-MODEL",
-      "api_key_env": "ANIMA_SYNTH_API_KEY"
+      "role": "compare the other agents' arguments, identify unsupported claims, and summarize disagreement and uncertainty",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+      "model": "gemini-3.8-flash",
+      "api_key_env": "ANIMA_GEMINI_API_KEY"
     }
   ],
   "synthesizer": "Synthesizer"
