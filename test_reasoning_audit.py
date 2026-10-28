@@ -38,6 +38,30 @@ class ReasoningAuditTests(unittest.TestCase):
             for result in report["results"]
         ))
 
+    def test_reasoning_quality_review_dataset_has_unique_pending_cases(self):
+        path = Path(__file__).with_name("reasoning_quality_review_cases.json")
+        cases = json.loads(path.read_text(encoding="utf-8"))
+        self.assertTrue(cases)
+        ids = [case.get("id") for case in cases]
+        self.assertTrue(all(isinstance(value, str) and value.strip() for value in ids))
+        self.assertEqual(len(ids), len(set(ids)))
+        required = ("id", "prompt", "claim", "context", "review_focus", "review_question", "review_status")
+        forbidden = {"correct", "incorrect", "gold_label", "gold_label_correctness",
+                     "reasoning_quality_score", "human_verdict", "validated_label"}
+        for case in cases:
+            with self.subTest(case=case.get("id")):
+                for field in required:
+                    self.assertIsInstance(case.get(field), str)
+                    self.assertTrue(case[field].strip(), f"{field} must be non-empty")
+                self.assertEqual(case["review_status"], "pending_human_review")
+                self.assertTrue(forbidden.isdisjoint(case.keys()))
+        focuses = {case["review_focus"] for case in cases}
+        self.assertTrue({
+            "causal_inference", "correlation_causation", "overgeneralization",
+            "confounding", "unsupported_motive", "uncertainty_calibration",
+            "attribution", "scope_mismatch", "insufficient_context",
+        }.issubset(focuses))
+
     def test_case_schema_and_unique_ids(self):
         path = Path(__file__).with_name("reasoning_audit_cases.json")
         cases = json.loads(path.read_text(encoding="utf-8"))
