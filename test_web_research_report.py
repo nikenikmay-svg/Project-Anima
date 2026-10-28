@@ -40,6 +40,31 @@ class WebResearchReportTests(unittest.TestCase):
         self.assertIn("Distinct source URLs (fragment/trailing-slash normalized): **1**", report)
         self.assertIn("URLs appearing more than once: **1**", report)
 
+    def test_report_shows_distinct_hosts_and_category_counts(self):
+        second = make_record(
+            record_id="web-002", record_type="observation",
+            source="https://pubmed.ncbi.nlm.nih.gov/12345/",
+            content=(
+                "Title: Example study\nURL: https://pubmed.ncbi.nlm.nih.gov/12345/\n"
+                "Extracted page text (untrusted; not independently verified):\n"
+                "A study description."
+            ),
+            outcome="observed", confidence="low", review_status="unreviewed",
+            tags=["web", "unverified"],
+        )
+        report = build_report([self.record, second])
+        self.assertIn("Distinct source hosts: **2**", report)
+        self.assertIn("Source diversity snapshot", report)
+        self.assertIn("en.wikipedia.org: 1 observation(s)", report)
+        self.assertIn("pubmed.ncbi.nlm.nih.gov: 1 observation(s)", report)
+        self.assertIn("research/publisher-domain indicator: 1", report)
+        self.assertIn("Host counts describe where collected pages came from", report)
+
+    def test_single_host_with_multiple_observations_gets_caution(self):
+        second = dict(self.record, id="web-002", source="https://en.wikipedia.org/wiki/Method")
+        report = build_report([self.record, second])
+        self.assertIn("Diversity caution", report)
+
     def test_empty_report_is_explicit(self):
         self.assertIn("No source-linked web observations", build_report([]))
 
