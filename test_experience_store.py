@@ -64,6 +64,36 @@ class ExperienceStoreTests(unittest.TestCase):
         self.assertIn("Review status: unreviewed", output)
         self.assertIn("storage is not verification", output)
 
+    def test_search_requires_nonblank_query(self):
+        from experience_store import search_records
+        with self.assertRaisesRegex(ValueError, "nonblank"):
+            search_records([self.record], "  ")
+
+    def test_search_matches_all_terms_case_insensitively(self):
+        from experience_store import search_records
+        second = make_record(
+            record_id="exp-002", record_type="observation", source="https://example.org",
+            content="Evidence supports the claim but uncertainty remains.",
+            tags=["research"], recorded_at="2026-10-28T13:00:00Z",
+        )
+        found = search_records([self.record, second], "EVIDENCE uncertainty")
+        self.assertEqual([item["id"] for item in found], ["exp-002"])
+
+    def test_search_filters_by_review_status_and_exact_tag(self):
+        from experience_store import search_records
+        reviewed = make_record(
+            record_id="exp-002", record_type="lesson", source="manual review",
+            content="Clause scope needs careful review.", outcome="confirmed",
+            confidence="medium", review_status="reviewed", tags=["clause-scope"],
+        )
+        found = search_records([self.record, reviewed], "review", review_status="reviewed", tag="CLAUSE-SCOPE")
+        self.assertEqual([item["id"] for item in found], ["exp-002"])
+
+    def test_search_rejects_unknown_review_status(self):
+        from experience_store import search_records
+        with self.assertRaisesRegex(ValueError, "review_status"):
+            search_records([self.record], "evidence", review_status="verified")
+
     def test_tags_must_be_unique(self):
         with self.assertRaisesRegex(ValueError, "duplicates"):
             make_record(record_id="bad", record_type="lesson", source="test", content="text", tags=["x", "x"])
