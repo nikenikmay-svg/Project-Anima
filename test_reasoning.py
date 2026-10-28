@@ -16,7 +16,7 @@ class ReasoningIndicatorTests(unittest.TestCase):
         self.assertEqual(result["not_detected_categories"], [])
         self.assertEqual(
             result["categories"]["evidence"]["evidence_clauses"],
-            ["Evidence from the study supports the claim"],
+            ["Evidence from the study supports the claim."],
         )
 
     def test_reports_categories_without_indicators_as_not_detected(self):
