@@ -1,9 +1,12 @@
 """Create a conservative, auditable duplicate-cleanup preview for Anima memory.
 
 The original store is never modified. Only web observations with the same
-normalized source URL, page-body SHA-256, outcome, confidence, and review status
-are eligible for consolidation. Records without a recognized page hash remain
-separate. A report preserves the IDs and metadata of every collapsed record.
+normalized source URL, normalized extracted-text SHA-256, outcome, confidence,
+and review status are eligible for consolidation. The raw response-body hash is
+recorded for audit but is not used as the primary duplicate fingerprint because
+page HTML can change between fetches while extracted text stays the same.
+Records without extractable text remain separate. A report preserves the IDs
+and metadata of every collapsed record.
 """
 from __future__ import annotations
 
@@ -17,11 +20,26 @@ from experience_store import read_records
 from web_roamer import canonical_source_url
 
 PAGE_HASH = re.compile(r"(?m)^Page SHA-256: ([0-9a-f]{64})$")
+TEXT_MARKER = "Extracted page text (untrusted; not independently verified):\\n"
 
 
 def _page_hash(record: dict) -> str | None:
+    """Return the original response-body hash for audit/debug purposes."""
     match = PAGE_HASH.search(record.get("content", ""))
     return match.group(1) if match else None
+
+
+def _extracted_text_hash(record: dict) -> str | None:
+    """Fingerprint normalized extracted text, excluding volatile response metadata."""
+    content = record.get("content", "")
+    if TEXT_MARKER not in content:
+        return None
+    text = content.split(TEXT_MARKER, 1)[1]
+    normalized = " ".join(text.split()).casefold()
+    if not normalized:
+        return None
+    import hashlib
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
 
 def cleanup_preview(records: list[dict]) -> tuple[list[dict], str]:
@@ -29,7 +47,7 @@ def cleanup_preview(records: list[dict]) -> tuple[list[dict], str]:
     groups: OrderedDict[tuple, list[dict]] = OrderedDict()
     passthrough = []
     for record in records:
-        digest = _page_hash(record)
+        digest = _extracted_text_hash(record)
         if record.get("record_type") != "observation" or not digest:
             passthrough.append(record)
             continue
@@ -53,7 +71,10 @@ def cleanup_preview(records: list[dict]) -> tuple[list[dict], str]:
             ))
             clusters.append({
                 "canonical_url": canonical_url,
-                "page_sha256": digest,
+                "extracted_text_sha256": digest,
+                "original_page_sha256s": list(dict.fromkeys(
+                    value for member in members if (value := _page_hash(member))
+                )),
                 "retained_id": primary["id"],
                 "collapsed_ids": [member["id"] for member in members[1:]],
                 "members": [
@@ -93,7 +114,8 @@ def cleanup_preview(records: list[dict]) -> tuple[list[dict], str]:
         lines.extend([
             f"## Duplicate cluster {index}", "",
             f"- Normalized source: {cluster['canonical_url']}",
-            f"- Page SHA-256: {cluster['page_sha256']}",
+            f"- Normalized extracted-text SHA-256: {cluster['extracted_text_sha256']}",
+            f"- Original response-body SHA-256 values (may vary across identical fetches): {', '.join(cluster['original_page_sha256s']) or '(not available)'}",
             f"- Retained record ID: {cluster['retained_id']}",
             f"- Consolidated duplicate IDs: {', '.join(cluster['collapsed_ids'])}",
             "",
