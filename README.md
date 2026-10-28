@@ -183,3 +183,14 @@ python argument_review_cli.py argument_review_example.json --output argument-rev
 Omit `--output` to print the report to standard output. Invalid JSON, unreadable files, and missing required input fields produce a clear error and a non-zero exit code. The example includes explicit placeholder evidence, not real citations; replace it with source details before any real review.
 
 The output uses schema version `1.0` and includes a limitation notice. It remains an inventory of caller-supplied material: the CLI does not fetch or verify sources, infer missing premises, generate counterexamples, or judge whether the conclusion follows. Conclusion evidence status and inference quality remain `not_assessed`. Tests cover JSON document shape, output-file writing, malformed JSON, and required fields.
+
+
+## Markdown review report export
+
+The argument-review CLI supports both JSON and readable Markdown output. JSON remains the default and is useful for programmatic processing. To create a Markdown report:
+
+```bash
+python argument_review_cli.py argument_review_example.json --format markdown --output argument-review-report.md
+```
+
+Omit `--output` to print to the terminal. The Markdown view shows the argument ID, premises, supplied evidence items, assumptions, counterexamples, inventory counts, and limitation notice. It preserves `not_assessed` states rather than presenting counts as proof of quality. This is a presentation/export feature only; it does not change the review logic or validate sources and inference. Tests cover key sections, empty lists, malformed documents, and CLI file output.
