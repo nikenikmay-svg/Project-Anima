@@ -406,3 +406,15 @@ This is a storage foundation only: it does not fetch external information, call 
 ### Recording controlled experiment outcomes
 
 The integrated improvement-cycle runner can optionally append its observed outcome to the experience store. Pass `--memory-store anima-memory.jsonl` to `run_improvement_cycle.py`. Each run creates an `unreviewed` record with the hypothesis, target case IDs, gate result, and a low confidence label. A passing regression gate is recorded as an observed outcome, not as proof of a semantic improvement. Reusing the same experiment ID in the same store is rejected to avoid duplicate records.
+
+
+## Public-web research and experience capture
+
+`web_roamer.py` adds an explicit web research command that searches public pages, extracts bounded text, and stores source-linked observations in the local experience memory. See [WEB_RESEARCH.md](WEB_RESEARCH.md) for setup, commands, and safeguards.
+
+```bash
+python web_roamer.py --query "your research question" --limit 3
+python experience_store.py list --store anima-memory.jsonl
+```
+
+This records observations; it does not make webpages authoritative, train a model, change code, or run continuously. Review status remains `unreviewed` by default.
