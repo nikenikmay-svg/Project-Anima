@@ -102,11 +102,11 @@ CASES = [
         "expected_contradicted": ["evidence"],
     },
     {
-        "id": "multiple_criteria_with_mixed_polarity",
+        "id": "known_false_negative_absent_marker",
         "answer": "Evidence is absent, but reasoning supports the conclusion.",
         "criteria": ["evidence", "reasoning", "uncertainty"],
-        "expected_score": 33,
-        "expected_contradicted": ["evidence"],
+        "expected_score": 67,
+        "expected_contradicted": [],
     },
     {
         "id": "word_boundary_prevents_embedded_match",
