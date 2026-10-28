@@ -229,4 +229,4 @@ To verify that the paired files still match their manifest, run:
 python verify_review_bundle.py review-bundle
 ```
 
-The verifier exits `0` when both file hashes match and `1` when the manifest is missing, malformed, or a report differs. It checks integrity only; it does not authenticate the report's author, verify cited sources, or assess reasoning quality. Run `python -m unittest discover -v` to test valid bundles, altered files, malformed manifests, and missing manifests.
+The verifier exits `0` when both file hashes match and `1` when the manifest is missing, malformed, or a report differs. It checks integrity only; it does not authenticate the report's author, verify cited sources, or assess reasoning quality. Run `python -m unittest discover -v` to test valid bundles, altered files, malformed manifests, and missing manifests. GitHub Actions also builds and verifies this example bundle and uploads the JSON, Markdown, and manifest as the `anima-sample-review-bundle` artifact for 30 days. The example evidence is placeholder text, not a real citation.

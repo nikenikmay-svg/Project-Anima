@@ -40,6 +40,22 @@ jobs:
       - name: Build layered evaluation summary
         run: python evaluate_summary.py
 
+      - name: Build and verify sample review bundle
+        run: |
+          python argument_review_cli.py argument_review_example.json --format bundle --output ci-review-bundle
+          python verify_review_bundle.py ci-review-bundle
+
+      - name: Upload sample review bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: anima-sample-review-bundle
+          path: |
+            ci-review-bundle.json
+            ci-review-bundle.md
+            ci-review-bundle.manifest.json
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Upload benchmark reports
         uses: actions/upload-artifact@v4
         with:
