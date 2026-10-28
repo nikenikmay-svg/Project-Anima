@@ -25,6 +25,14 @@ _CONTRAST_BOUNDARY = re.compile(
 )
 
 
+def _has_contradiction_marker(clause):
+    """Detect configured markers, excluding the narrow double-negative phrase."""
+    # This exact phrase ordinarily affirms relevance. Mask both words so neither
+    # "not" nor "irrelevant" triggers a contradiction flag in this one pattern.
+    normalized = re.sub(r"\bnot\s+irrelevant\b", " ", clause, flags=re.IGNORECASE)
+    return _CONTRADICTION_MARKERS.search(normalized) is not None
+
+
 def _contains_phrase(text, phrase):
     """Match a criterion as a phrase, ignoring case and punctuation boundaries."""
     escaped = re.escape(phrase.strip())
