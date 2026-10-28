@@ -38,3 +38,10 @@ The tool uses only the Python standard library. Network access must be available
 - It does not run continuously. Run it manually or configure a separately reviewed scheduler later.
 - The memory store is local runtime data. Do not commit it; do not store secrets or confidential information.
 - A source URL and a stored record are provenance, not proof. Compare independent sources and review contradictions before relying on a claim.
+
+
+## Scheduled exploration
+
+The `.github/workflows/web-research.yml` workflow runs weekly (Monday at 03:00 UTC) and can also be started manually from the repository's **Actions → Anima Scheduled Web Research → Run workflow** page. Leave the optional query blank to use `research_topics.txt`, or enter a one-off research question. The workflow tests the research component first, restores the latest successful run's `anima-web-memory.jsonl` artifact when available, explores a bounded number of results, and uploads the updated memory as a 90-day artifact.
+
+This makes exploration recurring when GitHub Actions is enabled for the repository. It is not uninterrupted browsing: it runs on a schedule, depends on network/search availability, and GitHub retains the memory artifact for a limited time. Download the `anima-web-memory` artifact from the Actions run to inspect or use the records locally. All web observations remain unreviewed; this workflow never edits source code or promotes claims to verified facts. The workflow uses GitHub's temporary workflow token only to read prior run artifacts; it does not require a personal access token.
