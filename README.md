@@ -60,3 +60,8 @@ Benchmark cases are stored separately in `benchmark_cases.json` and labelled by 
 - Reasoning-indicator categories are word-based signals and can produce false positives and false negatives.
 
 Review flagged clauses and use scores and indicator reports as debugging signals, not as stand-alone judgments of reasoning quality.
+
+
+## Reasoning-indicator benchmark
+
+Run `python reasoning_indicator_benchmark.py` to check the evidence, reasoning, and uncertainty word-indicator checklist against a separate set of hand-labelled examples. The cases live in `reasoning_indicator_cases.json`; the report lists false-positive and false-negative case IDs to make misses easier to inspect. This benchmark measures agreement with its small expected-label set, not semantic reasoning quality. Run `python -m unittest` to include its regression checks.
