@@ -59,7 +59,9 @@ def render_review_markdown(document: Any) -> str:
         lines.extend(_bullets(row.get("evidence_items")))
         lines.extend(["", f"**Support assessment:** {_text(row.get('support_assessment'), 'not_assessed')}", ""])
 
-    lines.extend(["## Unstated assumptions supplied", ""])
+    lines.extend(["## Input warnings", ""])
+    lines.extend(_bullets(review.get("input_warnings")))
+    lines.extend(["", "## Unstated assumptions supplied", ""])
     lines.extend(_bullets(review.get("unstated_assumptions")))
     lines.extend(["", "## Counterexamples supplied", ""])
     lines.extend(_bullets(review.get("counterexamples")))
