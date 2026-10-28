@@ -72,7 +72,7 @@ class ReasoningIndicatorBenchmarkTests(unittest.TestCase):
     def test_review_set_has_explicit_questions_and_pending_status(self):
         review_path = Path(__file__).with_name("reasoning_indicator_review_cases.json")
         cases = json.loads(review_path.read_text(encoding="utf-8"))
-        self.assertGreaterEqual(len(cases), 8)
+        self.assertGreaterEqual(len(cases), 16)
         ids = [case["id"] for case in cases]
         self.assertEqual(len(ids), len(set(ids)))
         valid_focuses = {"negation", "context", "ambiguous_modal", "ambiguous_connector",
@@ -95,6 +95,10 @@ class ReasoningIndicatorBenchmarkTests(unittest.TestCase):
         self.assertIn("negation", focuses)
         self.assertIn("context", focuses)
         self.assertTrue(any(focus.startswith("ambiguous") for focus in focuses))
+        self.assertIn("invalid_inference", focuses)
+        self.assertIn("implicit_reasoning", focuses)
+        self.assertIn("ambiguous_modal", focuses)
+        self.assertIn("ambiguous_connector", focuses)
 
     def test_human_review_protocol_separates_evaluation_questions(self):
         protocol_path = Path(__file__).with_name("HUMAN_REVIEW_PROTOCOL.md")
