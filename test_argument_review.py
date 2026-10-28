@@ -19,6 +19,7 @@ class ArgumentReviewTests(unittest.TestCase):
         self.assertFalse(report["premise_evidence"][1]["evidence_supplied"])
         self.assertEqual(report["premise_evidence"][0]["support_assessment"], "not_assessed")
         self.assertEqual(report["inference_quality"], "not_assessed")
+        self.assertEqual(report["input_warnings"], [])
 
     def test_records_assumptions_and_counterexamples_as_supplied(self):
         report = review_argument(
@@ -36,10 +37,31 @@ class ArgumentReviewTests(unittest.TestCase):
         self.assertEqual(report["premise_evidence"], [])
         self.assertEqual(report["inference_quality"], "not_assessed")
 
-    def test_ignores_malformed_evidence_values_safely(self):
+    def test_malformed_evidence_values_are_reported(self):
         report = review_argument(self.argument, {"1": "not a list", "2": ["", None, "Evidence B"]})
         self.assertEqual(report["premise_evidence"][0]["evidence_items"], [])
         self.assertEqual(report["premise_evidence"][1]["evidence_items"], ["Evidence B"])
+        self.assertEqual(len(report["input_warnings"]), 3)
+        self.assertIn("must be a list", report["input_warnings"][0])
+        self.assertTrue(any("empty or non-text" in warning for warning in report["input_warnings"]))
+
+    def test_unknown_and_malformed_evidence_keys_are_reported(self):
+        report = review_argument(self.argument, {"1": ["Source A"], "3": ["Orphan source"], 2: ["Numeric key"]})
+        self.assertEqual(report["premise_evidence"][0]["evidence_items"], ["Source A"])
+        self.assertEqual(report["premise_evidence"][1]["evidence_items"], [])
+        self.assertEqual(len(report["input_warnings"]), 2)
+        self.assertTrue(any("does not match" in warning for warning in report["input_warnings"]))
+
+    def test_wrong_top_level_input_and_optional_fields_are_reported(self):
+        report = review_argument(
+            self.argument,
+            evidence_by_premise=["not", "an", "object"],
+            unstated_assumptions="not a list",
+            counterexamples={"wrong": "shape"},
+        )
+        self.assertEqual(len(report["input_warnings"]), 3)
+        self.assertEqual(report["unstated_assumptions"], [])
+        self.assertEqual(report["counterexamples"], [])
 
     def test_does_not_invent_assumptions_or_counterexamples(self):
         report = review_argument(self.argument)
