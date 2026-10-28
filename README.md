@@ -92,3 +92,10 @@ The review set now also includes additional stress cases for quoted negation, pa
 ## Reasoning-quality review cases
 
 `reasoning_quality_review_cases.json` is a separate set of 10 prompts for future human evaluation of evidence support and inference quality. Cases cover causal attribution, correlation versus causation, overgeneralization, confounding, unsupported motive attribution, uncertainty calibration, quotation attribution, scope mismatch, and insufficient context. Each case supplies the prompt, a claim to assess, context, and a review question; it deliberately contains **no pre-filled correctness or reasoning-quality label**. All cases remain `pending_human_review`. This is a review instrument, not an automated evaluator or a validated gold-standard dataset. Use `HUMAN_REVIEW_PROTOCOL.md` and independent reviewers before drawing conclusions.
+
+
+## Claim-audit prototype and improvement gates
+
+Run \`python reasoning_audit_benchmark.py\` to create \`reasoning-audit-report.json\`. The prototype highlights selected lexical patterns that deserve human review, including causal wording, broad generalizations, motive attribution, and strong certainty language. It shows the exact matched phrase and why it was flagged. It does **not** determine whether a claim is true, whether evidence supports it, or whether an inference is valid; those fields remain \`not_assessed\`.
+
+The 10 examples in \`reasoning_audit_cases.json\` are a small, designed rule-smoke-test set. The pass rate means only that the current rules match the expected trigger lists in these examples. It is not a semantic accuracy score and is not a representative benchmark. CI runs the smoke tests, unit tests, existing lexical benchmarks, and report generation. A change that breaks the explicit expected behavior fails CI; human review remains necessary before treating any rule as an improvement.
