@@ -44,16 +44,6 @@ def _contains_phrase(text, phrase):
     return re.search(r"(?<!\w)" + escaped + r"(?!\w)", text, re.IGNORECASE) is not None
 
 
-def _has_contradiction_marker(clause):
-    """Detect lexical markers, excluding one narrowly scoped double negative.
-
-    Only the exact phrase "not irrelevant" is exempted. This is not a general
-    negation parser and does not establish semantic correctness.
-    """
-    normalized = re.sub(r"\bnot\s+irrelevant\b", " ", clause, flags=re.IGNORECASE)
-    return _CONTRADICTION_MARKERS.search(normalized) is not None
-
-
 def _split_clauses(answer):
     """Split sentences, then conservatively separate common contrast clauses."""
     sentences = re.split(r"(?<=[.!?])\s+|\n+", answer)
