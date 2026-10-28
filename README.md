@@ -230,3 +230,6 @@ python verify_review_bundle.py review-bundle
 ```
 
 The verifier exits `0` when both file hashes match and `1` when the manifest is missing, malformed, or a report differs. It checks integrity only; it does not authenticate the report's author, verify cited sources, or assess reasoning quality. Run `python -m unittest discover -v` to test valid bundles, altered files, malformed manifests, and missing manifests. GitHub Actions also builds and verifies this example bundle and uploads the JSON, Markdown, and manifest as the `anima-sample-review-bundle` artifact for 30 days. The example evidence is placeholder text, not a real citation.
+
+
+The reviewer comparison tool now checks that both CSV worksheets contain every required annotation column before comparing values. Missing columns are reported explicitly rather than silently appearing as missing annotations. Blank cells are still allowed for unfinished worksheets and are reported separately. This is a format check, not a judgement about reviewer correctness.

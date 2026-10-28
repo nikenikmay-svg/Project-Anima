@@ -16,8 +16,10 @@ COMPARE_FIELDS = (
 def load_annotations(path):
     with Path(path).open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
-        if not reader.fieldnames or "case_id" not in reader.fieldnames:
-            raise ValueError(f"{path}: CSV must contain a case_id column")
+        required_columns = {"case_id", *COMPARE_FIELDS}
+        if not reader.fieldnames or not required_columns.issubset(reader.fieldnames):
+            missing = sorted(required_columns - set(reader.fieldnames or []))
+            raise ValueError(f"{path}: CSV is missing required columns: {missing}")
         rows = {}
         for row in reader:
             case_id = (row.get("case_id") or "").strip()
