@@ -251,6 +251,40 @@ def canonical_source_url(url: str) -> str:
     return urllib.parse.urlunsplit((parsed.scheme.lower(), netloc, path, query, ""))
 
 
+def select_diverse_candidates(candidates: list[dict], known_urls: set[str],
+                             limit: int) -> tuple[list[dict], list[dict]]:
+    """Prefer unseen URLs and one result per host before allowing repeated hosts."""
+    unseen = []
+    skipped = []
+    seen_batch = set()
+    for candidate in candidates:
+        url = candidate.get("url", "")
+        canonical = canonical_source_url(url)
+        if canonical in known_urls:
+            skipped.append({"url": url, "reason": "source URL already exists in memory"})
+        elif canonical in seen_batch:
+            skipped.append({"url": url, "reason": "duplicate URL in this research batch"})
+        else:
+            seen_batch.add(canonical)
+            unseen.append(candidate)
+
+    chosen = []
+    chosen_hosts = set()
+    remaining = []
+    for candidate in unseen:
+        host = (urllib.parse.urlsplit(candidate["url"]).hostname or "").lower()
+        if host not in chosen_hosts and len(chosen) < limit:
+            chosen.append(candidate)
+            chosen_hosts.add(host)
+        else:
+            remaining.append(candidate)
+    for candidate in remaining:
+        if len(chosen) >= limit:
+            break
+        chosen.append(candidate)
+    return chosen, skipped
+
+
 def _stored_page_hash(record: dict) -> str | None:
     """Read the content hash marker from an existing web observation, if present."""
     match = re.search(r"(?m)^Page SHA-256: ([0-9a-f]{64})$", record.get("content", ""))
@@ -262,7 +296,9 @@ def research(query: str | None, urls: list[str], store_path: str | Path,
     """Search and/or fetch pages, then save source-linked observations as unreviewed."""
     candidates = []
     if query:
-        candidates.extend(search_web(query, limit=limit))
+        # Inspect a wider pool so known sources can be skipped without leaving
+        # the expedition empty when alternate results are available.
+        candidates.extend(search_web(query, limit=min(10, limit * 2)))
     candidates.extend({"url": url, "title": "", "snippet": ""} for url in urls)
     if not candidates:
         if query and not urls:
@@ -277,15 +313,21 @@ def research(query: str | None, urls: list[str], store_path: str | Path,
         (canonical_source_url(record["source"]), _stored_page_hash(record))
         for record in existing if _stored_page_hash(record)
     }
-    seen_candidate_urls = set()
-    saved, skipped, errors = [], [], []
-    for candidate in candidates[:limit + len(urls)]:
+    known_urls = {canonical_source_url(record["source"]) for record in existing if record.get("source")}
+    search_candidates = candidates[:min(10, limit * 2)] if query else []
+    direct_candidates = candidates[len(search_candidates):] if query else candidates
+    selected, skipped = select_diverse_candidates(search_candidates, known_urls, limit) if query else ([], [])
+    # Explicit URLs remain supported, but are still checked against known and batch URLs.
+    direct_selected, direct_skipped = select_diverse_candidates(
+        direct_candidates, known_urls | {canonical_source_url(item["url"]) for item in selected},
+        len(urls),
+    ) if urls else ([], [])
+    selected.extend(direct_selected)
+    skipped.extend(direct_skipped)
+    saved, errors = [], []
+    for candidate in selected:
         try:
             canonical_candidate_url = canonical_source_url(candidate["url"])
-            if canonical_candidate_url in seen_candidate_urls:
-                skipped.append({"url": candidate["url"], "reason": "duplicate URL in this research batch"})
-                continue
-            seen_candidate_urls.add(canonical_candidate_url)
             page = read_page(candidate["url"])
             digest = page["content_sha256"]
             canonical_page_url = canonical_source_url(page["url"])
