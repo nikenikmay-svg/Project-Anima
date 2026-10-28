@@ -48,6 +48,15 @@ class WebRoamerTests(unittest.TestCase):
         self.assertEqual(parser.results[0]["title"], "Alternate result")
         self.assertEqual(parser.results[0]["url"], "https://example.com")
 
+    def test_search_web_falls_back_to_lite_endpoint(self):
+        responses = [
+            ("https://html.duckduckgo.com/html/?", b"<html>blocked</html>", "utf-8"),
+            ("https://lite.duckduckgo.com/lite/?", b'<a class="result-link" href="https://example.com/">Example result</a>', "utf-8"),
+        ]
+
+        def fake_fetch(url, max_bytes):
+            return responses.pop(0)[1], responses[0][1], "utf-8"
+
     def test_query_with_no_search_results_reports_search_failure(self):
         with tempfile.TemporaryDirectory() as directory:
             store = Path(directory) / "memory.jsonl"
