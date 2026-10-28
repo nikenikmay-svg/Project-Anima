@@ -34,15 +34,19 @@ jobs:
       - name: Run reasoning-indicator benchmark
         run: python reasoning_indicator_benchmark.py
 
+      - name: Build layered evaluation summary
+        run: python evaluate_summary.py
+
       - name: Upload benchmark reports
         uses: actions/upload-artifact@v4
         with:
           name: anima-benchmark-results
           path: |
             benchmark-results.json
-            reasoning-indicator-benchmark-results.json\n            anima-evaluation-summary.json
+            reasoning-indicator-benchmark-results.json
+            anima-evaluation-summary.json
           if-no-files-found: error
           retention-days: 30
 
       - name: Report status
-        run: echo "Anima syntax, regression tests, and benchmark completed successfully."
+        run: echo "Anima syntax, regression tests, benchmarks, and layered summary completed successfully."
