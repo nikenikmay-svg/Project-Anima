@@ -34,6 +34,7 @@ class BenchmarkTests(unittest.TestCase):
             "context",
             "clause_scope",
             "repeated_mentions",
+            "human_reviewed",
         }
         self.assertTrue(all(case.get("category") in allowed_categories for case in CASES))
 
