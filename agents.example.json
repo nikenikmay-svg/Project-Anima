@@ -1,0 +1,26 @@
+{
+  "agents": [
+    {
+      "name": "Researcher",
+      "role": "find relevant evidence, distinguish evidence from assumptions, and note source limitations",
+      "endpoint": "https://YOUR-PROVIDER/v1/chat/completions",
+      "model": "YOUR-MODEL",
+      "api_key_env": "ANIMA_RESEARCHER_API_KEY"
+    },
+    {
+      "name": "Skeptic",
+      "role": "challenge assumptions, seek counterexamples, and identify alternative explanations",
+      "endpoint": "https://YOUR-SECOND-PROVIDER/v1/chat/completions",
+      "model": "YOUR-SECOND-MODEL",
+      "api_key_env": "ANIMA_SKEPTIC_API_KEY"
+    },
+    {
+      "name": "Synthesizer",
+      "role": "compare the other agents' reasoning, flag unsupported claims, and summarize disagreement and uncertainty",
+      "endpoint": "https://YOUR-PROVIDER/v1/chat/completions",
+      "model": "YOUR-MODEL",
+      "api_key_env": "ANIMA_SYNTH_API_KEY"
+    }
+  ],
+  "synthesizer": "Synthesizer"
+}
