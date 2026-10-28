@@ -91,3 +91,4 @@ if __name__ == "__main__":
     output_path = Path("reasoning-indicator-benchmark-results.json")
     output_path.write_text(rendered + "\n", encoding="utf-8")
     print(f"Saved report to {output_path}")
+    raise SystemExit(0 if report["passed"] == report["total"] else 1)

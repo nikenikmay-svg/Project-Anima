@@ -58,6 +58,10 @@ class ReasoningIndicatorBenchmarkTests(unittest.TestCase):
     def test_benchmark_discloses_lexical_limitations(self):
         self.assertTrue(run_benchmark()["limitations"])
 
+    def test_all_expanded_cases_match_expected_lexical_labels(self):
+        report = run_benchmark()
+        self.assertEqual(report["passed"], report["total"], report["results"])
+
 
 if __name__ == "__main__":
     unittest.main()
