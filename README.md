@@ -144,3 +144,27 @@ print(report["review_prompts"])
 ```
 
 `argument_review_cases.json` contains three prompts for future human review: correlation versus causation, alternative explanations, and universal claims from small samples. Their status is `pending_human_review`; no quality labels are pre-filled. The helper records only caller-provided evidence, assumptions, and counterexamples. It does not automatically generate or validate them. Run `python -m unittest discover -v` for regression tests.
+
+
+## Compact human-review summary
+
+`argument_review_summary.py` provides `summarize_review(report)`, which counts only information already supplied in an `argument_review.py` report: premise count, evidence items attached to premises, assumptions listed by a reviewer, and counterexamples listed by a reviewer. These counts are inventory, not quality scores. The summary always keeps conclusion evidence status and inference quality at `not_assessed`, and preserves the need for human review.
+
+Example:
+
+```python
+from argument_review import review_argument
+from argument_review_summary import summarize_review
+
+review = review_argument(
+    {
+        "id": "example-1",
+        "premises": ["Premise one.", "Premise two."],
+        "conclusion": "Conclusion.",
+    },
+    evidence_by_premise={"1": ["Reviewer-supplied source A"]},
+)
+print(summarize_review(review))
+```
+
+The summary does not verify sources, infer unstated assumptions, generate counterexamples, assess evidence quality, or decide whether a conclusion follows. Its tests cover count accuracy, malformed entries, and the invariant that inference quality remains `not_assessed`.
