@@ -23,7 +23,7 @@ jobs:
           python-version: "3.12"
 
       - name: Check Python syntax
-        run: python -m py_compile anima.py test_anima.py benchmark.py reasoning.py reasoning_pipeline.py reasoning_indicator_benchmark.py evaluate_summary.py test_evaluate_summary.py test_compare_annotations.py test_annotation_template.py test_reasoning.py test_reasoning_pipeline.py test_reasoning_indicator_benchmark.py
+        run: python -m py_compile anima.py test_anima.py benchmark.py reasoning.py reasoning_pipeline.py reasoning_indicator_benchmark.py reasoning_audit.py reasoning_audit_benchmark.py evaluate_summary.py test_reasoning_audit.py test_evaluate_summary.py test_compare_annotations.py test_annotation_template.py test_reasoning.py test_reasoning_pipeline.py test_reasoning_indicator_benchmark.py
 
       - name: Run evaluation regression tests
         run: python -m unittest discover -v
@@ -33,6 +33,9 @@ jobs:
 
       - name: Run reasoning-indicator benchmark
         run: python reasoning_indicator_benchmark.py
+
+      - name: Run claim-audit prototype smoke tests
+        run: python reasoning_audit_benchmark.py
 
       - name: Build layered evaluation summary
         run: python evaluate_summary.py
@@ -44,9 +47,10 @@ jobs:
           path: |
             benchmark-results.json
             reasoning-indicator-benchmark-results.json
+            reasoning-audit-report.json
             anima-evaluation-summary.json
           if-no-files-found: error
           retention-days: 30
 
       - name: Report status
-        run: echo "Anima syntax, regression tests, benchmarks, and layered summary completed successfully."
+        run: echo "Anima syntax, regression tests, benchmarks, claim-audit smoke tests, and layered summary completed successfully."

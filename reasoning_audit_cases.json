@@ -1,0 +1,84 @@
+[
+  {
+    "id": "causal_after_event",
+    "prompt": "Attendance rose after a workshop.",
+    "claim": "The workshop caused attendance to rise.",
+    "context": "No comparison group or alternative explanations are described.",
+    "expected_review_flags": [
+      "causal_language"
+    ]
+  },
+  {
+    "id": "correlation_causation",
+    "prompt": "Longer sleep was associated with higher scores.",
+    "claim": "Sleeping longer improves academic performance.",
+    "context": "Observational association only.",
+    "expected_review_flags": []
+  },
+  {
+    "id": "universal_generalization",
+    "prompt": "Eight volunteers found a service helpful.",
+    "claim": "The service is helpful for everyone.",
+    "context": "Small self-selected sample.",
+    "expected_review_flags": [
+      "broad_generalization"
+    ]
+  },
+  {
+    "id": "confounded_cause",
+    "prompt": "Output rose after software adoption and staffing increased.",
+    "claim": "The software caused the output increase.",
+    "context": "Staffing changed at the same time.",
+    "expected_review_flags": [
+      "causal_language"
+    ]
+  },
+  {
+    "id": "motive_guess",
+    "prompt": "A person missed two appointments.",
+    "claim": "The person missed appointments because they do not care about treatment.",
+    "context": "No reason for absence is reported.",
+    "expected_review_flags": [
+      "motive_attribution"
+    ]
+  },
+  {
+    "id": "calibrated_claim",
+    "prompt": "A preliminary estimate has a wide confidence interval.",
+    "claim": "The true effect may be smaller or larger than the point estimate.",
+    "context": "Uncertainty is acknowledged.",
+    "expected_review_flags": []
+  },
+  {
+    "id": "quote_attribution",
+    "prompt": "A participant said there is no evidence.",
+    "claim": "The evaluator concluded that the program does not work.",
+    "context": "Participant quote is not evaluator endorsement.",
+    "expected_review_flags": []
+  },
+  {
+    "id": "scope_overreach",
+    "prompt": "One group scored higher on one test.",
+    "claim": "The first group is more intelligent in every respect.",
+    "context": "Only one measure is described.",
+    "expected_review_flags": [
+      "broad_generalization"
+    ]
+  },
+  {
+    "id": "unsupported_certainty",
+    "prompt": "The intervention has preliminary evidence.",
+    "claim": "The intervention definitely works.",
+    "context": "The available evidence is preliminary.",
+    "expected_review_flags": [
+      "certainty_language"
+    ]
+  },
+  {
+    "id": "plain_description",
+    "prompt": "A study measured sleep duration in 40 people.",
+    "claim": "The study measured sleep duration in 40 participants.",
+    "context": "Descriptive report only.",
+    "expected_review_flags": []
+  }
+]

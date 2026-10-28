@@ -6,11 +6,13 @@ from pathlib import Path
 from benchmark import run_benchmark as run_criterion_benchmark
 from reasoning_indicator_benchmark import run_benchmark as run_indicator_benchmark
 from compare_annotations import compare_annotations
+from reasoning_audit_benchmark import run_benchmark as run_claim_audit_benchmark
 
 
 def build_summary(reviewer_a=None, reviewer_b=None):
     criterion = run_criterion_benchmark()
     indicators = run_indicator_benchmark()
+    claim_audit = run_claim_audit_benchmark()
     human_review = None
     review_status = "not_provided"
     if bool(reviewer_a) != bool(reviewer_b):
@@ -48,6 +50,15 @@ def build_summary(reviewer_a=None, reviewer_b=None):
                     "not semantic truth, not chance-corrected reliability, and not adjudication."
                 ),
             },
+            "claim_audit_prototype": {
+                "status": "computed",
+                "passed": claim_audit["passed"],
+                "total": claim_audit["total"],
+                "pass_rate_percent": claim_audit["pass_rate_percent"],
+                "rule_trigger_counts": claim_audit["rule_trigger_counts"],
+                "semantic_validation": claim_audit["semantic_validation"],
+                "meaning": "Rule smoke tests check whether transparent lexical review flags trigger on selected examples; they do not validate claim truth or inference quality.",
+            },
             "reasoning_quality_validation": {
                 "status": "not_established",
                 "meaning": "No automated semantic validation or independent reasoning-quality gold labels are claimed.",
@@ -59,6 +70,7 @@ def build_summary(reviewer_a=None, reviewer_b=None):
             "Human review comparison appears only when two reviewer worksheets are supplied.",
             "Raw reviewer agreement is descriptive; it is not chance-corrected reliability and does not resolve disagreements.",
             "Human reasoning-quality validation remains unestablished unless a separate, documented study is completed.",
+            "Claim-audit rule smoke tests measure rule behavior on a small designed set, not semantic accuracy.",
         ],
     }
 
