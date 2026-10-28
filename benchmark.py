@@ -42,6 +42,7 @@ def run_benchmark():
 
         results.append({
             "id": case["id"],
+            "category": case["category"],
             "passed": passed,
             "expected_score": case["expected_score"],
             "actual_score": actual["score"],
@@ -61,6 +62,23 @@ def run_benchmark():
         kind: sum(item["error_analysis"]["type"] == kind for item in results)
         for kind in ("correct", "false_positive", "false_negative", "mixed_contradiction_errors", "score_mismatch")
     }
+
+    category_metrics = {}
+    for category in sorted({case["category"] for case in CASES}):
+        category_results = [
+            item for item in results if item["category"] == category
+        ]
+        category_passed = sum(item["passed"] for item in category_results)
+        category_metrics[category] = {
+            "total": len(category_results),
+            "passed": category_passed,
+            "pass_rate_percent": round(category_passed / len(category_results) * 100)
+            if category_results else 0,
+            "error_counts": {
+                kind: sum(item["error_analysis"]["type"] == kind for item in category_results)
+                for kind in ("correct", "false_positive", "false_negative", "mixed_contradiction_errors", "score_mismatch")
+            },
+        }
 
     criterion_names = sorted({
         point
@@ -116,6 +134,7 @@ def run_benchmark():
         "total": len(results),
         "pass_rate_percent": round(passed_count / len(results) * 100) if results else 0,
         "error_counts": error_counts,
+        "category_metrics": category_metrics,
         "criterion_error_counts": criterion_error_counts,
         "criterion_metrics": criterion_metrics,
         "results": results,
