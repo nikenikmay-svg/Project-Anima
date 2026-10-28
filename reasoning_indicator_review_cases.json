@@ -1,0 +1,110 @@
+[
+  {
+    "id": "negated_evidence",
+    "answer": "There is no evidence for the claim.",
+    "review_focus": "negation",
+    "lexical_expected_detected": [
+      "evidence"
+    ],
+    "review_question": "Should a future semantic evaluator distinguish mentioning evidence from claiming evidence exists?",
+    "interpretation_note": "The detector matches the word evidence even though the sentence denies its availability.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "evidence_unavailable",
+    "answer": "The report says evidence is not available.",
+    "review_focus": "negation",
+    "lexical_expected_detected": [
+      "evidence"
+    ],
+    "review_question": "Does the answer provide evidence, or only refer to evidence being unavailable?",
+    "interpretation_note": "A literal match is expected; it should not be interpreted as evidence support.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "unrelated_may",
+    "answer": "The meeting may begin at noon.",
+    "review_focus": "context",
+    "lexical_expected_detected": [
+      "uncertainty"
+    ],
+    "review_question": "Is uncertainty language relevant to the reasoning quality being evaluated here?",
+    "interpretation_note": "May expresses possibility in an ordinary scheduling context, not necessarily analytical uncertainty.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "could_ability",
+    "answer": "She could swim before she started school.",
+    "review_focus": "ambiguous_modal",
+    "lexical_expected_detected": [
+      "uncertainty"
+    ],
+    "review_question": "Is could expressing uncertainty, or a past ability?",
+    "interpretation_note": "The current lexical rules flag could regardless of whether it describes ability.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "since_time",
+    "answer": "Since Monday, the readings have remained stable.",
+    "review_focus": "ambiguous_connector",
+    "lexical_expected_detected": [
+      "reasoning"
+    ],
+    "review_question": "Is since a causal connector here or a temporal marker?",
+    "interpretation_note": "The detector flags since as reasoning even though this sentence uses it temporally.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "therefore_invalid",
+    "answer": "Therefore, the moon is made of glass.",
+    "review_focus": "invalid_inference",
+    "lexical_expected_detected": [
+      "reasoning"
+    ],
+    "review_question": "Does the presence of therefore indicate valid reasoning in this answer?",
+    "interpretation_note": "The connector is present, but the sentence provides no supporting premises and may be false.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "study_as_verb",
+    "answer": "I study every evening.",
+    "review_focus": "context",
+    "lexical_expected_detected": [
+      "evidence"
+    ],
+    "review_question": "Should study count as an evidence signal when it refers to the speaker's activity?",
+    "interpretation_note": "The word study triggers the evidence category even though no research evidence is cited.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "confidence_without_calibration",
+    "answer": "I am confident that the answer is correct.",
+    "review_focus": "ambiguous_term",
+    "lexical_expected_detected": [
+      "uncertainty"
+    ],
+    "review_question": "Should confidence language trigger an uncertainty category when it expresses certainty?",
+    "interpretation_note": "The current list treats confidence as an uncertainty indicator without interpreting polarity or calibration.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "reasoning_without_marker",
+    "answer": "The temperature rose from 10 to 15 degrees, a five-degree increase.",
+    "review_focus": "implicit_reasoning",
+    "lexical_expected_detected": [],
+    "review_question": "Can a statement contain useful inference or evidence without the configured indicator vocabulary?",
+    "interpretation_note": "The answer contains a numeric comparison but none of the configured lexical indicators.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "possibly_rhetorical",
+    "answer": "Possibly the most obvious answer of all.",
+    "review_focus": "ambiguous_context",
+    "lexical_expected_detected": [
+      "uncertainty"
+    ],
+    "review_question": "Is possibly expressing genuine uncertainty, or is it rhetorical in this fragment?",
+    "interpretation_note": "The lexical match does not establish the speaker's intended degree of uncertainty.",
+    "review_status": "pending_human_review"
+  }
+]
