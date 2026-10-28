@@ -121,11 +121,9 @@
     "criteria": [
       "evidence"
     ],
-    "expected_score": 0,
-    "expected_contradicted": [
-      "evidence"
-    ],
-    "category": "negation"
+    "expected_score": 100,
+    "expected_contradicted": [],
+    "category": "double_negation"
   },
   {
     "id": "clean_repeat_offsets_flagged_repeat",
