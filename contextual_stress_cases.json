@@ -6,7 +6,7 @@
       "evidence"
     ],
     "observed_status": "matched",
-    "review_question": "Does the narrow lexical exception handle this exact double-negative phrase appropriately?",
+    "review_question": "Does this narrow exception avoid flagging the exact phrase \"not irrelevant\" while keeping other contradiction markers active?",
     "review_status": "pending_human_review"
   },
   {
