@@ -65,6 +65,33 @@ class ArgumentReviewCliTests(unittest.TestCase):
             self.assertIn("Source A", output)
             self.assertIn("not_assessed", output)
 
+    def test_strict_input_returns_three_when_warnings_exist(self):
+        payload = dict(self.payload)
+        payload["evidence_by_premise"] = {"9": ["Unmatched item"]}
+        with tempfile.TemporaryDirectory() as temp:
+            input_path = Path(temp) / "input.json"
+            output_path = Path(temp) / "output.json"
+            input_path.write_text(json.dumps(payload), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "argument_review_cli.py", str(input_path),
+                 "--strict-input", "--output", str(output_path)],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 3, result.stderr)
+            output = json.loads(output_path.read_text(encoding="utf-8"))
+            self.assertTrue(output["review"]["input_warnings"])
+
+    def test_strict_input_returns_zero_when_no_warnings_exist(self):
+        with tempfile.TemporaryDirectory() as temp:
+            input_path = Path(temp) / "input.json"
+            input_path.write_text(json.dumps(self.payload), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "argument_review_cli.py", str(input_path),
+                 "--strict-input"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_cli_reports_invalid_json_with_nonzero_exit(self):
         with tempfile.TemporaryDirectory() as temp:
             input_path = Path(temp) / "bad.json"

@@ -199,3 +199,14 @@ Omit `--output` to print to the terminal. The Markdown view shows the argument I
 ## Evidence input validation
 
 The evidence review layer now emits `input_warnings` when the evidence map has the wrong type, a key does not match a 1-based premise position, a premise's evidence value is not a list, or an evidence item is empty/non-text. Invalid entries are ignored rather than silently treated as valid evidence. The Markdown export includes these warnings so they remain visible in a human-readable report. Warnings identify input-shape problems only; they do not assess evidence quality or logical validity. Run `python -m unittest discover -v` to test the cases.
+
+
+## Strict input mode
+
+For automation, the CLI offers `--strict-input`. It still writes the normal JSON or Markdown report, but exits with status `3` if the review contains input-shape warnings. It exits `0` when no such warnings are present, and `2` for input/read/parse errors. This lets scripts stop or flag a review when evidence keys or item shapes need correction without losing the diagnostic report.
+
+```bash
+python argument_review_cli.py argument_review_example.json --strict-input --output review.json
+```
+
+The strict mode checks input formatting only. It does not mean that the evidence is trustworthy or that the argument is valid. Tests cover both warning and warning-free strict-mode runs.

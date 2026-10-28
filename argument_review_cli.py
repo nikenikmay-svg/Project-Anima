@@ -49,6 +49,10 @@ def main(argv: list[str] | None = None) -> int:
         "--format", choices=("json", "markdown"), default="json",
         help="report format (default: json)",
     )
+    parser.add_argument(
+        "--strict-input", action="store_true",
+        help="return exit code 3 after writing the report if input warnings were found",
+    )
     args = parser.parse_args(argv)
 
     try:
@@ -62,6 +66,8 @@ def main(argv: list[str] | None = None) -> int:
             Path(args.output).write_text(rendered, encoding="utf-8")
         else:
             sys.stdout.write(rendered)
+        if args.strict_input and document["review"].get("input_warnings"):
+            return 3
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         print(f"argument-review: {exc}", file=sys.stderr)
         return 2
