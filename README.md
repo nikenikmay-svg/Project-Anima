@@ -79,7 +79,7 @@ See [HUMAN_REVIEW_PROTOCOL.md](HUMAN_REVIEW_PROTOCOL.md) for a structured protoc
 
 ## Contextual stress review set
 
-`reasoning_indicator_stress_review_cases.json` adds 10 difficult examples involving quoted negation, unsupported causal claims, ambiguous modals, technical terminology, sarcasm, and implicit comparisons. `lexical_expected_detected` records the current detector's observed output and is regression-checked against the implementation; it is **not** a gold semantic label. Every case remains `pending_human_review`. The set is separate from the scored benchmark so it does not inflate or alter benchmark accuracy. Run `python -m unittest` to check its schema and recorded lexical outputs. Use the human-review protocol before making claims about contextual interpretation or reasoning quality.
+`reasoning_indicator_stress_review_cases.json` adds 10 difficult examples involving quoted negation, past-ability uses of modal words, temporal uses of connectors, unsupported conclusions, conflicting confidence language, implicit comparisons, mixed indicator signals, and word-boundary edge cases. Their `lexical_expected_detected` values record the current detector output only; they are **not gold-standard semantic labels**. All cases remain `pending_human_review`, and the existing benchmark scores are unchanged until an independently designed evaluation is justified.
 
 ## Reasoning-indicator benchmark
 
@@ -93,9 +93,25 @@ The review set now also includes additional stress cases for quoted negation, pa
 
 `reasoning_quality_review_cases.json` is a separate set of 10 prompts for future human evaluation of evidence support and inference quality. Cases cover causal attribution, correlation versus causation, overgeneralization, confounding, unsupported motive attribution, uncertainty calibration, quotation attribution, scope mismatch, and insufficient context. Each case supplies the prompt, a claim to assess, context, and a review question; it deliberately contains **no pre-filled correctness or reasoning-quality label**. All cases remain `pending_human_review`. This is a review instrument, not an automated evaluator or a validated gold-standard dataset. Use `HUMAN_REVIEW_PROTOCOL.md` and independent reviewers before drawing conclusions.
 
-
 ## Claim-audit prototype and improvement gates
 
-Run \`python reasoning_audit_benchmark.py\` to create \`reasoning-audit-report.json\`. The prototype highlights selected lexical patterns that deserve human review, including causal wording, broad generalizations, motive attribution, and strong certainty language. It shows the exact matched phrase and why it was flagged. It does **not** determine whether a claim is true, whether evidence supports it, or whether an inference is valid; those fields remain \`not_assessed\`.
+Run `python reasoning_audit_benchmark.py` to create `reasoning-audit-report.json`. The prototype highlights selected lexical patterns that deserve human review, including causal wording, broad generalizations, motive attribution, and strong certainty language. It shows the exact matched phrase and why it was flagged. It does **not** determine whether a claim is true, whether evidence supports it, or whether an inference is valid; those fields remain `not_assessed`.
 
-The 10 examples in \`reasoning_audit_cases.json\` are a small, designed rule-smoke-test set. The pass rate means only that the current rules match the expected trigger lists in these examples. It is not a semantic accuracy score and is not a representative benchmark. CI runs the smoke tests, unit tests, existing lexical benchmarks, and report generation. A change that breaks the explicit expected behavior fails CI; human review remains necessary before treating any rule as an improvement.
+The 10 examples in `reasoning_audit_cases.json` are a small, designed rule-smoke-test set. The pass rate means only that the current rules match the expected trigger lists in these examples. It is not a semantic accuracy score and is not a representative benchmark. CI runs the smoke tests, unit tests, existing lexical benchmarks, claim audit smoke tests, and report generation. A change that breaks the explicit expected behavior fails CI; human review remains necessary before treating any rule as an improvement.
+
+## Structured arguments and review worksheet
+
+`structured_arguments.py` validates the shape of an explicitly supplied argument object with an ID, one or more premise strings, and a conclusion string. Example:
+
+```python
+from structured_arguments import validate_argument
+
+report = validate_argument({
+    "id": "example-1",
+    "premises": ["All mammals are animals.", "Whales are mammals."],
+    "conclusion": "Whales are animals.",
+})
+print(report)
+```
+
+This validates only the data structure. The result deliberately reports `logical_validity: "not_assessed"`; it does not prove that premises are true or that a conclusion follows. `test_structured_arguments.py` covers valid structure, missing fields, empty values, malformed inputs, and duplicate IDs. `argument_review_worksheet.csv` is a blank worksheet for human reviewers to independently record premises, conclusions, evidence support, missing context, alternative explanations, inference quality, confidence, and notes. No reviewer labels are pre-filled. Run `python -m unittest discover -v` to run the regression suite.
