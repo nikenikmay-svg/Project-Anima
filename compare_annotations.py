@@ -25,8 +25,14 @@ ALLOWED_VALUES = {
 def load_annotations(path):
     with Path(path).open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
+        headers = reader.fieldnames or []
+        if any(not (header or "").strip() for header in headers):
+            raise ValueError(f"{path}: CSV contains a blank column name")
+        duplicates = sorted({header for header in headers if headers.count(header) > 1})
+        if duplicates:
+            raise ValueError(f"{path}: CSV contains duplicate column names: {duplicates}")
         required_columns = {"case_id", *COMPARE_FIELDS}
-        if not reader.fieldnames or not required_columns.issubset(reader.fieldnames):
+        if not headers or not required_columns.issubset(headers):
             missing = sorted(required_columns - set(reader.fieldnames or []))
             raise ValueError(f"{path}: CSV is missing required columns: {missing}")
         rows = {}
