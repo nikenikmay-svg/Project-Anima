@@ -1,4 +1,3 @@
-
 name: Anima Background Checks
 
 on:
@@ -24,7 +23,10 @@ jobs:
           python-version: "3.12"
 
       - name: Check Python syntax
-        run: python -m py_compile anima.py
+        run: python -m py_compile anima.py test_anima.py
+
+      - name: Run evaluation regression tests
+        run: python -m unittest discover -v
 
       - name: Report status
-        run: echo "Anima syntax check completed successfully."
+        run: echo "Anima syntax and evaluation checks completed successfully."
