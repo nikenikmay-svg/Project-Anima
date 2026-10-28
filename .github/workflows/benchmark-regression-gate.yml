@@ -1,0 +1,50 @@
+name: Anima Benchmark Regression Gate
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  compare-baseline-and-candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pull request candidate
+        uses: actions/checkout@v4
+
+      - name: Check out pull request base revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: baseline
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run baseline benchmark
+        working-directory: baseline
+        run: |
+          python benchmark.py || test -f benchmark-results.json
+          test -s benchmark-results.json
+
+      - name: Run candidate benchmark
+        run: |
+          python benchmark.py || test -f benchmark-results.json
+          test -s benchmark-results.json
+
+      - name: Compare baseline and candidate reports
+        run: |
+          python benchmark_gate.py baseline/benchmark-results.json benchmark-results.json --output benchmark-gate-report.json
+
+      - name: Upload comparison report
+        if: always() && hashFiles('benchmark-gate-report.json') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: anima-benchmark-gate-report
+          path: benchmark-gate-report.json
+          if-no-files-found: error
+          retention-days: 30
