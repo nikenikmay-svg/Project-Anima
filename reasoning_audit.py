@@ -51,5 +51,5 @@ def audit_claim(prompt, claim, context=""):
             "inference_validity": "not_assessed",
             "reason": "Lexical flags identify passages for review; they do not determine truth or logical validity.",
         },
-        "notice": "Prototype heuristic. No flag is a verdict, and no flag does not mean a claim is valid.",
+        "notice": "Prototype heuristic, not a verdict. A missing flag does not mean a claim is valid.",
     }
