@@ -1,0 +1,73 @@
+"""Regression tests for Anima's transparent keyword evaluator."""
+import unittest
+
+from anima import evaluate_answer
+
+
+CRITERIA = ["evidence", "reasoning", "uncertainty"]
+
+
+class EvaluateAnswerTests(unittest.TestCase):
+    def test_all_criteria_without_contradiction_score_100(self):
+        result = evaluate_answer(
+            "A scientific explanation uses evidence, reasoning, and uncertainty.",
+            CRITERIA,
+        )
+        self.assertEqual(result["score"], 100)
+        self.assertEqual(result["matched_points"], CRITERIA)
+        self.assertEqual(result["missing_points"], [])
+        self.assertEqual(result["contradicted_points"], [])
+
+    def test_missing_criterion_reduces_score(self):
+        result = evaluate_answer("Use evidence and careful reasoning.", CRITERIA)
+        self.assertEqual(result["score"], 67)
+        self.assertEqual(result["missing_points"], ["uncertainty"])
+
+    def test_contradictory_sentence_is_not_counted_as_affirmed(self):
+        result = evaluate_answer(
+            "Evidence, reasoning, and uncertainty are irrelevant to science.",
+            CRITERIA,
+        )
+        self.assertEqual(result["score"], 0)
+        self.assertEqual(result["matched_points"], [])
+        self.assertEqual(result["contradicted_points"], CRITERIA)
+
+    def test_phrase_matching_is_case_insensitive(self):
+        result = evaluate_answer("EVIDENCE matters.", ["evidence"])
+        self.assertEqual(result["score"], 100)
+
+    def test_substring_does_not_count_as_match(self):
+        result = evaluate_answer("Partial results are reported.", ["art"])
+        self.assertEqual(result["score"], 0)
+        self.assertEqual(result["missing_points"], ["art"])
+
+    def test_empty_answer(self):
+        result = evaluate_answer("  ", CRITERIA)
+        self.assertEqual(result["score"], 0)
+        self.assertEqual(result["missing_points"], CRITERIA)
+
+    def test_empty_criteria(self):
+        result = evaluate_answer("Any answer", [])
+        self.assertEqual(result["score"], 0)
+        self.assertIn("No evaluation criteria", result["feedback"])
+
+    def test_duplicate_criteria_are_counted_once(self):
+        result = evaluate_answer("Evidence supports the claim.", ["evidence", "Evidence"])
+        self.assertEqual(result["score"], 100)
+        self.assertEqual(result["matched_points"], ["evidence"])
+
+    def test_invalid_inputs_are_rejected(self):
+        with self.assertRaises(TypeError):
+            evaluate_answer(None, CRITERIA)
+        with self.assertRaises(TypeError):
+            evaluate_answer("text", "evidence")
+        with self.assertRaises(ValueError):
+            evaluate_answer("text", [""])
+
+    def test_result_has_compatible_core_keys(self):
+        result = evaluate_answer("Evidence matters.", ["evidence", "reasoning"])
+        self.assertTrue({"score", "matched_points", "missing_points", "feedback"} <= set(result))
+
+
+if __name__ == "__main__":
+    unittest.main()
