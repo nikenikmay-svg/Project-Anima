@@ -99,7 +99,26 @@ def compare_annotations(path_a, path_b):
             "missing_from_at_least_one_reviewer": missing,
             "raw_agreement": agreements / compared if compared else None,
         }
+    total_compared = sum(metric["compared_cases"] for metric in fields.values())
+    total_agreements = sum(metric["agreements"] for metric in fields.values())
+    total_disagreements = sum(metric["disagreements"] for metric in fields.values())
+    total_missing_pairs = sum(
+        metric["missing_from_at_least_one_reviewer"] for metric in fields.values()
+    )
     return {
+        "worksheet_comparison_overview": {
+            "fields_compared": len(fields),
+            "total_case_field_pairs": len(a) * len(COMPARE_FIELDS),
+            "completed_pairs_compared": total_compared,
+            "agreements": total_agreements,
+            "disagreements_requiring_human_review": len(disagreements),
+            "missing_pairs": total_missing_pairs,
+            "raw_agreement": total_agreements / total_compared if total_compared else None,
+            "interpretation": (
+                "Descriptive agreement among nonblank paired labels only; "
+                "not chance-corrected reliability or a measure of semantic reasoning quality."
+            ),
+        },
         "reviewer_a_file": str(path_a),
         "reviewer_b_file": str(path_b),
         "total_case_ids": len(a),

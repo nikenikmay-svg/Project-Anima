@@ -245,3 +245,5 @@ The reviewer comparison JSON now includes a `missing_annotations` list identifyi
 
 
 The comparison report also summarizes blank annotation values by reviewer and overall, alongside the total number of possible annotation cells. This makes worksheet completeness easier to assess, but completeness counts are not quality scores and do not change agreement calculations.
+
+The paired-review report now includes a `worksheet_comparison_overview` with aggregate counts for completed case-field pairs, agreements, disagreements requiring human review, and pairs missing at least one reviewer label. Its overall raw-agreement rate is calculated only from pairs where both reviewers supplied a value; it is `null` when no pairs can be compared. Read it alongside the per-field metrics and missing-value counts: missing pairs are not agreements, and a high rate based on very few completed pairs can be misleading. This overview is descriptive only; it is not chance-corrected inter-rater reliability, an adjudication result, or evidence of semantic reasoning quality.
