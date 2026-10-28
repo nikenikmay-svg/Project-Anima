@@ -42,7 +42,7 @@ def _has_contradiction_marker(clause):
     This handles one common double-negative false positive only; it is not a
     general negation parser and makes no claim about semantic interpretation.
     """
-    normalized = re.sub(r"\\bnot\\s+irrelevant\\b", " ", clause, flags=re.IGNORECASE)
+    normalized = re.sub(r"\bnot\s+irrelevant\b", " ", clause, flags=re.IGNORECASE)
     return _CONTRADICTION_MARKERS.search(normalized) is not None
 
 
