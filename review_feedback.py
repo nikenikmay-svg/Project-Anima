@@ -102,7 +102,7 @@ def main():
         existing_ids = [item.get("id") for item in baseline if isinstance(item, dict)]
         candidates = approved_feedback_to_cases(feedback, existing_ids)
         Path(args.output).write_text(
-            json.dumps(candidates, indent=2, ensure_ascii=False) + "\\n",
+            json.dumps(candidates, indent=2, ensure_ascii=False) + "\n",
             encoding="utf-8",
         )
     except (ValueError, OSError, json.JSONDecodeError) as exc:
