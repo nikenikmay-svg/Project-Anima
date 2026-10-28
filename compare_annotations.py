@@ -63,6 +63,7 @@ def compare_annotations(path_a, path_b):
     fields = {}
     disagreements = []
     missing_annotations = []
+    missing_by_reviewer = {"reviewer_a": 0, "reviewer_b": 0}
     for field in COMPARE_FIELDS:
         compared = 0
         agreements = 0
@@ -72,6 +73,8 @@ def compare_annotations(path_a, path_b):
             value_b = (b[case_id].get(field) or "").strip()
             if not value_a or not value_b:
                 missing += 1
+                missing_by_reviewer["reviewer_a"] += int(not bool(value_a))
+                missing_by_reviewer["reviewer_b"] += int(not bool(value_b))
                 missing_annotations.append({
                     "case_id": case_id,
                     "field": field,
@@ -103,6 +106,11 @@ def compare_annotations(path_a, path_b):
         "field_metrics": fields,
         "disagreements": disagreements,
         "missing_annotations": missing_annotations,
+        "missing_value_counts": {
+            **missing_by_reviewer,
+            "total_missing_values": sum(missing_by_reviewer.values()),
+            "possible_values": len(a) * len(COMPARE_FIELDS) * 2,
+        },
         "limitations": [
             "Raw agreement is descriptive and is not chance-corrected inter-rater reliability.",
             "Blank values are excluded field-by-field; a high missing count can make a rate misleading.",
