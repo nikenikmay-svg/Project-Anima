@@ -242,3 +242,6 @@ The worksheet comparator also rejects duplicate or blank CSV column names. Dupli
 
 
 The reviewer comparison JSON now includes a `missing_annotations` list identifying the case, field, and which reviewer left it blank. This makes follow-up work actionable while preserving the existing field-level missing counts. Blank entries remain missing data, not agreement or disagreement.
+
+
+The comparison report also summarizes blank annotation values by reviewer and overall, alongside the total number of possible annotation cells. This makes worksheet completeness easier to assess, but completeness counts are not quality scores and do not change agreement calculations.
