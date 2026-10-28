@@ -46,8 +46,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("input", help="path to a UTF-8 JSON input file")
     parser.add_argument("-o", "--output", help="output path; defaults to stdout")
     parser.add_argument(
-        "--format", choices=("json", "markdown"), default="json",
-        help="report format (default: json)",
+        "--format", choices=("json", "markdown", "bundle"), default="json",
+        help="report format: json, markdown, or both files as bundle (default: json)",
     )
     parser.add_argument(
         "--strict-input", action="store_true",
@@ -58,14 +58,20 @@ def main(argv: list[str] | None = None) -> int:
     try:
         payload = json.loads(Path(args.input).read_text(encoding="utf-8"))
         document = build_review_document(payload)
-        if args.format == "markdown":
-            rendered = render_review_markdown(document)
+        json_rendered = json.dumps(document, indent=2, ensure_ascii=False) + "\n"
+        markdown_rendered = render_review_markdown(document)
+        if args.format == "bundle":
+            if not args.output:
+                raise ValueError("--format bundle requires --output as a filename prefix")
+            prefix = Path(args.output)
+            Path(str(prefix) + ".json").write_text(json_rendered, encoding="utf-8")
+            Path(str(prefix) + ".md").write_text(markdown_rendered, encoding="utf-8")
         else:
-            rendered = json.dumps(document, indent=2, ensure_ascii=False) + "\n"
-        if args.output:
-            Path(args.output).write_text(rendered, encoding="utf-8")
-        else:
-            sys.stdout.write(rendered)
+            rendered = markdown_rendered if args.format == "markdown" else json_rendered
+            if args.output:
+                Path(args.output).write_text(rendered, encoding="utf-8")
+            else:
+                sys.stdout.write(rendered)
         if args.strict_input and document["review"].get("input_warnings"):
             return 3
     except (OSError, json.JSONDecodeError, ValueError) as exc:
