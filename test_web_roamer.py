@@ -110,6 +110,37 @@ class WebRoamerTests(unittest.TestCase):
             self.assertEqual(len(result["saved"]), 0)
             self.assertEqual(len(result["skipped"]), 1)
 
+    def test_canonical_source_url_removes_tracking_and_fragments(self):
+        self.assertEqual(
+            web_roamer.canonical_source_url("https://example.com/page/?utm_source=feed#section"),
+            "https://example.com/page",
+        )
+
+    def test_research_skips_duplicate_normalized_url_in_same_batch(self):
+        page = {"url": "https://example.com/page", "title": "Example", "text": "Observed text",
+                "content_sha256": "a" * 64}
+        with tempfile.TemporaryDirectory() as directory:
+            store = Path(directory) / "memory.jsonl"
+            with patch.object(web_roamer, "read_page", return_value=page) as fetch:
+                result = web_roamer.research(None, [
+                    "https://example.com/page?utm_source=first",
+                    "https://example.com/page#section",
+                ], store)
+            self.assertEqual(len(result["saved"]), 1)
+            self.assertEqual(len(result["skipped"]), 1)
+            fetch.assert_called_once()
+
+    def test_research_skips_same_content_across_tracking_url_variants(self):
+        page = {"url": "https://example.com/page", "title": "Example", "text": "Observed text",
+                "content_sha256": "a" * 64}
+        with tempfile.TemporaryDirectory() as directory:
+            store = Path(directory) / "memory.jsonl"
+            with patch.object(web_roamer, "read_page", return_value=page):
+                web_roamer.research(None, ["https://example.com/page?utm_source=first"], store)
+                result = web_roamer.research(None, ["https://example.com/page?utm_source=second"], store)
+            self.assertEqual(len(result["saved"]), 0)
+            self.assertEqual(len(result["skipped"]), 1)
+
     def test_invalid_limit_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "between 1 and 10"):
             web_roamer.search_web("anima", limit=20)

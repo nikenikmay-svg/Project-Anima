@@ -29,8 +29,8 @@ jobs:
 
       - name: Test the research and memory components
         run: |
-          python -m py_compile web_roamer.py experience_store.py
-          python -m unittest -v test_web_roamer.py
+          python -m py_compile web_roamer.py experience_store.py web_research_report.py
+          python -m unittest -v test_web_roamer.py test_web_research_report.py
 
       - name: Restore the latest saved research memory
         env:
@@ -77,6 +77,17 @@ jobs:
             echo "::error::Research finished without saving any observations. Check the search output above."
             exit 1
           fi
+
+      - name: Build source inventory report
+        run: python web_research_report.py --store anima-memory.jsonl --output anima-research-report.md
+
+      - name: Upload source inventory report
+        uses: actions/upload-artifact@v4
+        with:
+          name: anima-research-review
+          path: anima-research-report.md
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Upload accumulated experience memory
         uses: actions/upload-artifact@v4
