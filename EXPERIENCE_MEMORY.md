@@ -38,3 +38,21 @@ The default store is `anima-memory.jsonl`; use `--store path/to/file.jsonl` to s
 - Do not store passwords, access tokens, private personal information, or confidential source material.
 - The store does not fetch the web, call a language model, generate code, or run unattended background jobs.
 - Human review and independent evaluation remain necessary before a lesson is treated as reliable or used to change behavior.
+
+
+## Recording improvement-cycle results
+
+To retain the outcome of a controlled experiment, pass the store path to the existing improvement-cycle runner:
+
+```bash
+python run_improvement_cycle.py baseline-results.json \
+  --experiment-id exp-003 \
+  --hypothesis "A focused change may fix case-17 without regressions" \
+  --target-case-id case-17 \
+  --memory-store anima-memory.jsonl \
+  --output-dir improvement-cycle-output
+```
+
+The runner appends an `experiment` record after it writes the experiment ledger. The record contains the hypothesis, target cases, and observed command/gate summary. It is deliberately marked `unreviewed`, with low confidence and outcome `observed`, even if the regression gate passes. This records what happened in the experiment; it does not establish semantic correctness or approve a code change. The option is opt-in, so existing runs do not create a memory file unless requested.
+
+Experiment IDs must be unique within the selected memory store. A duplicate causes an error instead of overwriting history. The experiment ledger may already have been written before the duplicate is detected; inspect the output directory and choose a new ID for a fresh run.
