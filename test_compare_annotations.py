@@ -71,6 +71,25 @@ class CompareAnnotationsTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "missing required columns"):
                 compare_annotations(a, b)
 
+    def test_invalid_annotation_value_raises_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            self.write_csv(a, [{"case_id": "one", "contextual_evidence": "probably"}])
+            self.write_csv(b, [{"case_id": "one", "contextual_evidence": "present"}])
+            with self.assertRaisesRegex(ValueError, "invalid contextual_evidence value"):
+                compare_annotations(a, b)
+
+    def test_allowed_values_and_blank_values(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "a.csv"
+            b = Path(tmp) / "b.csv"
+            self.write_csv(a, [{"case_id": "one", "contextual_evidence": "", "evidence_support": "not_applicable"}])
+            self.write_csv(b, [{"case_id": "one", "contextual_evidence": "", "evidence_support": "not_applicable"}])
+            report = compare_annotations(a, b)
+            self.assertEqual(report["field_metrics"]["evidence_support"]["raw_agreement"], 1.0)
+            self.assertIsNone(report["field_metrics"]["contextual_evidence"]["raw_agreement"])
+
     def test_duplicate_case_ids_raise_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             a = Path(tmp) / "a.csv"

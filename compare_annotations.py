@@ -13,6 +13,15 @@ COMPARE_FIELDS = (
     "confidence",
 )
 
+ALLOWED_VALUES = {
+    "contextual_evidence": {"present", "absent", "ambiguous"},
+    "contextual_reasoning": {"present", "absent", "ambiguous"},
+    "contextual_uncertainty": {"present", "absent", "ambiguous"},
+    "evidence_support": {"supported", "unsupported", "not_applicable"},
+    "inference_quality": {"valid", "invalid", "insufficient_context", "not_applicable"},
+    "confidence": {"high", "medium", "low"},
+}
+
 def load_annotations(path):
     with Path(path).open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
@@ -27,6 +36,13 @@ def load_annotations(path):
                 raise ValueError(f"{path}: found a row without case_id")
             if case_id in rows:
                 raise ValueError(f"{path}: duplicate case_id {case_id!r}")
+            for field, allowed in ALLOWED_VALUES.items():
+                value = (row.get(field) or "").strip()
+                if value and value not in allowed:
+                    raise ValueError(
+                        f"{path}: case {case_id!r} has invalid {field} value {value!r}; "
+                        f"expected one of {sorted(allowed)} or blank"
+                    )
             rows[case_id] = row
         return rows
 
