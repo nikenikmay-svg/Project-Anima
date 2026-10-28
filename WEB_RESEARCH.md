@@ -58,3 +58,17 @@ To generate the report locally:
 python web_research_report.py --store anima-memory.jsonl --output anima-research-report.md
 python -m unittest -v test_web_roamer.py test_web_research_report.py
 ```
+
+
+## Conservative memory cleanup preview
+
+Each successful research run also creates an `anima-memory-cleanup-preview` artifact with a cleaned-copy JSONL file and an audit report. The preview only consolidates observation records when normalized source URL, page-body SHA-256, outcome, confidence, and review status match. Records with changed page hashes, different review statuses, missing page hashes, or non-observation types are preserved separately.
+
+The original `anima-memory.jsonl` artifact remains unchanged. The audit report lists every retained record and collapsed duplicate ID with timestamps, original source URLs, and review status. Do not replace the authoritative memory with the preview until its audit report has been inspected. Cleanup does not verify claims or promote review status.
+
+To create a preview locally:
+
+```bash
+python memory_cleanup.py --store anima-memory.jsonl --output anima-memory-cleaned.jsonl --report anima-memory-cleanup-report.md
+python -m unittest -v test_memory_cleanup.py
+```
