@@ -85,4 +85,9 @@ def run_benchmark():
 
 
 if __name__ == "__main__":
-    print(json.dumps(run_benchmark(), indent=2))
+    report = run_benchmark()
+    rendered = json.dumps(report, indent=2)
+    print(rendered)
+    output_path = Path("reasoning-indicator-benchmark-results.json")
+    output_path.write_text(rendered + "\n", encoding="utf-8")
+    print(f"Saved report to {output_path}")
