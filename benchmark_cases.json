@@ -8,7 +8,8 @@
       "uncertainty"
     ],
     "expected_score": 100,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "baseline"
   },
   {
     "id": "one_criterion_missing",
@@ -19,7 +20,8 @@
       "uncertainty"
     ],
     "expected_score": 67,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "baseline"
   },
   {
     "id": "all_criteria_explicitly_rejected",
@@ -34,7 +36,8 @@
       "evidence",
       "reasoning",
       "uncertainty"
-    ]
+    ],
+    "category": "negation"
   },
   {
     "id": "case_insensitive_match",
@@ -43,7 +46,8 @@
       "evidence"
     ],
     "expected_score": 100,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "phrase_matching"
   },
   {
     "id": "substring_false_positive",
@@ -52,7 +56,8 @@
       "art"
     ],
     "expected_score": 0,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "phrase_matching"
   },
   {
     "id": "empty_answer",
@@ -61,7 +66,8 @@
       "evidence"
     ],
     "expected_score": 0,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "input_edges"
   },
   {
     "id": "contradiction_marker_flags_criterion",
@@ -72,7 +78,8 @@
     "expected_score": 0,
     "expected_contradicted": [
       "evidence"
-    ]
+    ],
+    "category": "negation"
   },
   {
     "id": "unrelated_sentence_does_not_flag",
@@ -82,7 +89,8 @@
       "uncertainty"
     ],
     "expected_score": 100,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "context"
   },
   {
     "id": "repeated_criterion_mixed_mentions",
@@ -91,7 +99,8 @@
       "evidence"
     ],
     "expected_score": 100,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "other"
   },
   {
     "id": "contrast_clause_scope",
@@ -103,7 +112,8 @@
     "expected_score": 50,
     "expected_contradicted": [
       "evidence"
-    ]
+    ],
+    "category": "clause_scope"
   },
   {
     "id": "negation_marker_in_same_clause",
@@ -114,7 +124,8 @@
     "expected_score": 0,
     "expected_contradicted": [
       "evidence"
-    ]
+    ],
+    "category": "negation"
   },
   {
     "id": "clean_repeat_offsets_flagged_repeat",
@@ -123,7 +134,8 @@
       "evidence"
     ],
     "expected_score": 100,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "repeated_mentions"
   },
   {
     "id": "semicolon_does_not_scope_marker",
@@ -134,7 +146,8 @@
     "expected_score": 0,
     "expected_contradicted": [
       "evidence"
-    ]
+    ],
+    "category": "clause_scope"
   },
   {
     "id": "known_false_negative_absent_marker",
@@ -145,7 +158,8 @@
       "uncertainty"
     ],
     "expected_score": 67,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "negation"
   },
   {
     "id": "word_boundary_prevents_embedded_match",
@@ -155,7 +169,8 @@
       "evidence"
     ],
     "expected_score": 0,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "phrase_matching"
   },
   {
     "id": "multiword_criterion_phrase",
@@ -164,7 +179,8 @@
       "data quality"
     ],
     "expected_score": 100,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "phrase_matching"
   },
   {
     "id": "duplicate_criterion_is_counted_once",
@@ -174,14 +190,16 @@
       "evidence"
     ],
     "expected_score": 100,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "input_edges"
   },
   {
     "id": "empty_criteria_list",
     "answer": "Evidence supports the claim.",
     "criteria": [],
     "expected_score": 0,
-    "expected_contradicted": []
+    "expected_contradicted": [],
+    "category": "input_edges"
   },
   {
     "id": "without_marker_flags_criterion",
@@ -192,6 +210,7 @@
     "expected_score": 0,
     "expected_contradicted": [
       "evidence"
-    ]
+    ],
+    "category": "negation"
   }
 ]
