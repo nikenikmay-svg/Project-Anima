@@ -1,5 +1,9 @@
 """Tests for the reasoning-indicator benchmark and its diagnostic report."""
+import json
 import unittest
+from pathlib import Path
+
+from reasoning import analyze_reasoning_indicators
 
 from reasoning_indicator_benchmark import CASES, CATEGORIES, run_benchmark
 
@@ -64,6 +68,33 @@ class ReasoningIndicatorBenchmarkTests(unittest.TestCase):
         report = run_benchmark()
         self.assertEqual(report["passed"], report["total"], report["results"])
 
+
+    def test_review_set_has_explicit_questions_and_pending_status(self):
+        review_path = Path(__file__).with_name("reasoning_indicator_review_cases.json")
+        cases = json.loads(review_path.read_text(encoding="utf-8"))
+        self.assertGreaterEqual(len(cases), 8)
+        ids = [case["id"] for case in cases]
+        self.assertEqual(len(ids), len(set(ids)))
+        valid_focuses = {"negation", "context", "ambiguous_modal", "ambiguous_connector",
+                         "invalid_inference", "ambiguous_term", "implicit_reasoning",
+                         "ambiguous_context"}
+        for case in cases:
+            self.assertTrue(case["answer"].strip(), case["id"])
+            self.assertTrue(case["review_question"].strip(), case["id"])
+            self.assertTrue(case["interpretation_note"].strip(), case["id"])
+            self.assertEqual(case["review_status"], "pending_human_review", case["id"])
+            self.assertIn(case["review_focus"], valid_focuses, case["id"])
+            self.assertTrue(set(case["lexical_expected_detected"]).issubset(CATEGORIES))
+            actual = analyze_reasoning_indicators(case["answer"])["detected_categories"]
+            self.assertEqual(actual, case["lexical_expected_detected"], case["id"])
+
+    def test_review_set_covers_negation_context_and_ambiguity(self):
+        review_path = Path(__file__).with_name("reasoning_indicator_review_cases.json")
+        cases = json.loads(review_path.read_text(encoding="utf-8"))
+        focuses = {case["review_focus"] for case in cases}
+        self.assertIn("negation", focuses)
+        self.assertIn("context", focuses)
+        self.assertTrue(any(focus.startswith("ambiguous") for focus in focuses))
 
 if __name__ == "__main__":
     unittest.main()
