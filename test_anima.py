@@ -32,6 +32,12 @@ class EvaluateAnswerTests(unittest.TestCase):
         self.assertEqual(result["matched_points"], [])
         self.assertEqual(result["contradicted_points"], CRITERIA)
 
+    def test_not_irrelevant_is_not_flagged_as_contradiction(self):
+        result = evaluate_answer("Evidence is not irrelevant to the conclusion.", ["evidence"])
+        self.assertEqual(result["score"], 100)
+        self.assertEqual(result["matched_points"], ["evidence"])
+        self.assertEqual(result["contradicted_points"], [])
+
     def test_phrase_matching_is_case_insensitive(self):
         result = evaluate_answer("EVIDENCE matters.", ["evidence"])
         self.assertEqual(result["score"], 100)
