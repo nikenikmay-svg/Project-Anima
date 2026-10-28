@@ -55,6 +55,16 @@ def _split_clauses(answer):
     return clauses
 
 
+def _has_contradiction_marker(clause):
+    """Detect known markers, excluding one narrow double-negative phrase.
+
+    This intentionally handles only the exact phrase "not irrelevant". It is
+    not a general natural-language negation resolver.
+    """
+    normalized = re.sub(r"\\bnot\\s+irrelevant\\b", " ", clause, flags=re.IGNORECASE)
+    return _CONTRADICTION_MARKERS.search(normalized) is not None
+
+
 def evaluate_answer(answer, required_points):
     """Return keyword coverage plus conservative contradiction flags.
 
