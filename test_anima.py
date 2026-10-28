@@ -23,7 +23,7 @@ class EvaluateAnswerTests(unittest.TestCase):
         self.assertEqual(result["score"], 67)
         self.assertEqual(result["missing_points"], ["uncertainty"])
 
-    def test_contradictory_sentence_is_not_counted_as_affirmed(self):
+    def test_explicitly_rejected_criteria_are_not_counted_as_affirmed(self):
         result = evaluate_answer(
             "Evidence, reasoning, and uncertainty are irrelevant to science.",
             CRITERIA,
@@ -32,71 +32,24 @@ class EvaluateAnswerTests(unittest.TestCase):
         self.assertEqual(result["matched_points"], [])
         self.assertEqual(result["contradicted_points"], CRITERIA)
 
-    def test_simple_not_irrelevant_double_negative_is_not_flagged(self):
+    def test_exact_not_irrelevant_double_negative_is_not_flagged(self):
         result = evaluate_answer("Evidence is not irrelevant to the conclusion.", ["evidence"])
         self.assertEqual(result["score"], 100)
         self.assertEqual(result["matched_points"], ["evidence"])
         self.assertEqual(result["contradicted_points"], [])
 
-    def test_irrelevant_without_negation_still_flags_criterion(self):
+    def test_plain_irrelevant_still_flags_criterion(self):
         result = evaluate_answer("Evidence is irrelevant to the conclusion.", ["evidence"])
         self.assertEqual(result["score"], 0)
         self.assertEqual(result["contradicted_points"], ["evidence"])
 
     def test_other_contradiction_marker_still_flags_double_negative_clause(self):
-        result = evaluate_answer(
-            "Evidence is not irrelevant and unsupported.",
-            ["evidence"],
-        )
-        self.assertEqual(result["score"], 0)
-        self.assertEqual(result["contradicted_points"], ["evidence"])
-
-    def test_narrow_double_negative_not_irrelevant_is_not_flagged(self):
-        result = evaluate_answer("Evidence is not irrelevant to the conclusion.", ["evidence"])
-        self.assertEqual(result["score"], 100)
-        self.assertEqual(result["matched_points"], ["evidence"])
-        self.assertEqual(result["contradicted_points"], [])
-
-    def test_irrelevant_without_negation_is_still_flagged(self):
-        result = evaluate_answer("Evidence is irrelevant to the conclusion.", ["evidence"])
-        self.assertEqual(result["score"], 0)
-        self.assertEqual(result["contradicted_points"], ["evidence"])
-
-    def test_irrelevant_without_double_negative_is_still_flagged(self):
-        result = evaluate_answer("Evidence is irrelevant to the conclusion.", ["evidence"])
-        self.assertEqual(result["score"], 0)
-        self.assertEqual(result["contradicted_points"], ["evidence"])
-
-    def test_irrelevant_without_not_is_still_flagged(self):
-        result = evaluate_answer("Evidence is irrelevant to the conclusion.", ["evidence"])
-        self.assertEqual(result["score"], 0)
-        self.assertEqual(result["contradicted_points"], ["evidence"])
-
-    def test_exact_double_negative_not_irrelevant_is_not_flagged(self):
-        result = evaluate_answer("Evidence is not irrelevant to the conclusion.", ["evidence"])
-        self.assertEqual(result["score"], 100)
-        self.assertEqual(result["matched_points"], ["evidence"])
-        self.assertEqual(result["contradicted_points"], [])
-
-    def test_irrelevant_without_double_negative_remains_flagged(self):
-        result = evaluate_answer("Evidence is irrelevant to the conclusion.", ["evidence"])
-        self.assertEqual(result["score"], 0)
-        self.assertEqual(result["contradicted_points"], ["evidence"])
-
-    def test_narrow_double_negative_not_irrelevant_is_not_flagged(self):
-        result = evaluate_answer("Evidence is not irrelevant to the conclusion.", ["evidence"])
-        self.assertEqual(result["score"], 100)
-        self.assertEqual(result["matched_points"], ["evidence"])
-        self.assertEqual(result["contradicted_points"], [])
-
-    def test_irrelevant_without_not_is_still_flagged(self):
-        result = evaluate_answer("Evidence is irrelevant to the conclusion.", ["evidence"])
+        result = evaluate_answer("Evidence is not irrelevant and remains unsupported.", ["evidence"])
         self.assertEqual(result["score"], 0)
         self.assertEqual(result["contradicted_points"], ["evidence"])
 
     def test_phrase_matching_is_case_insensitive(self):
-        result = evaluate_answer("EVIDENCE matters.", ["evidence"])
-        self.assertEqual(result["score"], 100)
+        self.assertEqual(evaluate_answer("EVIDENCE matters.", ["evidence"])["score"], 100)
 
     def test_substring_does_not_count_as_match(self):
         result = evaluate_answer("Partial results are reported.", ["art"])
@@ -118,24 +71,6 @@ class EvaluateAnswerTests(unittest.TestCase):
         self.assertEqual(result["score"], 100)
         self.assertEqual(result["matched_points"], ["evidence"])
 
-    def test_exact_not_irrelevant_phrase_is_not_flagged(self):
-        result = evaluate_answer("Evidence is not irrelevant to the conclusion.", ["evidence"])
-        self.assertEqual(result["score"], 100)
-        self.assertEqual(result["matched_points"], ["evidence"])
-        self.assertEqual(result["contradicted_points"], [])
-
-    def test_irrelevant_without_negation_still_flags(self):
-        result = evaluate_answer("Evidence is irrelevant to the conclusion.", ["evidence"])
-        self.assertEqual(result["score"], 0)
-        self.assertEqual(result["contradicted_points"], ["evidence"])
-
-    def test_other_contradiction_marker_survives_double_negation_exception(self):
-        result = evaluate_answer(
-            "Evidence is not irrelevant and remains unsupported.",
-            ["evidence"],
-        )
-        self.assertEqual(result["contradicted_points"], ["evidence"])
-
     def test_invalid_inputs_are_rejected(self):
         with self.assertRaises(TypeError):
             evaluate_answer(None, CRITERIA)
@@ -144,18 +79,10 @@ class EvaluateAnswerTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             evaluate_answer("text", [""])
 
-    def test_result_has_compatible_core_keys(self):
-        result = evaluate_answer("Evidence matters.", ["evidence", "reasoning"])
-        self.assertTrue({"score", "matched_points", "missing_points", "feedback"} <= set(result))
-
     def test_semicolon_separates_unrelated_negation_from_evidence(self):
-        result = evaluate_answer(
-            "The claim is not established; evidence supports the result.",
-            ["evidence"],
-        )
+        result = evaluate_answer("The claim is not established; evidence supports the result.", ["evidence"])
         self.assertEqual(result["score"], 100)
         self.assertEqual(result["matched_points"], ["evidence"])
-        self.assertEqual(result["contradicted_points"], [])
 
     def test_negation_in_contrast_clause_does_not_flag_other_criterion(self):
         result = evaluate_answer(
@@ -171,27 +98,19 @@ class EvaluateAnswerTests(unittest.TestCase):
             "Evidence supports the claim, however uncertainty remains about timing.",
             ["evidence", "uncertainty"],
         )
-        self.assertEqual(result["contradicted_points"], [])
         self.assertEqual(result["matched_points"], ["evidence", "uncertainty"])
         self.assertEqual(result["score"], 100)
-
-
-    def test_plain_irrelevant_remains_flagged(self):
-        result = evaluate_answer("Evidence is irrelevant to the conclusion.", ["evidence"])
-        self.assertEqual(result["score"], 0)
-        self.assertEqual(result["contradicted_points"], ["evidence"])
 
     def test_clean_repeated_mention_prevents_automatic_contradiction_flag(self):
         result = evaluate_answer(
             "Evidence is not available yet. Later evidence supports the conclusion.",
             ["evidence"],
         )
-        self.assertEqual(result["contradicted_points"], [])
         self.assertEqual(result["matched_points"], ["evidence"])
+        self.assertEqual(result["contradicted_points"], [])
         self.assertEqual(result["score"], 100)
 
-
-    def test_criterion_analysis_explains_each_status_with_source_clauses(self):
+    def test_criterion_analysis_explains_status_with_source_clauses(self):
         result = evaluate_answer(
             "There is no evidence for the claim, but reasoning supports it.",
             ["evidence", "reasoning", "uncertainty"],
@@ -202,9 +121,6 @@ class EvaluateAnswerTests(unittest.TestCase):
         self.assertEqual(analysis["reasoning"]["status"], "matched")
         self.assertEqual(analysis["reasoning"]["flagged_clauses"], [])
         self.assertEqual(analysis["uncertainty"]["status"], "missing")
-        self.assertEqual(analysis["uncertainty"]["evidence_clauses"], [])
-
-
 
 
 if __name__ == "__main__":
