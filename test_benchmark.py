@@ -23,6 +23,20 @@ class BenchmarkTests(unittest.TestCase):
             "without_marker_flags_criterion",
         }.issubset(case_ids))
 
+    def test_case_ids_are_unique_and_categories_are_known(self):
+        case_ids = [case["id"] for case in CASES]
+        self.assertEqual(len(case_ids), len(set(case_ids)), "benchmark case IDs must be unique")
+        allowed_categories = {
+            "baseline",
+            "negation",
+            "phrase_matching",
+            "input_edges",
+            "context",
+            "clause_scope",
+            "repeated_mentions",
+        }
+        self.assertTrue(all(case.get("category") in allowed_categories for case in CASES))
+
     def test_category_metrics_cover_every_case(self):
         report = run_benchmark()
         self.assertTrue(all(case.get("category") for case in CASES))
@@ -39,6 +53,12 @@ class BenchmarkTests(unittest.TestCase):
                 metrics["error_counts"][kind]
                 for kind in ("false_positive", "false_negative", "mixed_contradiction_errors", "score_mismatch")
             ), metrics["total"])
+            self.assertEqual(
+                sum(len(ids) for ids in metrics["case_ids_by_error_type"].values()),
+                metrics["total"],
+            )
+            for kind, ids in metrics["case_ids_by_error_type"].items():
+                self.assertEqual(len(ids), metrics["error_counts"][kind])
 
     def test_error_analysis_classifies_each_case(self):
         report = run_benchmark()
