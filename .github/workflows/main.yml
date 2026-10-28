@@ -23,10 +23,21 @@ jobs:
           python-version: "3.12"
 
       - name: Check Python syntax
-        run: python -m py_compile anima.py test_anima.py
+        run: python -m py_compile anima.py test_anima.py benchmark.py
 
       - name: Run evaluation regression tests
         run: python -m unittest discover -v
 
+      - name: Run reasoning evaluation benchmark
+        run: python benchmark.py
+
+      - name: Upload benchmark report
+        uses: actions/upload-artifact@v4
+        with:
+          name: anima-benchmark-results
+          path: benchmark-results.json
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Report status
-        run: echo "Anima syntax and evaluation checks completed successfully."
+        run: echo "Anima syntax, regression tests, and benchmark completed successfully."
