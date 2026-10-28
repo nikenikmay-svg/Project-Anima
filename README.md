@@ -233,3 +233,6 @@ The verifier exits `0` when both file hashes match and `1` when the manifest is 
 
 
 The reviewer comparison tool now checks that both CSV worksheets contain every required annotation column before comparing values. Missing columns are reported explicitly rather than silently appearing as missing annotations. Blank cells are still allowed for unfinished worksheets and are reported separately. This is a format check, not a judgement about reviewer correctness.
+
+
+The reviewer worksheet comparator now validates nonblank annotation values against the review protocol's allowed labels: present/absent/ambiguous, the documented evidence-support and inference-quality labels, and high/medium/low confidence. Blank values remain permitted for incomplete reviews. Invalid labels stop comparison with a clear error; this guards data consistency but does not validate the substance of any judgement.
