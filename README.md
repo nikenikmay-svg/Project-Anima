@@ -349,3 +349,21 @@ python prioritize_experiments.py benchmark-results.json --limit 10
 ```
 
 The tool groups failures by error type and category, ranks mixed contradiction errors first, then false positives/negatives, then score mismatches, and emits suggested hypotheses and next-step experiment ideas in JSON and Markdown. The ranking is only a triage heuristic; a human must inspect the case and approve any proposed change. It does not change source code, labels, or baselines.
+
+
+### Run a prioritized candidate through the experiment cycle
+
+Create the ranked queue, then pass it directly to the cycle runner. The first-ranked candidate supplies the default hypothesis and target case ID; explicit `--hypothesis` or `--target-case-id` values override those defaults.
+
+```bash
+python benchmark.py
+python prioritize_experiments.py benchmark-results.json --json-output prioritized-candidates.json
+cp benchmark-results.json baseline-results.json
+python run_improvement_cycle.py baseline-results.json \
+  --experiment-id exp-002 \
+  --candidate-queue prioritized-candidates.json \
+  --command "python benchmark.py" \
+  --output-dir improvement-cycle-output
+```
+
+This runs the supplied trusted command in the controlled experiment's temporary repository copy and writes the experiment report and ledger. An empty queue is rejected rather than guessed around. A passing gate is recorded as `tested`, never automatically `accepted`; human review remains required.
