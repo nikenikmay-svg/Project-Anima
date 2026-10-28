@@ -119,6 +119,32 @@ class ArgumentReviewCliTests(unittest.TestCase):
                              hashlib.sha256(markdown_path.read_bytes()).hexdigest())
             self.assertIn("do not validate", manifest["notice"])
 
+    def test_exported_bundle_passes_verifier_and_detects_tampering(self):
+        with tempfile.TemporaryDirectory() as temp:
+            input_path = Path(temp) / "input.json"
+            prefix = Path(temp) / "review-bundle"
+            input_path.write_text(json.dumps(self.payload), encoding="utf-8")
+            export_result = subprocess.run(
+                [sys.executable, "argument_review_cli.py", str(input_path),
+                 "--format", "bundle", "--output", str(prefix)],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(export_result.returncode, 0, export_result.stderr)
+
+            verify_command = [sys.executable, "verify_review_bundle.py", str(prefix)]
+            verify_result = subprocess.run(
+                verify_command, capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(verify_result.returncode, 0, verify_result.stdout + verify_result.stderr)
+            self.assertIn("Integrity check passed", verify_result.stdout)
+
+            Path(str(prefix) + ".md").write_text("# altered after export\\n", encoding="utf-8")
+            tampered_result = subprocess.run(
+                verify_command, capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(tampered_result.returncode, 1)
+            self.assertIn("hash mismatch", tampered_result.stdout)
+
     def test_bundle_requires_output_prefix(self):
         with tempfile.TemporaryDirectory() as temp:
             input_path = Path(temp) / "input.json"
