@@ -106,5 +106,93 @@
     "review_question": "Is possibly expressing genuine uncertainty, or is it rhetorical in this fragment?",
     "interpretation_note": "The lexical match does not establish the speaker's intended degree of uncertainty.",
     "review_status": "pending_human_review"
+  },
+  {
+    "id": "quoted_negation_stress",
+    "answer": "The comment says, \"There is no evidence for that claim.\"",
+    "review_focus": "negation",
+    "lexical_expected_detected": [
+      "evidence"
+    ],
+    "review_question": "Should quoted language be treated differently from the answer author's own position?",
+    "interpretation_note": "The detector matches evidence inside a quotation and does not track attribution or the quoted negation.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "could_past_ability_stress",
+    "answer": "As a child, he could solve these puzzles quickly.",
+    "review_focus": "ambiguous_modal",
+    "lexical_expected_detected": [
+      "uncertainty"
+    ],
+    "review_question": "Does could express uncertainty here, or past ability?",
+    "interpretation_note": "The lexical rule flags could regardless of its grammatical meaning.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "since_temporal_stress",
+    "answer": "Since the start of the trial, scores have increased.",
+    "review_focus": "ambiguous_connector",
+    "lexical_expected_detected": [
+      "reasoning"
+    ],
+    "review_question": "Is since causal here, or does it mark time?",
+    "interpretation_note": "The word since triggers the reasoning category even when used temporally.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "therefore_unsupported_stress",
+    "answer": "Therefore, every treatment will work for everyone.",
+    "review_focus": "invalid_inference",
+    "lexical_expected_detected": [
+      "reasoning"
+    ],
+    "review_question": "Does a reasoning connector make this broad conclusion justified?",
+    "interpretation_note": "Therefore is detected, but the sentence supplies no premises and makes an unsupported universal claim.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "confidence_overstatement_stress",
+    "answer": "I am completely confident; there is no uncertainty.",
+    "review_focus": "ambiguous_term",
+    "lexical_expected_detected": [
+      "uncertainty"
+    ],
+    "review_question": "Should the word confidence count as uncertainty when the sentence denies uncertainty?",
+    "interpretation_note": "Confidence is a configured trigger; the detector does not interpret the stance of the sentence.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "implicit_change_after_event_stress",
+    "answer": "Scores rose from four to eight after the workshop.",
+    "review_focus": "implicit_reasoning",
+    "lexical_expected_detected": [],
+    "review_question": "Could this invite an inference despite containing no configured indicator words?",
+    "interpretation_note": "The answer contains a before/after comparison but no configured lexical indicators.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "mixed_signals_stress",
+    "answer": "The study data suggest improvement, but the estimate might be unreliable.",
+    "review_focus": "ambiguous_context",
+    "lexical_expected_detected": [
+      "evidence",
+      "reasoning",
+      "uncertainty"
+    ],
+    "review_question": "Do all three lexical categories help assess this mixed, qualified statement?",
+    "interpretation_note": "All three categories are triggered, but lexical presence alone does not establish evidence quality or sound inference.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "database_modal_stress",
+    "answer": "The database may fail during the next update.",
+    "review_focus": "context",
+    "lexical_expected_detected": [
+      "uncertainty"
+    ],
+    "review_question": "Is the uncertainty signal relevant to reasoning quality in this operational warning?",
+    "interpretation_note": "May is detected as uncertainty; database does not match the standalone data indicator because of word boundaries.",
+    "review_status": "pending_human_review"
   }
 ]
