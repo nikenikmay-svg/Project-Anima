@@ -51,7 +51,7 @@ class ArgumentReviewMarkdownTests(unittest.TestCase):
     def test_does_not_turn_bad_count_into_claim(self):
         self.document["summary"]["evidence_items_supplied"] = -100
         output = render_review_markdown(self.document)
-        self.assertIn("Evidence items supplied: 0", output)
+        self.assertIn("- **Evidence items supplied:** 0", output)
 
 
 if __name__ == "__main__":
