@@ -1,0 +1,11 @@
+case_id,answer,review_focus,lexical_expected_detected,reviewer_id,review_date,lexical_output_observed,contextual_evidence,contextual_reasoning,contextual_uncertainty,evidence_support,evidence_quote,inference_quality,inference_rationale,rationale,confidence,adjudication_status
+negated_evidence,"There is no evidence for the claim.",negation,evidence,,,,,,,,,,,,,
+evidence_unavailable,"The report says evidence is not available.",negation,evidence,,,,,,,,,,,,,
+unrelated_may,"The meeting may begin at noon.",context,uncertainty,,,,,,,,,,,,,
+could_ability,"She could swim before she started school.",ambiguous_modal,uncertainty,,,,,,,,,,,,,
+since_time,"Since Monday, the readings have remained stable.",ambiguous_connector,reasoning,,,,,,,,,,,,,
+therefore_invalid,"Therefore, the moon is made of glass.",invalid_inference,reasoning,,,,,,,,,,,,,
+study_as_verb,"I study every evening.",context,evidence,,,,,,,,,,,,,
+confidence_without_calibration,"I have confidence that the answer is correct.",ambiguous_term,uncertainty,,,,,,,,,,,,,
+reasoning_without_marker,"The temperature rose from 10 to 15 degrees, a five-degree increase.",implicit_reasoning,none,,,,,,,,,,,,,
+possibly_rhetorical,"Possibly the most obvious answer of all.",ambiguous_context,uncertainty,,,,,,,,,,,,,
