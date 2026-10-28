@@ -11,6 +11,20 @@ class ReasoningIndicatorBenchmarkTests(unittest.TestCase):
         for case in CASES:
             self.assertTrue(set(case["expected_detected"]).issubset(CATEGORIES))
 
+    def test_dataset_has_diverse_regression_examples(self):
+        self.assertGreaterEqual(len(CASES), 30)
+        answers = {case["answer"] for case in CASES}
+        self.assertEqual(len(answers), len(CASES))
+        for category in CATEGORIES:
+            self.assertTrue(
+                any(category in case["expected_detected"] for case in CASES),
+                f"no positive examples for {category}",
+            )
+            self.assertTrue(
+                any(category not in case["expected_detected"] for case in CASES),
+                f"no negative examples for {category}",
+            )
+
     def test_report_covers_every_case(self):
         report = run_benchmark()
         self.assertEqual(report["total"], len(CASES))

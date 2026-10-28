@@ -83,5 +83,139 @@
       "evidence",
       "reasoning"
     ]
+  },
+  {
+    "id": "evidence_data_term",
+    "answer": "The data were collected last week.",
+    "expected_detected": [
+      "evidence"
+    ]
+  },
+  {
+    "id": "evidence_measurement_plural",
+    "answer": "Measurements varied across groups.",
+    "expected_detected": [
+      "evidence"
+    ]
+  },
+  {
+    "id": "evidence_experiment_term",
+    "answer": "The experiment was repeated twice.",
+    "expected_detected": [
+      "evidence"
+    ]
+  },
+  {
+    "id": "evidence_word_in_negated_claim",
+    "answer": "The report says evidence is not available.",
+    "expected_detected": [
+      "evidence"
+    ]
+  },
+  {
+    "id": "evidence_without_evidence_word",
+    "answer": "The explanation relies only on intuition.",
+    "expected_detected": []
+  },
+  {
+    "id": "reasoning_implies_term",
+    "answer": "A higher score implies a larger difference.",
+    "expected_detected": [
+      "reasoning"
+    ]
+  },
+  {
+    "id": "reasoning_logic_term",
+    "answer": "The logic is difficult to follow.",
+    "expected_detected": [
+      "reasoning"
+    ]
+  },
+  {
+    "id": "reasoning_consequently_term",
+    "answer": "Consequently, the result changed.",
+    "expected_detected": [
+      "reasoning"
+    ]
+  },
+  {
+    "id": "reasoning_without_connector",
+    "answer": "The two results differ by three points.",
+    "expected_detected": []
+  },
+  {
+    "id": "uncertainty_likely_term",
+    "answer": "The estimate is likely to change.",
+    "expected_detected": [
+      "uncertainty"
+    ]
+  },
+  {
+    "id": "uncertainty_possibly_term",
+    "answer": "Possibly, the sample was too small.",
+    "expected_detected": [
+      "uncertainty"
+    ]
+  },
+  {
+    "id": "uncertainty_confidence_term",
+    "answer": "Confidence in this estimate remains limited.",
+    "expected_detected": [
+      "uncertainty"
+    ]
+  },
+  {
+    "id": "uncertainty_may_in_unrelated_context",
+    "answer": "The meeting may begin at noon.",
+    "expected_detected": [
+      "uncertainty"
+    ]
+  },
+  {
+    "id": "uncertainty_no_marker",
+    "answer": "The result was exactly twelve.",
+    "expected_detected": []
+  },
+  {
+    "id": "multiple_categories_same_sentence",
+    "answer": "The data suggest the estimate might change.",
+    "expected_detected": [
+      "evidence",
+      "reasoning",
+      "uncertainty"
+    ]
+  },
+  {
+    "id": "indicator_in_newline_clause",
+    "answer": "The first result was recorded.\nThe study supports the claim.",
+    "expected_detected": [
+      "evidence"
+    ]
+  },
+  {
+    "id": "plural_observation_variant",
+    "answer": "Observations were recorded independently.",
+    "expected_detected": [
+      "evidence"
+    ]
+  },
+  {
+    "id": "reasoning_suggests_term",
+    "answer": "The pattern suggests a possible effect.",
+    "expected_detected": [
+      "reasoning"
+    ]
+  },
+  {
+    "id": "uncertainty_unlikely_term",
+    "answer": "A large effect is unlikely.",
+    "expected_detected": [
+      "uncertainty"
+    ]
+  },
+  {
+    "id": "unrelated_word_database",
+    "answer": "The database contains several tables.",
+    "expected_detected": []
   }
 ]
