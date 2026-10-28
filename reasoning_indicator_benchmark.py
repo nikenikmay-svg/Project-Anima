@@ -24,6 +24,7 @@ def run_benchmark():
         false_negative = [name for name in expected if name not in actual]
         results.append({
             "id": case["id"],
+            "label_rationale": case["label_rationale"],
             "expected_detected": expected,
             "actual_detected": actual,
             "passed": not false_positive and not false_negative,
