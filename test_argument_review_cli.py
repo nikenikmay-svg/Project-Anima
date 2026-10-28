@@ -92,6 +92,33 @@ class ArgumentReviewCliTests(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_cli_writes_json_and_markdown_bundle(self):
+        with tempfile.TemporaryDirectory() as temp:
+            input_path = Path(temp) / "input.json"
+            prefix = Path(temp) / "review-bundle"
+            input_path.write_text(json.dumps(self.payload), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "argument_review_cli.py", str(input_path),
+                 "--format", "bundle", "--output", str(prefix)],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            json_report = json.loads(Path(str(prefix) + ".json").read_text(encoding="utf-8"))
+            markdown_report = Path(str(prefix) + ".md").read_text(encoding="utf-8")
+            self.assertEqual(json_report["schema_version"], "1.0")
+            self.assertIn("# Argument Review Report", markdown_report)
+            self.assertIn("not_assessed", markdown_report)
+
+    def test_bundle_requires_output_prefix(self):
+        with tempfile.TemporaryDirectory() as temp:
+            input_path = Path(temp) / "input.json"
+            input_path.write_text(json.dumps(self.payload), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "argument_review_cli.py", str(input_path), "--format", "bundle"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("--format bundle requires --output", result.stderr)
     def test_cli_reports_invalid_json_with_nonzero_exit(self):
         with tempfile.TemporaryDirectory() as temp:
             input_path = Path(temp) / "bad.json"

@@ -210,3 +210,13 @@ python argument_review_cli.py argument_review_example.json --strict-input --outp
 ```
 
 The strict mode checks input formatting only. It does not mean that the evidence is trustworthy or that the argument is valid. Tests cover both warning and warning-free strict-mode runs.
+
+## Export a paired review bundle
+
+To create both machine-readable JSON and readable Markdown from the same review input, use bundle format with an output prefix:
+
+```bash
+python argument_review_cli.py argument_review_example.json --format bundle --output review-bundle
+```
+
+This writes `review-bundle.json` and `review-bundle.md`. The JSON report is suitable for further processing; the Markdown report is convenient for human review. Bundle mode requires an output prefix so two formats are not mixed on standard output. Both reports preserve the same supplied review data and limitations; bundle export does not add semantic validation. Regression tests verify both files are written and bundle mode rejects a missing output prefix.
