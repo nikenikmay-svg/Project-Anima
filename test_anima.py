@@ -98,6 +98,17 @@ class EvaluateAnswerTests(unittest.TestCase):
         self.assertEqual(result["score"], 100)
 
 
+    def test_narrow_double_negative_not_irrelevant_is_not_flagged(self):
+        result = evaluate_answer("Evidence is not irrelevant to the conclusion.", ["evidence"])
+        self.assertEqual(result["score"], 100)
+        self.assertEqual(result["matched_points"], ["evidence"])
+        self.assertEqual(result["contradicted_points"], [])
+
+    def test_plain_irrelevant_remains_flagged(self):
+        result = evaluate_answer("Evidence is irrelevant to the conclusion.", ["evidence"])
+        self.assertEqual(result["score"], 0)
+        self.assertEqual(result["contradicted_points"], ["evidence"])
+
     def test_clean_repeated_mention_prevents_automatic_contradiction_flag(self):
         result = evaluate_answer(
             "Evidence is not available yet. Later evidence supports the conclusion.",
