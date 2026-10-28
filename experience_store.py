@@ -78,6 +78,36 @@ def read_records(store_path: str | Path) -> list[dict]:
     return records
 
 
+def search_records(records: list[dict], query: str, *, review_status: str | None = None,
+                  tag: str | None = None) -> list[dict]:
+    """Find memory records by all query terms, with optional exact filters.
+
+    Search is case-insensitive substring matching over IDs, source URLs, content,
+    record type, outcome, and tags. It does not rank relevance or verify claims.
+    """
+    if not isinstance(query, str) or not query.strip():
+        raise ValueError("search query must be a nonblank string")
+    if review_status is not None and review_status not in ALLOWED_REVIEW_STATUS:
+        raise ValueError(f"review_status must be one of {sorted(ALLOWED_REVIEW_STATUS)}")
+    if tag is not None and not tag.strip():
+        raise ValueError("tag must be nonblank when supplied")
+    terms = query.casefold().split()
+    matches = []
+    for record in records:
+        validate_record(record)
+        if review_status is not None and record["review_status"] != review_status:
+            continue
+        if tag is not None and tag.casefold() not in {item.casefold() for item in record["tags"]}:
+            continue
+        haystack = " ".join([
+            record["id"], record["source"], record["content"], record["record_type"],
+            record["outcome"], *record["tags"],
+        ]).casefold()
+        if all(term in haystack for term in terms):
+            matches.append(record)
+    return matches
+
+
 def make_record(*, record_id: str, record_type: str, source: str, content: str,
                 outcome: str = "unknown", confidence: str = "low",
                 review_status: str = "unreviewed", tags: list[str] | None = None,
@@ -144,6 +174,13 @@ def main(argv=None) -> int:
     add.add_argument("--confidence", choices=sorted(ALLOWED_CONFIDENCE), default="low")
     add.add_argument("--tag", action="append", default=[], dest="tags")
 
+    search = subparsers.add_parser("search", help="search stored records without treating them as verified")
+    search.add_argument("--store", default="anima-memory.jsonl")
+    search.add_argument("--query", required=True, help="all terms must match, case-insensitively")
+    search.add_argument("--review-status", choices=sorted(ALLOWED_REVIEW_STATUS))
+    search.add_argument("--tag", help="match this exact tag, case-insensitively")
+    search.add_argument("--format", choices=["json", "markdown"], default="markdown")
+
     show = subparsers.add_parser("list", help="list stored records")
     show.add_argument("--store", default="anima-memory.jsonl")
     show.add_argument("--format", choices=["json", "markdown"], default="markdown")
@@ -160,6 +197,8 @@ def main(argv=None) -> int:
             print(f"Stored {record['id']} with review status '{record['review_status']}'.")
         else:
             records = read_records(args.store)
+            if args.action == "search":
+                records = search_records(records, args.query, review_status=args.review_status, tag=args.tag)
             if args.format == "json":
                 print(json.dumps(records, indent=2, ensure_ascii=False))
             else:
