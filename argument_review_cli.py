@@ -57,7 +57,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.format == "markdown":
             rendered = render_review_markdown(document)
         else:
-            rendered = json.dumps(document, indent=2, ensure_ascii=False) + "\\n"
+            rendered = json.dumps(document, indent=2, ensure_ascii=False) + "\n"
         if args.output:
             Path(args.output).write_text(rendered, encoding="utf-8")
         else:
