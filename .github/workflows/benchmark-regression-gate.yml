@@ -36,6 +36,10 @@ jobs:
           python benchmark.py || test -f benchmark-results.json
           test -s benchmark-results.json
 
+      - name: Generate reviewable improvement proposals
+        if: always() && hashFiles('benchmark-results.json') != ''
+        run: python improvement_proposal.py benchmark-results.json --json-output improvement-proposals.json --markdown-output improvement-proposals.md
+
       - name: Compare baseline and candidate reports
         run: |
           python benchmark_gate.py baseline/benchmark-results.json benchmark-results.json --output benchmark-gate-report.json
@@ -46,5 +50,16 @@ jobs:
         with:
           name: anima-benchmark-gate-report
           path: benchmark-gate-report.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload improvement proposal queue
+        if: always() && hashFiles('improvement-proposals.json', 'improvement-proposals.md') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: anima-improvement-proposals
+          path: |
+            improvement-proposals.json
+            improvement-proposals.md
           if-no-files-found: error
           retention-days: 30
