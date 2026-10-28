@@ -13,6 +13,16 @@ class BenchmarkTests(unittest.TestCase):
         report = run_benchmark()
         self.assertTrue(report["limitations"])
 
+    def test_benchmark_covers_input_and_phrase_edge_cases(self):
+        case_ids = {case["id"] for case in CASES}
+        self.assertGreaterEqual(len(CASES), 19)
+        self.assertTrue({
+            "multiword_criterion_phrase",
+            "duplicate_criterion_is_counted_once",
+            "empty_criteria_list",
+            "without_marker_flags_criterion",
+        }.issubset(case_ids))
+
     def test_error_analysis_classifies_each_case(self):
         report = run_benchmark()
         self.assertEqual(sum(report["error_counts"].values()), report["total"])
