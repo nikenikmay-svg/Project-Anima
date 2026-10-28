@@ -42,7 +42,7 @@ def _has_contradiction_marker(clause):
     This exception is intentionally narrow; other forms of negation and double
     negation remain heuristic and may require contextual human review.
     """
-    normalized = re.sub(r"\\bnot\\s+irrelevant\\b", "relevant", clause, flags=re.IGNORECASE)
+    normalized = re.sub(r"\bnot\s+irrelevant\b", "relevant", clause, flags=re.IGNORECASE)
     return _CONTRADICTION_MARKERS.search(normalized) is not None
 
 
