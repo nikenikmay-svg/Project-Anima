@@ -94,7 +94,7 @@ class CompareAnnotationsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             a = Path(tmp) / "a.csv"
             b = Path(tmp) / "b.csv"
-            header = ",".join(FIELDS + ["confidence"]) + "\\n"
+            header = ",".join(FIELDS + ["confidence"]) + chr(10)
             for path in (a, b):
                 path.write_text(header, encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "duplicate column names"):
@@ -104,7 +104,7 @@ class CompareAnnotationsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             a = Path(tmp) / "a.csv"
             b = Path(tmp) / "b.csv"
-            header = ",".join(FIELDS) + ",\\n"
+            header = ",".join(FIELDS) + "," + chr(10)
             for path in (a, b):
                 path.write_text(header, encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "blank column name"):
