@@ -128,13 +128,18 @@ class SearchExtractor(HTMLParser):
         self.active = None
         self.in_snippet = False
         self.snippet_parts = []
+        self.in_wikipedia_result = False
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         classes = attrs.get("class", "").split()
-        # DuckDuckGo has used both result__a and result-link across its HTML
-        # result pages. Accept either known result-link class.
-        if tag == "a" and ({"result__a", "result-link"} & set(classes)):
+        if tag == "div" and "mw-search-result-heading" in classes:
+            self.in_wikipedia_result = True
+        # DuckDuckGo uses result-link classes; Wikipedia search results place
+        # the result anchor inside a mw-search-result-heading container.
+        if tag == "a" and (
+            {"result__a", "result-link"} & set(classes) or self.in_wikipedia_result
+        ):
             self.active = {"url": attrs.get("href", ""), "title": ""}
         elif self.active is not None and tag in {"div", "a"} and (
             {"result__snippet", "result-snippet"} & set(classes)
@@ -150,6 +155,8 @@ class SearchExtractor(HTMLParser):
             self.in_snippet = False
         elif tag == "div" and self.in_snippet:
             self.in_snippet = False
+        if tag == "div":
+            self.in_wikipedia_result = False
 
     def handle_data(self, data):
         if self.active is not None:
@@ -168,12 +175,13 @@ def search_web(query: str, limit: int = DEFAULT_RESULTS) -> list[dict]:
         raise ValueError("result limit must be between 1 and 10")
 
     endpoints = (
-        "https://html.duckduckgo.com/html/?",
-        "https://lite.duckduckgo.com/lite/?",
+        ("https://html.duckduckgo.com/html/?", "q", False),
+        ("https://lite.duckduckgo.com/lite/?", "q", False),
+        ("https://en.wikipedia.org/w/index.php?", "search", True),
     )
     failures = []
-    for endpoint in endpoints:
-        search_url = endpoint + urllib.parse.urlencode({"q": query})
+    for endpoint, query_key, is_wikipedia in endpoints:
+        search_url = endpoint + urllib.parse.urlencode({query_key: query})
         try:
             _, body, charset = fetch_bytes(search_url, max_bytes=MAX_BYTES)
         except (OSError, ValueError, urllib.error.URLError) as exc:
@@ -188,6 +196,8 @@ def search_web(query: str, limit: int = DEFAULT_RESULTS) -> list[dict]:
             target = item["url"]
             if target.startswith("//"):
                 target = "https:" + target
+            elif is_wikipedia and target.startswith("/"):
+                target = urllib.parse.urljoin("https://en.wikipedia.org", target)
             if target.startswith("/l/?"):
                 params = urllib.parse.parse_qs(urllib.parse.urlsplit(target).query)
                 target = params.get("uddg", [target])[0]
