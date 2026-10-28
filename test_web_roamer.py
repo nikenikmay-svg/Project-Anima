@@ -50,12 +50,15 @@ class WebRoamerTests(unittest.TestCase):
 
     def test_search_web_falls_back_to_lite_endpoint(self):
         responses = [
-            ("https://html.duckduckgo.com/html/?", b"<html>blocked</html>", "utf-8"),
-            ("https://lite.duckduckgo.com/lite/?", b'<a class="result-link" href="https://example.com/">Example result</a>', "utf-8"),
+            ("https://html.duckduckgo.com/html/", b"<html>blocked</html>", "utf-8"),
+            ("https://lite.duckduckgo.com/lite/", b'<a class="result-link" href="https://example.com/">Example result</a>', "utf-8"),
         ]
-
-        def fake_fetch(url, max_bytes):
-            return responses.pop(0)[1], responses[0][1], "utf-8"
+        with patch.object(web_roamer, "fetch_bytes", side_effect=responses), \
+             patch.object(web_roamer, "validate_public_url", side_effect=lambda url: url):
+            results = web_roamer.search_web("test query", limit=2)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["url"], "https://example.com/")
+        self.assertEqual(results[0]["title"], "Example result")
 
     def test_query_with_no_search_results_reports_search_failure(self):
         with tempfile.TemporaryDirectory() as directory:
