@@ -151,3 +151,10 @@ if __name__ == "__main__":
     print(f"Matched: {result['matched_points']}")
     print(f"Missing: {result['missing_points']}")
     print(f"Flagged for contradiction review: {result['contradicted_points']}")
+    print("\\n--- Criterion Evidence ---")
+    for item in result["criterion_analysis"]:
+        print(f"- {item['criterion']}: {item['status']}")
+        for clause in item["evidence_clauses"]:
+            print(f"    Evidence: {clause}")
+        for clause in item["flagged_clauses"]:
+            print(f"    Review marker detected: {clause}")
