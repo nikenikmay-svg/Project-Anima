@@ -33,6 +33,16 @@ def _has_contradiction_marker(clause):
     return _CONTRADICTION_MARKERS.search(normalized) is not None
 
 
+def _has_contradiction_marker(clause):
+    """Detect lexical markers, excluding only the exact double-negative phrase 'not irrelevant'.
+
+    This narrow exception is not general negation understanding; other markers
+    in the same clause still trigger review.
+    """
+    marker_text = re.sub(r"\\bnot\\s+irrelevant\\b", " ", clause, flags=re.IGNORECASE)
+    return _CONTRADICTION_MARKERS.search(marker_text) is not None
+
+
 def _contains_phrase(text, phrase):
     """Match a criterion as a phrase, ignoring case and punctuation boundaries."""
     escaped = re.escape(phrase.strip())
