@@ -37,41 +37,13 @@ def _contains_phrase(text, phrase):
 
 
 def _has_contradiction_marker(clause):
-    """Detect configured markers, excluding the narrow phrase ``not irrelevant``.
+    """Detect lexical markers, excluding one narrowly scoped double negative.
 
-    This handles one common double-negative false positive only; it is not a
-    general negation parser and makes no claim about semantic interpretation.
+    Only the exact phrase "not irrelevant" is exempted. This is not a general
+    negation parser and does not establish semantic correctness.
     """
     normalized = re.sub(r"\bnot\s+irrelevant\b", " ", clause, flags=re.IGNORECASE)
     return _CONTRADICTION_MARKERS.search(normalized) is not None
-
-
-def _has_contradiction_marker(clause):
-    """Detect lexical markers, excluding the one supported double-negative phrase."""
-    # Narrow exception: "not irrelevant" affirms relevance in ordinary usage.
-    # This does not attempt to resolve other forms of double negation.
-    marker_text = re.sub(r"\bnot\s+irrelevant\b", " ", clause, flags=re.IGNORECASE)
-    return _CONTRADICTION_MARKERS.search(marker_text) is not None
-
-
-def _has_contradiction_marker(clause):
-    """Detect configured markers, excluding one narrowly scoped double negative.
-
-    The exact phrase "not irrelevant" is not treated as a contradiction marker.
-    This exception is intentionally limited; it is not general negation parsing.
-    """
-    without_known_double_negative = re.sub(
-        r"\\bnot\\s+irrelevant\\b", " ", clause, flags=re.IGNORECASE
-    )
-    return _CONTRADICTION_MARKERS.search(without_known_double_negative) is not None
-
-
-def _has_contradiction_marker(clause):
-    """Detect markers while excluding one narrowly scoped double negative."""
-    without_known_double_negative = re.sub(
-        r"\bnot\s+irrelevant\b", " ", clause, flags=re.IGNORECASE
-    )
-    return _CONTRADICTION_MARKERS.search(without_known_double_negative) is not None
 
 
 def _split_clauses(answer):
