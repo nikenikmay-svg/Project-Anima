@@ -1,0 +1,84 @@
+name: Anima Scheduled Web Research
+
+on:
+  workflow_dispatch:
+    inputs:
+      query:
+        description: "Optional one-off research question (leave blank to use the topic list)"
+        required: false
+        type: string
+  schedule:
+    - cron: "0 3 * * 1"
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out Anima
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test the research and memory components
+        run: |
+          python -m py_compile web_roamer.py experience_store.py
+          python -m unittest -v test_web_roamer.py
+
+      - name: Restore the latest saved research memory
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          touch anima-memory.jsonl
+          PREVIOUS_RUN_ID="$(gh run list --workflow web-research.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+          if [ -n "$PREVIOUS_RUN_ID" ]; then
+            mkdir -p prior-memory
+            if gh run download "$PREVIOUS_RUN_ID" --name anima-web-memory --dir prior-memory; then
+              if [ -f prior-memory/anima-memory.jsonl ]; then
+                cp prior-memory/anima-memory.jsonl anima-memory.jsonl
+                echo "Restored saved research memory from run $PREVIOUS_RUN_ID."
+              fi
+            else
+              echo "No previous memory artifact was available; starting with an empty store."
+            fi
+          else
+            echo "No previous successful research run; starting with an empty store."
+          fi
+
+      - name: Explore the requested topic or topic list
+        env:
+          QUERY: ${{ inputs.query }}
+        run: |
+          set +e
+          if [ -n "$QUERY" ]; then
+            python web_roamer.py --query "$QUERY" --limit 3 --store anima-memory.jsonl
+            RESULT=$?
+            if [ "$RESULT" -ne 0 ]; then echo "One-off query returned no new records; inspect the JSON output above."; fi
+          else
+            while IFS= read -r topic || [ -n "$topic" ]; do
+              topic="${topic%%#*}"
+              topic="$(printf '%s' "$topic" | xargs)"
+              [ -z "$topic" ] && continue
+              echo "Research topic: $topic"
+              python web_roamer.py --query "$topic" --limit 2 --store anima-memory.jsonl
+              RESULT=$?
+              if [ "$RESULT" -ne 0 ]; then echo "Topic returned no new records; continuing."; fi
+            done < research_topics.txt
+          fi
+          exit 0
+
+      - name: Upload accumulated experience memory
+        uses: actions/upload-artifact@v4
+        with:
+          name: anima-web-memory
+          path: anima-memory.jsonl
+          if-no-files-found: error
+          retention-days: 90
