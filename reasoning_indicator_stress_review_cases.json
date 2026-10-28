@@ -1,0 +1,112 @@
+[
+  {
+    "id": "quoted_claim",
+    "answer": "The witness said, “There is no evidence.”",
+    "review_focus": "quotation_and_negation",
+    "lexical_expected_detected": [
+      "evidence"
+    ],
+    "review_question": "Should a quoted denial count as the answer itself presenting evidence?",
+    "interpretation_note": "The matcher sees evidence inside reported speech; speaker attribution and negation require context.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "because_without_premise",
+    "answer": "Because I said so, the treatment works.",
+    "review_focus": "unsupported_causal_claim",
+    "lexical_expected_detected": [
+      "reasoning"
+    ],
+    "review_question": "Does because introduce a meaningful premise that supports the conclusion?",
+    "interpretation_note": "A causal connector is present, but the stated premise does not substantiate the efficacy claim.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "data_as_metaphor",
+    "answer": "I have a lot of data in my head about this song.",
+    "review_focus": "ambiguous_evidence_term",
+    "lexical_expected_detected": [
+      "evidence"
+    ],
+    "review_question": "Does data refer to systematic observations here or informal personal knowledge?",
+    "interpretation_note": "The detector flags data without checking whether it is empirical evidence.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "might_in_permission",
+    "answer": "You might leave after the form is signed.",
+    "review_focus": "modal_function",
+    "lexical_expected_detected": [
+      "uncertainty"
+    ],
+    "review_question": "Does might express epistemic uncertainty, permission, or a conditional rule?",
+    "interpretation_note": "The word might is detected regardless of its pragmatic function.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "since_causal",
+    "answer": "Since the sample was small, the estimate is uncertain.",
+    "review_focus": "multiple_categories_and_scope",
+    "lexical_expected_detected": [
+      "reasoning",
+      "uncertainty"
+    ],
+    "review_question": "Does the sentence give a defensible reason for uncertainty, and is the scope clear?",
+    "interpretation_note": "Both configured words occur; the labels describe lexical matches only.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "study_negated",
+    "answer": "The team did not study the effect, so the result is unknown.",
+    "review_focus": "negation_and_inference",
+    "lexical_expected_detected": [
+      "evidence",
+      "uncertainty"
+    ],
+    "review_question": "Does the sentence accurately infer that the result is unknown from the absence of a study?",
+    "interpretation_note": "All three categories are triggered, but neither factual accuracy nor inference validity is checked.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "no_marker_numerical",
+    "answer": "The second group scored 8 points more than the first group.",
+    "review_focus": "implicit_comparison",
+    "lexical_expected_detected": [],
+    "review_question": "Does the comparison convey useful information despite no configured indicator word?",
+    "interpretation_note": "The detector finds no configured lexical indicators; that is not evidence of absent reasoning.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "confidence_interval",
+    "answer": "The confidence interval is wide, so the estimate may be imprecise.",
+    "review_focus": "technical_term_and_uncertainty",
+    "lexical_expected_detected": [
+      "uncertainty"
+    ],
+    "review_question": "Does the technical use of confidence indicate uncertainty, and is the conclusion warranted?",
+    "interpretation_note": "Confidence triggers uncertainty and so triggers? The current reasoning matcher does not include so; this expected output is based only on configured terms.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "sarcastic_therefore",
+    "answer": "Great logic—therefore, the earth is flat.",
+    "review_focus": "sarcasm_and_invalid_inference",
+    "lexical_expected_detected": [
+      "reasoning"
+    ],
+    "review_question": "Does the tone signal sarcasm, and does the conclusion follow from any stated premise?",
+    "interpretation_note": "Therefore is a lexical trigger; sarcasm and argument quality are outside the detector.",
+    "review_status": "pending_human_review"
+  },
+  {
+    "id": "possibly_not",
+    "answer": "It is not possibly true under the stated assumptions.",
+    "review_focus": "negation_scope",
+    "lexical_expected_detected": [
+      "uncertainty"
+    ],
+    "review_question": "Does the negated phrase express uncertainty, impossibility, or something else?",
+    "interpretation_note": "Possibly is detected despite surrounding negation and scope.",
+    "review_status": "pending_human_review"
+  }
+]
