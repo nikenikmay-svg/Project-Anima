@@ -49,7 +49,10 @@ def _split_clauses(answer):
     sentences = re.split(r"(?<=[.!?])\s+|\n+", answer)
     clauses = []
     for sentence in sentences:
-        clauses.extend(part.strip() for part in _CONTRAST_BOUNDARY.split(sentence) if part.strip())
+        for part in _CONTRAST_BOUNDARY.split(sentence):
+            # A semicolon commonly separates independent clauses; keep a
+            # contradiction marker on one side from contaminating the other.
+            clauses.extend(bit.strip() for bit in re.split(r";+", part) if bit.strip())
     return clauses
 
 
