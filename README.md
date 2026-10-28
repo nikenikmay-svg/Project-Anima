@@ -1,6 +1,6 @@
 # Project Anima
 
-A small, transparent Python project for evaluating whether an answer mentions required concepts. Anima currently uses phrase matching and conservative lexical contradiction markers; it is **not** a semantic reasoner and does not verify scientific truth.
+A small, transparent Python project for evaluating whether an answer mentions required concepts. Anima currently uses phrase matching and conservative lexical contradiction markers; it is **not** a semantic reasoner and does not verify scientific truth. The contradiction detector has one deliberately narrow exception for the exact phrase “not irrelevant”; this does not provide general double-negation or semantic understanding.
 
 ## Run it
 
