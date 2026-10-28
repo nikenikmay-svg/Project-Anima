@@ -269,3 +269,20 @@ python review_feedback.py review_feedback_template.json --output proposed-regres
 ```
 
 The exporter checks required fields, unique IDs, score bounds, label consistency, and duplicate IDs against `benchmark_cases.json`. It does **not** edit the baseline benchmark or evaluator code. Review the generated candidates, then propose any baseline changes in a separate pull request and run the full test suite. CI remains the regression gate; a passing test suite only demonstrates consistency with the curated expected labels, not semantic correctness. The feedback status and `human_verified` flag are workflow declarations, not cryptographic proof of who reviewed the data.
+
+
+## Saved-report benchmark regression gate
+
+Use `benchmark_gate.py` to compare a baseline report with a candidate report generated from a different evaluator revision:
+
+```bash
+python benchmark.py
+cp benchmark-results.json baseline-results.json
+# After changing the evaluator, run the benchmark again:
+python benchmark.py
+python benchmark_gate.py baseline-results.json benchmark-results.json --output benchmark-gate-report.json
+```
+
+The gate requires both reports to contain exactly the same unique case IDs and boolean pass/fail outcomes. It lists cases that regressed from pass to fail, improved from fail to pass, and any changed `actual_score` values. It exits with status 1 if any previously passing case regresses; malformed reports or changed case sets are rejected. Keep the baseline report from the earlier revision before regenerating the candidate report.
+
+This is a deterministic comparison tool, not an automatic improvement system. A pass means agreement with the project's hand-written expected labels, not semantic correctness. The gate does not itself check out two revisions, generate both reports, or replace human review.
