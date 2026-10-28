@@ -55,6 +55,10 @@ Benchmark cases are stored separately in `benchmark_cases.json` and labelled by 
 
 Run `python evaluate_summary.py` to create `anima-evaluation-summary.json`. The report keeps the criterion lexical benchmark, reasoning-indicator lexical benchmark, optional human-review comparison, and reasoning-quality validation status in separate sections. To include two independently completed reviewer worksheets, run `python evaluate_summary.py --reviewer-a reviewer_a.csv --reviewer-b reviewer_b.csv`. It reports raw agreement and disagreements without adjudicating them. Without reviewer files, human review is marked `not_provided`; reasoning-quality validation is explicitly `not_established`. This report does not turn lexical scores into a semantic reasoning score.
 
+## Contextual stress-review cases
+
+`reasoning_indicator_stress_cases.json` adds a separate set of challenging examples involving quoted claims, negation, ambiguous connectors, uncertainty scope, unsupported assertions, multiple indicator categories, and contraction boundaries. Each case records the detector's **observed lexical matches** and remains marked `pending_human_review`. These matches document current program behavior; they are **not gold-standard labels** and do not count toward the baseline benchmark score. Run `python -m unittest` to validate the dataset schema and confirm the recorded outputs still match the current detector. Human reviewers should use `HUMAN_REVIEW_PROTOCOL.md` before making semantic judgments.
+
 ## Current limitations
 
 - Contradiction detection relies on a small list of lexical markers.
