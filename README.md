@@ -423,3 +423,7 @@ This records observations; it does not make webpages authoritative, train a mode
 ## Search the experience memory
 
 Use `python experience_store.py search --store anima-memory.jsonl --query "clause scope" --review-status unreviewed --tag web` to find stored records. Every query term must occur somewhere in the record (case-insensitive substring matching); the review-status filter is exact, and the tag filter matches an exact tag. Add `--format json` for machine-readable output. Search only retrieves stored text: it does not rank truth, verify claims, or promote unreviewed records to trusted knowledge.
+
+## Multi-agent research council
+
+`agent_council.py` can ask 2–4 explicitly configured OpenAI-compatible AI agents to answer a question independently, then optionally send their responses to a synthesizer for comparison. See [MULTI_AGENT_COUNCIL.md](MULTI_AGENT_COUNCIL.md) for configuration, environment-variable credentials, example usage, and safety limits. No external model is contacted unless the CLI is run with configured endpoints and credentials; the framework does not discover agents automatically or store transcripts in long-term memory.
