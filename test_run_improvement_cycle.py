@@ -5,10 +5,31 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from run_improvement_cycle import run_cycle
+from run_improvement_cycle import run_cycle, resolve_candidate_inputs
 
 
 class ImprovementCycleTests(unittest.TestCase):
+    def test_queue_selects_top_candidate_inputs(self):
+        queue = {"candidates": [
+            {"case_id": "case-top", "hypothesis": "Test the highest-ranked case"},
+            {"case_id": "case-next", "hypothesis": "Another hypothesis"},
+        ]}
+        hypothesis, case_ids = resolve_candidate_inputs(queue)
+        self.assertEqual(hypothesis, "Test the highest-ranked case")
+        self.assertEqual(case_ids, ["case-top"])
+
+    def test_explicit_inputs_override_queue_defaults(self):
+        queue = {"candidates": [{"case_id": "case-top", "hypothesis": "Queue hypothesis"}]}
+        hypothesis, case_ids = resolve_candidate_inputs(queue, "My hypothesis", ["manual-case"])
+        self.assertEqual(hypothesis, "My hypothesis")
+        self.assertEqual(case_ids, ["manual-case"])
+
+    def test_empty_queue_requires_manual_inputs(self):
+        with self.assertRaisesRegex(ValueError, "candidate queue is empty"):
+            resolve_candidate_inputs({"candidates": []})
+        with self.assertRaisesRegex(ValueError, "provide --hypothesis"):
+            resolve_candidate_inputs(None)
+
     def test_cycle_records_tested_but_unapproved_result(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
