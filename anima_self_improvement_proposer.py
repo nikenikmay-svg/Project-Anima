@@ -61,8 +61,11 @@ def main():
     message = choices[0].get("message", {}) if choices and isinstance(choices[0], dict) else {}
     reply = message.get("content", "") if isinstance(message, dict) else ""
     finish_reason = choices[0].get("finish_reason", "unknown") if choices and isinstance(choices[0], dict) else "no_choices"
-    if not isinstance(reply, str) or not reply.strip() or reply.strip() == "NO_CHANGE":
-        diagnostic(f"Status: no usable patch proposed. finish_reason={finish_reason}; choices={len(choices) if isinstance(choices, list) else 0}.")
+    if not isinstance(reply, str) or not reply.strip():
+        diagnostic(f"Status: peer model returned empty text. finish_reason={finish_reason}; choices={len(choices) if isinstance(choices, list) else 0}.")
+        return
+    if reply.strip() == "NO_CHANGE":
+        diagnostic(f"Status: peer model explicitly chose NO_CHANGE. finish_reason={finish_reason}; choices={len(choices) if isinstance(choices, list) else 0}.")
         return
     fence = chr(96) * 3
     if reply.startswith(fence):
