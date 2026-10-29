@@ -39,7 +39,11 @@ jobs:
           fi
           BRANCH="anima/self-improvement-${GITHUB_RUN_ID}"
           git checkout -b "$BRANCH"
-          git apply --check anima-self-improvement.patch
+          if ! git apply --check anima-self-improvement.patch; then
+            echo "has_patch=false" >> "$GITHUB_OUTPUT"
+            echo "Patch could not be applied cleanly; no source files changed."
+            exit 0
+          fi
           git apply anima-self-improvement.patch
           git diff --check
           CHANGED="$(git diff --name-only)"
@@ -73,3 +77,12 @@ jobs:
           gh pr create --draft --base main --head "$BRANCH" \
             --title "Anima self-improvement proposal" \
             --body "Automated proposal from the guarded self-improvement workflow. Only anima_aqe_pilot.py was allowed to change. Syntax and smoke checks passed in a runner without repository credentials. Review the diff and benchmark impact carefully; this PR is not auto-merged."
+
+      - name: Upload safe self-improvement diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: anima-self-improvement-diagnostic
+          path: anima-self-improvement-diagnostic.md
+          if-no-files-found: ignore
+          retention-days: 7
