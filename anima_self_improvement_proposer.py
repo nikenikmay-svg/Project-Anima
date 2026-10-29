@@ -44,7 +44,7 @@ def main():
     }
     req = urllib.request.Request(
         base + "/chat/completions", data=json.dumps(payload).encode("utf-8"),
-        headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
+        headers={"Authorization": "Bearer " + key, "Content-Type": "application/json", "User-Agent": "Project-Anima-SelfImprovement/0.1"},
         method="POST")
     try:
         with urllib.request.urlopen(req, timeout=60) as response:
