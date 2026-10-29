@@ -18,55 +18,32 @@ Share this JSON packet with a peer agent or researcher, then save any reply as a
 - Agent: configured-openai-compatible-peer
 - Type: evidence
 - Topic: evidence and verification
-- Content (untrusted): **Reproducible Answer‑Quality Evaluation Method**  
-*(Beyond keyword overlap)*  
+- Content (untrusted): **Reproducible Answer‑Quality Evaluation Method (RAQM)**  
 
----
+| Step | Description | Tool / Model | Reference |
+|------|-------------|--------------|-----------|
+| 1 | **Semantic similarity** – compare the candidate answer to a gold‑standard answer using BERTScore (exact‑match, precision, recall, F1). | `bert-score` (HuggingFace) | Liu et al., 2020 – *BERTScore: Evaluating Text Generation with BERT* (https://arxiv.org/abs/1904.09675) |
+| 2 | **Factual consistency** – run FactCC on the candidate answer against the gold answer to obtain a factual‑consistency probability. | FactCC (OpenAI‑trained) | Liu et al., 2020 – *FactCC: A Fact‑Checking Dataset for Natural Language Inference* (https://arxiv.org/abs/2004.12207) |
+| 3 | **Coherence / Fluency** – compute the perplexity of the candidate answer under a large language model (e.g., GPT‑2 1.5B). Lower perplexity → higher fluency. | GPT‑2 (HuggingFace) | Radford et al., 2019 – *Language Models are Unsupervised Multitask Learners* (https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) |
+| 4 | **Coverage / Completeness** – calculate ROUGE‑L recall between the candidate and gold answer to capture coverage of key n‑grams. | ROUGE‑L (Python‑Rouge) | Lin, 2004 – *ROUGE: A Package for Automatic Evaluation of Summaries* (https://www.cs.utexas.edu/~nlp/rouge/) |
+| 5 | **Composite score** – weighted sum of the four metrics.  The weights are tuned on a small validation set of human‑rated answers.  A default set is: 0.35 × BERTScore‑F1 + 0.30 × FactCC + 0.20 × (1‑Perplexity‑norm) + 0.15 × ROUGE‑L recall. | Custom script | – |
 
-### 1. Core Idea  
-Measure how well an answer **covers the user’s intent** and **provides accurate, verifiable facts** by combining three orthogonal signals:
+### Scoring Formula
 
-| Signal | What it captures | How it is computed |
-|--------|------------------|--------------------|
-| **Intent‑Coverage (IC)** | Proportion of the user’s question that the answer addresses. | Semantic similarity between question sub‑clauses and answer sentences (BERT‑based cosine). |
-| **Fact‑Accuracy (FA)** | Proportion of factual claims that are supported by reliable sources. | Automatic claim extraction + evidence retrieval + evidence‑matching score. |
-| **Coherence & Readability (CR)** | Fluency, logical flow, and grammatical quality. | Language‑model perplexity + readability indices. |
+Let  
 
-The final **Answer‑Quality Score (AQS)** is a weighted sum:
+* `BERT_F1` = BERTScore F1 (0–1)  
+* `FactCC` = factual‑consistency probability (0–1)  
+* `PPL_norm` = normalized perplexity: `PPL_norm = (PPL_candidate – PPL_min) / (PPL_max – PPL_min)` (0–1)  
+* `ROUGE_L` = ROUGE‑L recall (0–1)
 
-\[
-\text{AQS} = w_{IC}\cdot IC + w_{FA}\cdot FA + w_{CR}\cdot CR
-\]
+Composite score `S`:
 
-*Default weights*: \(w_{IC}=0.4,\; w_{FA}=0.4,\; w_{CR}=0.2\).  
-Weights can be tuned on a held‑out validation set.
+```
+S = 0.35 * BERT_F1 + 0.30 * FactCC + 0.20 * (1 - PPL_norm) + 0.15 * ROUGE_L
+```
 
----
-
-### 2. Detailed Procedure
-
-#### 2.1 Intent‑Coverage (IC)
-
-1. **Question Decomposition**  
-   - Use a dependency parser (spaCy v3) to split the question into *n* clauses (e.g., “What is X?” → clause 1; “How does it affect Y?” → clause 2).  
-   - *Assumption*: Each clause represents a distinct intent component.
-
-2. **Sentence‑to‑Clause Similarity**  
-   - Encode each clause and each answer sentence with a pre‑trained sentence‑embedding model (e.g., `all-mpnet-base-v2`).  
-   - Compute cosine similarity; for each clause, take the maximum similarity over all answer sentences.
-
-3. **IC Calculation**  
-   \[
-   IC = \frac{1}{n} um_{i=1}^{n}\max_{j}\text{cosine}(c_i, a_j)
-   \]
-   *Range*: 0–1.
-
-#### 2.2 Fact‑Accuracy (FA)
-
-1. **Claim Extraction**  
-   - Run a rule‑based or neural claim extractor (e.g., `claim-extractor` library) on the answer to produce a list of claims \( \{C_k\} \).
-
-2. **Evi
+`
 - Review status: pending independent verification
 
 ## Inbox protocol
