@@ -6,8 +6,8 @@ The conversation stays in memory for this process and is not saved to disk.
 
 Environment variables:
   ANIMA_GEMINI_API_KEY  API key (never put it in this file or commit it)
-  ANIMA_CHAT_MODEL      Optional model name (default: gemini-2.5-flash)
-  ANIMA_CHAT_ENDPOINT  Optional OpenAI-compatible chat-completions endpoint
+  ANIMA_CHAT_MODEL      Optional model name (default: gemini-flash-latest)
+  ANIMA_CHAT_ENDPOINT   Optional OpenAI-compatible chat-completions endpoint
 """
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ import urllib.error
 import urllib.request
 
 DEFAULT_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
-DEFAULT_MODEL = "gemini-2.5-flash"
+DEFAULT_MODEL = "gemini-flash-latest"
 MAX_INPUT_CHARS = 8_000
 MAX_HISTORY_MESSAGES = 20
 TIMEOUT_SECONDS = 45
@@ -75,7 +75,7 @@ def request_reply(messages: list[dict[str, str]], api_key: str,
         raise RuntimeError(
             f"Could not reach the provider ({exc.reason}). Check your internet connection."
         ) from None
-    except (KeyError, IndexError, TypeError, json.JSONDecodeError) as exc:
+    except (KeyError, IndexError, TypeError, json.JSONDecodeError):
         raise RuntimeError(
             "The provider response format was unexpected. Check the endpoint and model."
         ) from None
@@ -114,12 +114,11 @@ def main() -> int:
             continue
 
         history.append({"role": "user", "content": user_text})
-        # Keep a bounded rolling conversation; the system prompt is added separately.
         history = history[-MAX_HISTORY_MESSAGES:]
         try:
             reply = request_reply(history, api_key, endpoint, model)
         except RuntimeError as exc:
-            history.pop()  # don't keep a user message whose request failed
+            history.pop()
             print(f"Anima: I couldn't get a reply. {exc}")
             continue
         history.append({"role": "assistant", "content": reply})
