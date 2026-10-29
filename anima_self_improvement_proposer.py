@@ -75,8 +75,17 @@ def main():
     start = reply.find("diff --git ")
     if start >= 0:
         reply = reply[start:]
+    else:
+        # Some models return a valid unified diff without the optional git header.
+        # Add the git header only when the standard target headers are present.
+        lines = reply.splitlines()
+        old_header = "--- a/" + TARGET
+        new_header = "+++ b/" + TARGET
+        if old_header in lines and new_header in lines:
+            reply = "diff --git a/" + TARGET + " b/" + TARGET + "\\n" + "\\n".join(lines[lines.index(old_header):])
     if len(reply) > 6000 or "diff --git " not in reply:
-        diagnostic("Status: rejected malformed or oversized model output; no code changed.")
+        preview = reply[:180].replace("\\n", " ")
+        diagnostic(f"Status: rejected malformed or oversized model output; length={len(reply)}; has_diff_header={'diff --git ' in reply}; preview={preview!r}. No code changed.")
         return
     headers = re.findall(r"^diff --git a/([^ ]+) b/([^ ]+)$", reply, re.M)
     if not headers or any(a != TARGET or b != TARGET for a, b in headers):
