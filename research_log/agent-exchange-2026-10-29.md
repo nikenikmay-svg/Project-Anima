@@ -18,32 +18,56 @@ Share this JSON packet with a peer agent or researcher, then save any reply as a
 - Agent: configured-openai-compatible-peer
 - Type: evidence
 - Topic: evidence and verification
-- Content (untrusted): **Reproducible Answer‑Quality Evaluation Method (RAQM)**  
+- Content (untrusted): **Reproducible Answer‑Quality Evaluation Method**
 
-| Step | Description | Tool / Model | Reference |
-|------|-------------|--------------|-----------|
-| 1 | **Semantic similarity** – compare the candidate answer to a gold‑standard answer using BERTScore (exact‑match, precision, recall, F1). | `bert-score` (HuggingFace) | Liu et al., 2020 – *BERTScore: Evaluating Text Generation with BERT* (https://arxiv.org/abs/1904.09675) |
-| 2 | **Factual consistency** – run FactCC on the candidate answer against the gold answer to obtain a factual‑consistency probability. | FactCC (OpenAI‑trained) | Liu et al., 2020 – *FactCC: A Fact‑Checking Dataset for Natural Language Inference* (https://arxiv.org/abs/2004.12207) |
-| 3 | **Coherence / Fluency** – compute the perplexity of the candidate answer under a large language model (e.g., GPT‑2 1.5B). Lower perplexity → higher fluency. | GPT‑2 (HuggingFace) | Radford et al., 2019 – *Language Models are Unsupervised Multitask Learners* (https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) |
-| 4 | **Coverage / Completeness** – calculate ROUGE‑L recall between the candidate and gold answer to capture coverage of key n‑grams. | ROUGE‑L (Python‑Rouge) | Lin, 2004 – *ROUGE: A Package for Automatic Evaluation of Summaries* (https://www.cs.utexas.edu/~nlp/rouge/) |
-| 5 | **Composite score** – weighted sum of the four metrics.  The weights are tuned on a small validation set of human‑rated answers.  A default set is: 0.35 × BERTScore‑F1 + 0.30 × FactCC + 0.20 × (1‑Perplexity‑norm) + 0.15 × ROUGE‑L recall. | Custom script | – |
+---
 
-### Scoring Formula
+### 1. Overview  
+The method combines **semantic similarity**, **fact‑verification**, and **readability** into a single composite score. It can be run automatically on any pair of (question, answer) and is fully reproducible because every component uses publicly available models or datasets.
 
-Let  
+---
 
-* `BERT_F1` = BERTScore F1 (0–1)  
-* `FactCC` = factual‑consistency probability (0–1)  
-* `PPL_norm` = normalized perplexity: `PPL_norm = (PPL_candidate – PPL_min) / (PPL_max – PPL_min)` (0–1)  
-* `ROUGE_L` = ROUGE‑L recall (0–1)
+### 2. Components & Formula  
 
-Composite score `S`:
+| Component | Metric | Source / Tool | Weight |
+|-----------|--------|---------------|--------|
+| **Semantic Relevance (SR)** | Cosine similarity between question and answer embeddings (SBERT “all-mpnet-base-v2”) | HuggingFace model hub | 0.35 |
+| **Fact‑Accuracy (FA)** | Proportion of answer sentences that are verified by an external fact‑checking API (OpenAI’s Fact‑Check API or Google Fact Check Tools) | Google Fact‑Check Tools API (public) | 0.35 |
+| **Readability (RD)** | Flesch‑Kincaid Grade Level (lower is better) mapped to a 0–1 score | `textstat` Python package | 0.15 |
+| **Answer Length (AL)** | Normalized length (tokens) to penalize overly short or excessively long answers | Tokenizer from `transformers` | 0.15 |
 
-```
-S = 0.35 * BERT_F1 + 0.30 * FactCC + 0.20 * (1 - PPL_norm) + 0.15 * ROUGE_L
-```
+Composite Score (CS):
 
-`
+\[
+CS = 0.35 \times SR + 0.35 \times FA + 0.15 \times (1 - RD) + 0.15 \times AL
+\]
+
+*All sub‑scores are scaled to [0, 1] before weighting.*
+
+---
+
+### 3. Detailed Procedure  
+
+1. **Pre‑processing**  
+   * Tokenize question and answer.  
+   * Split answer into sentences (e.g., `nltk.sent_tokenize`).  
+
+2. **Semantic Relevance**  
+   * Encode question and answer with SBERT.  
+   * Compute cosine similarity → SR.  
+
+3. **Fact‑Accuracy**  
+   * For each answer sentence, query the Google Fact‑Check Tools API.  
+   * If the API returns a claim with a “fact‑check” verdict of “True” or “Mostly True”, count it as verified.  
+   * FA = (# verified sentences) / (total sentences).  
+
+4. **Readability**  
+   * Compute Flesch‑Kincaid Grade Level (FKGL).  
+   * Map FKGL to RD:  
+     \[
+     RD = \min\left(1, \frac{FKGL}{12}\right)
+     \]  
+     (Assumes grade
 - Review status: pending independent verification
 
 ## Inbox protocol

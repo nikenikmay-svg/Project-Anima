@@ -6,11 +6,11 @@
 
 ## Topics worth reviewing
 
-- **reasoning evaluation** — matching terms: reasoning, evaluation, benchmark, verification, inference (signal count: 5)
-- **memory and retrieval** — matching terms: memory, retrieval, knowledge, long-term, context (signal count: 5)
 - **agent collaboration** — matching terms: agent, multi-agent, collaboration, tool use, orchestration (signal count: 5)
-- **safety and reliability** — matching terms: safety, reliability, failure, uncertainty (signal count: 4)
-- **human oversight** — matching terms: human, review, governance (signal count: 3)
+- **reasoning evaluation** — matching terms: reasoning, evaluation, benchmark, verification (signal count: 4)
+- **memory and retrieval** — matching terms: memory, retrieval, knowledge, context (signal count: 4)
+- **human oversight** — matching terms: human, oversight, review, governance (signal count: 4)
+- **safety and reliability** — matching terms: safety, risk, uncertainty (signal count: 3)
 
 ## Candidate learning questions
 
@@ -35,18 +35,18 @@ These are questions for a later evidence-checking step, not conclusions:
 
 ## Research items to inspect
 
-- 1. Counting the Bandages: On measuring the time that AI saves — https://export.arxiv.org/rss/cs.AI
-- 2. Enhancing Deep Learning Model Performance through Data Generation Strategies: Classification of Olive Tree Diseases — https://export.arxiv.org/rss/cs.AI
-- 3. The Trinity:Capability-Driven Recursive Self-Improvement for Multimodal Agents — https://export.arxiv.org/rss/cs.AI
-- 4. CohortFlow: A Steerable Clinical Cohort Curation Agent with Localized Semantic Correction — https://export.arxiv.org/rss/cs.AI
-- 5. Why and How to Do Science When AI Is Better at It: A Framework Grounded in Human Understanding and Direction — https://export.arxiv.org/rss/cs.AI
-- 6. From Structural Feedback to Prompt Policies: Learning Faithful Text-to-Image Prompt Editors — https://export.arxiv.org/rss/cs.AI
-- 7. Don't Pick a Winner: Knowledge Conflicts Need a Prior, Not a Rule — https://export.arxiv.org/rss/cs.AI
-- 8. Learning Human Sports Motion Feasibility via Quantile Regression on Tracking Data — https://export.arxiv.org/rss/cs.AI
-- 9. Skill Dreaming: Evolving Repository Skills through Pull Request Streams — https://export.arxiv.org/rss/cs.AI
-- 10. MARQ: A Modular, LLM-Agnostic Requirement Quality Assessor Infused with Systems Engineering Knowledge — https://export.arxiv.org/rss/cs.AI
-- 11. ReCoPII: A Relation-Grounded Framework for Building Contextual PII Masking Datasets — https://export.arxiv.org/rss/cs.CL
-- 12. MedJev: Evaluating Zero-Shot System-One Decision Making in Medicine — https://export.arxiv.org/rss/cs.CL
-- 13. OmniBrain-0: A Unified Agentic Model for Embodied Intelligence — https://export.arxiv.org/rss/cs.CL
-- 14. FinLLM-KG: Knowledge Graph-Enhanced LLMs for Financial Sentiment Analysis in Algorithmic Trading — https://export.arxiv.org/rss/cs.CL
-- 15. 3, 7, 14, 17, 42: Instruction Tuning Installs and Sharpens Number-Choice Heuristics in Language Models — https://export.arxiv.org/rss/cs.CL
+- 1. SaiCharan85/JudgeKit — https://github.com/SaiCharan85/JudgeKit
+- 2. Rutytoi220/Zelyr — https://github.com/Rutytoi220/Zelyr
+- 3. HadiKhai/brain-core — https://github.com/HadiKhai/brain-core
+- 4. thurlow-research/HumanOversightSystem — https://github.com/thurlow-research/HumanOversightSystem
+- 5. Nireus79/Socratic-morality — https://github.com/Nireus79/Socratic-morality
+- 6. Preponderous-Software/playtester — https://github.com/Preponderous-Software/playtester
+- 7. crewAIInc/crewAI — https://github.com/crewAIInc/crewAI
+- 8. ArcadeAI/arcade-mcp — https://github.com/ArcadeAI/arcade-mcp
+- 9. SylphAI-Inc/AdalFlow — https://github.com/SylphAI-Inc/AdalFlow
+- 10. rudra496/nexus-agent — https://github.com/rudra496/nexus-agent
+- 11. nerdai/llm-agents-from-scratch — https://github.com/nerdai/llm-agents-from-scratch
+- 12. coapis-ai/coapis-agent — https://github.com/coapis-ai/coapis-agent
+- 13. foolzzz/looper — https://github.com/foolzzz/looper
+- 14. deepset-ai/haystack — https://github.com/deepset-ai/haystack
+- 15. the-magi-system/magi — https://github.com/the-magi-system/magi
