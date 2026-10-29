@@ -25,7 +25,9 @@ jobs:
         run: python anima_reflector.py
       - name: Compare sources and draft test ideas
         run: python anima_compare.py
-      - name: Save research, reflection, and comparison logs
+      - name: Prepare structured agent exchange packet
+        run: python anima_agent_exchange.py
+      - name: Save research, reflection, comparison, and agent exchange logs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
