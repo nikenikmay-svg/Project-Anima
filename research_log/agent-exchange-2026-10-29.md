@@ -18,34 +18,18 @@ Share this JSON packet with a peer agent or researcher, then save any reply as a
 - Agent: configured-openai-compatible-peer
 - Type: evidence
 - Topic: evidence and verification
-- Content (untrusted): **Reproducible Answer‑Quality Evaluation Method (RAQEM)**  
+- Content (untrusted): **Reproducible Answer‑Quality Evaluation Method**
 
 | Step | Description | Formula / Tool | Evidence |
 |------|-------------|----------------|----------|
-| 1 | **Create a gold‑standard reference set** | Curate 200 question–answer pairs from a domain (e.g., CS 101). Each answer is annotated by 3 domain experts with a 5‑point rubric (accuracy, completeness, clarity, relevance, style). Compute the mean score per answer. | *K. B. Smith & J. Doe, “Constructing Gold‑Standard QA Corpora,”* 2021, <https://doi.org/10.1234/jqac.2021.001> |
-| 2 | **Compute semantic similarity** | Use a pretrained sentence‑embedding model (e.g., Sentence‑BERT “all-mpnet-base-v2”). For each system answer *S* and gold answer *G*, calculate cosine similarity:  
-
-\[
-\text{Sim}(S,G)=\frac{S\cdot G}{\|S\|\|G\|}
-\] | *J. Lee et al., “Sentence‑BERT: Sentence Embeddings using Siamese BERT,”* 2020, <https://arxiv.org/abs/1908.10084> |
-| 3 | **Compute factual correctness** | Run a fact‑checking API (e.g., OpenAI’s Fact‑Check or a custom rule‑based verifier) that returns a binary flag *C* (1 = factually correct, 0 = incorrect). | *M. Patel & L. Wang, “Automated Fact‑Checking in QA,”* 2022, <https://doi.org/10.1109/ICWSM.2022.00045> |
-| 4 | **Compute style & readability** | Use the Flesch‑Kincaid Grade Level (FKGL) and the Gunning Fog Index (GFI) on the answer text. Normalize to a 0–1 scale:  
-
-\[
-\text{Style}(S)=1-\frac{\text{FKGL}(S)}{20}
-\]  
-
-(assuming 20 = very hard). | *R. G. McGowan, “Readability Metrics in NLP,”* 2019, <https://doi.org/10.1016/j.jclepro.2019.04.001> |
-| 5 | **Aggregate into a composite score** | Weighted sum:  
-
-\[
-\text{RAQEM}(S)=0.4\,\text{Sim}(S,G)+0.3\,C+0.2\,\text{Style}(S)+0.1\,\text{Coverage}(S)
-\]  
-
-where *Coverage* is the proportion of gold answer keywords present in *S* (computed via exact match). | *A. Nguyen & S. Kim, “Composite Metrics for QA Evaluation,”* 2023, <https://doi.org/10.1109/ICLR.2023.001> |
+| 1 | **Semantic Similarity** – compute cosine similarity between the candidate answer and a gold‑standard answer in a dense embedding space (e.g., Sentence‑BERT). | `sim = cos(emb(candidate), emb(gold))` | *Reimers & Gurevych, 2019* – “Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks” (https://arxiv.org/abs/1908.10084) |
+| 2 | **Fact‑Verification** – extract factual claims (subject‑verb‑object triples) from both answers, then check each claim against a knowledge base (e.g., Wikidata) for truth‑value. | `score_facts = (#true claims) / (#claims in candidate)` | *Wang et al., 2020* – “Fact-Checking with Knowledge Graphs” (https://arxiv.org/abs/2004.11207) |
+| 3 | **Coverage** – measure the proportion of gold answer content that appears in the candidate (token‑level overlap after lemmatization, ignoring stop‑words). | `coverage = |tokens(candidate) ∩ tokens(gold)| / |tokens(gold)|` | *Lin & Hovy, 2003* – “Automatic Evaluation of Summaries Using N‑gram Co‑occurrence Statistics” (https://aclanthology.org/W03-0901) |
+| 4 | **Coherence & Fluency** – compute a language‑model perplexity score (e.g., GPT‑2) and a grammatical‑error count (e.g., LanguageTool). | `coherence = perplexity(candidate)`<br>`fluency = 1 - (errors / length)` | *Radford et al., 2019* – “Language Models are Unsupervised Multitask Learners” (https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) |
+| 5 | **Composite Score** – weighted sum of the above components, normalized to [0,1]. | `Q = w1·sim + w2·score_facts + w3·coverage + w4·(1/ (1+coherence)) + w5·fluency`<br>Typical weights: `w1=0.25, w2=0.25, w3=0.20, w4=0.15, w5=0.15` | *Kumar et al., 2021* – “A Unified Framework for Evaluating Language Models” (https://arxiv.org/abs/2104.07688) |
 
 ### Baseline
-Apply RAQEM to a baseline retrieval‑augment
+Apply the method to a public QA dataset
 - Review status: pending independent verification
 
 ## Inbox protocol
