@@ -1,0 +1,75 @@
+name: Anima Guarded Self-Improvement
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * 6"
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: anima-guarded-self-improvement
+  cancel-in-progress: false
+jobs:
+  propose-test-and-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Ask configured peer model for a restricted patch
+        env:
+          ANIMA_AGENT_BASE_URL: ${{ secrets.ANIMA_AGENT_BASE_URL }}
+          ANIMA_AGENT_API_KEY: ${{ secrets.ANIMA_AGENT_API_KEY }}
+          ANIMA_AGENT_MODEL: ${{ secrets.ANIMA_AGENT_MODEL }}
+        run: python anima_self_improvement_proposer.py
+      - name: Apply validated patch on a new branch
+        id: patch
+        shell: bash
+        run: |
+          if [ ! -s anima-self-improvement.patch ]; then
+            echo "has_patch=false" >> "$GITHUB_OUTPUT"
+            echo "No patch proposed; no source files changed."
+            exit 0
+          fi
+          BRANCH="anima/self-improvement-${GITHUB_RUN_ID}"
+          git checkout -b "$BRANCH"
+          git apply --check anima-self-improvement.patch
+          git apply anima-self-improvement.patch
+          git diff --check
+          CHANGED="$(git diff --name-only)"
+          if [ "$CHANGED" != "anima_aqe_pilot.py" ]; then
+            echo "Rejected: unexpected changed file list: $CHANGED"
+            exit 1
+          fi
+          echo "has_patch=true" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+      - name: Run syntax and evaluator smoke tests without secrets
+        if: steps.patch.outputs.has_patch == 'true'
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          python -m py_compile anima_aqe_pilot.py
+          python anima_aqe_pilot.py
+          python anima_aqe_benchmark.py
+          python anima_evidence_grounding.py
+      - name: Commit, push, and open a draft pull request
+        if: steps.patch.outputs.has_patch == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.patch.outputs.branch }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add anima_aqe_pilot.py
+          git commit -m "Anima: propose guarded AQE pilot improvement"
+          gh auth setup-git
+          git push --set-upstream origin "$BRANCH"
+          gh pr create --draft --base main --head "$BRANCH" \
+            --title "Anima self-improvement proposal" \
+            --body "Automated proposal from the guarded self-improvement workflow. Only anima_aqe_pilot.py was allowed to change. Syntax and smoke checks passed in a runner without repository credentials. Review the diff and benchmark impact carefully; this PR is not auto-merged."
