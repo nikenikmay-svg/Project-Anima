@@ -1,22 +1,29 @@
 """Guarded proposal generator: requests a diff but never applies or executes it."""
 from pathlib import Path
 from urllib.parse import urlparse
+from urllib.error import HTTPError, URLError
 import json, os, re, urllib.request
 
 ROOT = Path(__file__).resolve().parent
 TARGET = "anima_aqe_pilot.py"
 PATCH_PATH = ROOT / "anima-self-improvement.patch"
+DIAGNOSTIC_PATH = ROOT / "anima-self-improvement-diagnostic.md"
+
+def diagnostic(message):
+    DIAGNOSTIC_PATH.write_text("# Self-improvement proposal diagnostic\n\n" + message[:1200] + "\n", encoding="utf-8")
+    print(message[:1200])
 
 def main():
     base = os.environ.get("ANIMA_AGENT_BASE_URL", "").strip().rstrip("/")
     key = os.environ.get("ANIMA_AGENT_API_KEY", "").strip()
     model = os.environ.get("ANIMA_AGENT_MODEL", "").strip()
     if not (base and key and model):
-        print("No peer endpoint configured; safely skipping.")
+        diagnostic("Status: skipped safely. One or more peer endpoint secrets are not configured.")
         return
     parsed = urlparse(base)
     if parsed.scheme != "https" or not parsed.netloc:
-        raise SystemExit("Endpoint must use HTTPS.")
+        diagnostic("Status: skipped safely. ANIMA_AGENT_BASE_URL must be a valid HTTPS URL.")
+        return
     source = (ROOT / TARGET).read_text(encoding="utf-8")
     system = (
         "Return only a standard unified git diff changing only anima_aqe_pilot.py. "
@@ -39,32 +46,48 @@ def main():
         base + "/chat/completions", data=json.dumps(payload).encode("utf-8"),
         headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
         method="POST")
-    with urllib.request.urlopen(req, timeout=60) as response:
-        data = json.loads(response.read(1000000).decode("utf-8", errors="replace"))
-    choices = data.get("choices", [])
-    message = choices[0].get("message", {}) if choices else {}
-    reply = message.get("content", "") if isinstance(message, dict) else ""
-    if not isinstance(reply, str) or not reply.strip() or reply.strip() == "NO_CHANGE":
-        print("No patch proposed.")
+    try:
+        with urllib.request.urlopen(req, timeout=60) as response:
+            data = json.loads(response.read(1000000).decode("utf-8", errors="replace"))
+    except HTTPError as exc:
+        body = exc.read(2000).decode("utf-8", errors="replace")
+        diagnostic(f"Status: peer API returned HTTP {exc.code}. Response excerpt: {body}")
         return
-    if reply.startswith("```"):
+    except (URLError, TimeoutError, json.JSONDecodeError) as exc:
+        diagnostic(f"Status: peer API request failed safely: {type(exc).__name__}: {str(exc)[:400]}")
+        return
+
+    choices = data.get("choices", [])
+    message = choices[0].get("message", {}) if choices and isinstance(choices[0], dict) else {}
+    reply = message.get("content", "") if isinstance(message, dict) else ""
+    finish_reason = choices[0].get("finish_reason", "unknown") if choices and isinstance(choices[0], dict) else "no_choices"
+    if not isinstance(reply, str) or not reply.strip() or reply.strip() == "NO_CHANGE":
+        diagnostic(f"Status: no usable patch proposed. finish_reason={finish_reason}; choices={len(choices) if isinstance(choices, list) else 0}.")
+        return
+    fence = chr(96) * 3
+    if reply.startswith(fence):
         rows = reply.splitlines()
-        rows = rows[1:-1] if len(rows) > 2 and rows[-1].strip() == "```" else rows[1:]
+        rows = rows[1:-1] if len(rows) > 2 and rows[-1].strip() == fence else rows[1:]
         reply = "\n".join(rows)
     start = reply.find("diff --git ")
     if start >= 0:
         reply = reply[start:]
     if len(reply) > 18000 or "diff --git " not in reply:
-        raise SystemExit("Rejected malformed or oversized patch.")
+        diagnostic("Status: rejected malformed or oversized model output; no code changed.")
+        return
     headers = re.findall(r"^diff --git a/([^ ]+) b/([^ ]+)$", reply, re.M)
     if not headers or any(a != TARGET or b != TARGET for a, b in headers):
-        raise SystemExit("Rejected patch: only anima_aqe_pilot.py may change.")
+        diagnostic("Status: rejected patch because it attempted to modify a file outside the allowlist; no code changed.")
+        return
     if "--- a/" + TARGET not in reply or "+++ b/" + TARGET not in reply:
-        raise SystemExit("Rejected patch: missing standard file headers.")
+        diagnostic("Status: rejected patch because standard file headers were missing; no code changed.")
+        return
     if any(line.startswith(("rename from ", "rename to ", "copy from ", "copy to ")) for line in reply.splitlines()):
-        raise SystemExit("Rejected patch: rename/copy is not allowed.")
+        diagnostic("Status: rejected rename/copy operation; no code changed.")
+        return
     PATCH_PATH.write_text(reply + "\n", encoding="utf-8")
-    print("Patch format and target path validated. It has not been applied or executed.")
+    DIAGNOSTIC_PATH.write_text("# Self-improvement proposal diagnostic\n\nStatus: proposed patch passed path/format checks. It has not yet been applied or executed.\n", encoding="utf-8")
+    print("Validated patch format and allowlisted path; patch is ready for isolated checks.")
 
 if __name__ == "__main__":
     main()
