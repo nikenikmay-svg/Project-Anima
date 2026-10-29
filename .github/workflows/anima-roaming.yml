@@ -28,6 +28,7 @@ jobs:
       - name: Prepare structured agent exchange packet
         run: python anima_agent_exchange.py
       - name: Contact configured peer agent (optional)
+        continue-on-error: true
         env:
           ANIMA_AGENT_BASE_URL: ${{ secrets.ANIMA_AGENT_BASE_URL }}
           ANIMA_AGENT_API_KEY: ${{ secrets.ANIMA_AGENT_API_KEY }}
