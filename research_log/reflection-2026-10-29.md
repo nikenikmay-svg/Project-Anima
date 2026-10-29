@@ -45,8 +45,8 @@ These are questions for a later evidence-checking step, not conclusions:
 - 8. OmniBrain-0: A Unified Agentic Model for Embodied Intelligence — https://export.arxiv.org/rss/cs.CL
 - 9. FinLLM-KG: Knowledge Graph-Enhanced LLMs for Financial Sentiment Analysis in Algorithmic Trading — https://export.arxiv.org/rss/cs.CL
 - 10. 3, 7, 14, 17, 42: Instruction Tuning Installs and Sharpens Number-Choice Heuristics in Language Models — https://export.arxiv.org/rss/cs.CL
-- 11. PStarH/unprompted — https://github.com/PStarH/unprompted
-- 12. oxdingzg/miao — https://github.com/oxdingzg/miao
-- 13. Nyonib/Arkflow-Agent — https://github.com/Nyonib/Arkflow-Agent
-- 14. Emmanuel448/mcp-rojo-bridge — https://github.com/Emmanuel448/mcp-rojo-bridge
-- 15. team-reflect/reflect-open — https://github.com/team-reflect/reflect-open
+- 11. wisechef-ai/loopskill-api — https://github.com/wisechef-ai/loopskill-api
+- 12. ID-VerNe/IdleJot — https://github.com/ID-VerNe/IdleJot
+- 13. legendteddy/scan — https://github.com/legendteddy/scan
+- 14. creatorriver/skills — https://github.com/creatorriver/skills
+- 15. theastraway/daebot — https://github.com/theastraway/daebot
