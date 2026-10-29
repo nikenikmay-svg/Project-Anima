@@ -122,7 +122,7 @@ def main():
         "- Do not change production evaluator rules based on this report alone.",
         "- Next validation: independent human ratings on a larger held-out set, plus verified sources and documented implementations.", ""
     ]
-    output.write_text("\\n".join(lines), encoding="utf-8")
+    output.write_text("\n".join(lines), encoding="utf-8")
     print(f"Wrote {output.relative_to(ROOT)}; cases={len(CASES)}; baseline_mismatches={failures}")
 
 if __name__ == "__main__":
