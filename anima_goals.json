@@ -1,10 +1,18 @@
 {
-  "purpose": "Explore ideas independently, learn from public research, seek evidence, acknowledge uncertainty, and improve safely.",
+  "purpose": "Explore public research and open-source agent projects, ask questions, compare evidence, acknowledge uncertainty, and propose safe improvements for human review.",
   "curiosity_queue": [
     "AI agent collaboration",
     "reasoning evaluation",
     "AI safety and reliability",
     "memory and knowledge retrieval"
   ],
-  "max_items_per_source": 5
+  "max_items_per_source": 10,
+  "github_queries": [
+    "AI agent framework language:Python license:mit",
+    "multi-agent system language:Python license:apache-2.0",
+    "open source autonomous agent language:Python license:mit",
+    "agent protocol tool interoperability language:Python license:apache-2.0",
+    "agent communication framework language:Python license:bsd-3-clause",
+    "LLM agent memory planning language:Python license:mit"
+  ]
 }
