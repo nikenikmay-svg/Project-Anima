@@ -27,7 +27,7 @@ def main():
     source = (ROOT / TARGET).read_text(encoding="utf-8")
     system = (
         "Return only a standard unified git diff changing only anima_aqe_pilot.py. "
-        "Return ONLY a standard unified git diff for one tiny change in anima_aqe_pilot.py. Maximum one hunk and 12 changed lines total. No explanation, no markdown fences, no reasoning, no extra files. If you cannot meet this exact format, return NO_CHANGE. Prefer a simple edge-case or clarity fix. No dependencies, "
+        "Return ONLY a standard unified diff beginning exactly with: diff --git a/anima_aqe_pilot.py b/anima_aqe_pilot.py. Both file headers must name anima_aqe_pilot.py. Make one tiny change, maximum one hunk and 12 changed lines total. No other file paths, no explanation, no markdown fences, no reasoning. If you cannot meet this exact format, return NO_CHANGE. Prefer a simple edge-case or clarity fix. No dependencies, "
         "network calls, file access, subprocesses, secrets, or code execution. "
         "Preserve command-line behavior. If no useful safe change is clear, return NO_CHANGE. "
         "This evaluator is experimental keyword matching, not fact verification."
@@ -82,14 +82,15 @@ def main():
         old_header = "--- a/" + TARGET
         new_header = "+++ b/" + TARGET
         if old_header in lines and new_header in lines:
-            reply = "diff --git a/" + TARGET + " b/" + TARGET + "\\n" + "\\n".join(lines[lines.index(old_header):])
+            reply = "diff --git a/" + TARGET + " b/" + TARGET + "\n" + "\n".join(lines[lines.index(old_header):])
     if len(reply) > 6000 or "diff --git " not in reply:
         preview = reply[:180].replace("\\n", " ")
         diagnostic(f"Status: rejected malformed or oversized model output; length={len(reply)}; has_diff_header={'diff --git ' in reply}; preview={preview!r}. No code changed.")
         return
     headers = re.findall(r"^diff --git a/([^ ]+) b/([^ ]+)$", reply, re.M)
     if not headers or any(a != TARGET or b != TARGET for a, b in headers):
-        diagnostic("Status: rejected patch because it attempted to modify a file outside the allowlist; no code changed.")
+        safe_headers = [(a[:120], b[:120]) for a, b in headers[:5]]
+        diagnostic(f"Status: rejected patch because it attempted to modify a file outside the allowlist; observed_paths={safe_headers!r}; no code changed.")
         return
     if "--- a/" + TARGET not in reply or "+++ b/" + TARGET not in reply:
         diagnostic("Status: rejected patch because standard file headers were missing; no code changed.")
