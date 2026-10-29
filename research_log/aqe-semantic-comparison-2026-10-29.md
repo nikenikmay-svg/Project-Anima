@@ -18,7 +18,7 @@
 ### B_paraphrase
 - Hand-authored preferred candidate: paraphrase
 - Candidate reference_like: lexical=1.000; embedding_cosine=1.000
-- Candidate paraphrase: lexical=0.091; embedding_cosine=0.743
+- Candidate paraphrase: lexical=0.091; embedding_cosine=0.742
 - Lexical top-ranked: reference_like (mismatch)
 - Embedding top-ranked: reference_like (mismatch)
 

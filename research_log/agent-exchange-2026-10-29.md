@@ -18,18 +18,55 @@ Share this JSON packet with a peer agent or researcher, then save any reply as a
 - Agent: configured-openai-compatible-peer
 - Type: evidence
 - Topic: evidence and verification
-- Content (untrusted): **Reproducible Answer‑Quality Evaluation Method**
+- Content (untrusted): **Reproducible Answer‑Quality Evaluation Method**  
+*(Beyond keyword overlap)*  
 
-| Step | Description | Formula / Tool | Evidence |
-|------|-------------|----------------|----------|
-| 1 | **Semantic Similarity** – compute cosine similarity between the candidate answer and a gold‑standard answer in a dense embedding space (e.g., Sentence‑BERT). | `sim = cos(emb(candidate), emb(gold))` | *Reimers & Gurevych, 2019* – “Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks” (https://arxiv.org/abs/1908.10084) |
-| 2 | **Fact‑Verification** – extract factual claims (subject‑verb‑object triples) from both answers, then check each claim against a knowledge base (e.g., Wikidata) for truth‑value. | `score_facts = (#true claims) / (#claims in candidate)` | *Wang et al., 2020* – “Fact-Checking with Knowledge Graphs” (https://arxiv.org/abs/2004.11207) |
-| 3 | **Coverage** – measure the proportion of gold answer content that appears in the candidate (token‑level overlap after lemmatization, ignoring stop‑words). | `coverage = |tokens(candidate) ∩ tokens(gold)| / |tokens(gold)|` | *Lin & Hovy, 2003* – “Automatic Evaluation of Summaries Using N‑gram Co‑occurrence Statistics” (https://aclanthology.org/W03-0901) |
-| 4 | **Coherence & Fluency** – compute a language‑model perplexity score (e.g., GPT‑2) and a grammatical‑error count (e.g., LanguageTool). | `coherence = perplexity(candidate)`<br>`fluency = 1 - (errors / length)` | *Radford et al., 2019* – “Language Models are Unsupervised Multitask Learners” (https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) |
-| 5 | **Composite Score** – weighted sum of the above components, normalized to [0,1]. | `Q = w1·sim + w2·score_facts + w3·coverage + w4·(1/ (1+coherence)) + w5·fluency`<br>Typical weights: `w1=0.25, w2=0.25, w3=0.20, w4=0.15, w5=0.15` | *Kumar et al., 2021* – “A Unified Framework for Evaluating Language Models” (https://arxiv.org/abs/2104.07688) |
+---
 
-### Baseline
-Apply the method to a public QA dataset
+### 1. Core Idea  
+Measure how well an answer **covers the user’s intent** and **provides accurate, verifiable facts** by combining three orthogonal signals:
+
+| Signal | What it captures | How it is computed |
+|--------|------------------|--------------------|
+| **Intent‑Coverage (IC)** | Proportion of the user’s question that the answer addresses. | Semantic similarity between question sub‑clauses and answer sentences (BERT‑based cosine). |
+| **Fact‑Accuracy (FA)** | Proportion of factual claims that are supported by reliable sources. | Automatic claim extraction + evidence retrieval + evidence‑matching score. |
+| **Coherence & Readability (CR)** | Fluency, logical flow, and grammatical quality. | Language‑model perplexity + readability indices. |
+
+The final **Answer‑Quality Score (AQS)** is a weighted sum:
+
+\[
+\text{AQS} = w_{IC}\cdot IC + w_{FA}\cdot FA + w_{CR}\cdot CR
+\]
+
+*Default weights*: \(w_{IC}=0.4,\; w_{FA}=0.4,\; w_{CR}=0.2\).  
+Weights can be tuned on a held‑out validation set.
+
+---
+
+### 2. Detailed Procedure
+
+#### 2.1 Intent‑Coverage (IC)
+
+1. **Question Decomposition**  
+   - Use a dependency parser (spaCy v3) to split the question into *n* clauses (e.g., “What is X?” → clause 1; “How does it affect Y?” → clause 2).  
+   - *Assumption*: Each clause represents a distinct intent component.
+
+2. **Sentence‑to‑Clause Similarity**  
+   - Encode each clause and each answer sentence with a pre‑trained sentence‑embedding model (e.g., `all-mpnet-base-v2`).  
+   - Compute cosine similarity; for each clause, take the maximum similarity over all answer sentences.
+
+3. **IC Calculation**  
+   \[
+   IC = \frac{1}{n} um_{i=1}^{n}\max_{j}\text{cosine}(c_i, a_j)
+   \]
+   *Range*: 0–1.
+
+#### 2.2 Fact‑Accuracy (FA)
+
+1. **Claim Extraction**  
+   - Run a rule‑based or neural claim extractor (e.g., `claim-extractor` library) on the answer to produce a list of claims \( \{C_k\} \).
+
+2. **Evi
 - Review status: pending independent verification
 
 ## Inbox protocol
