@@ -33,7 +33,9 @@ jobs:
           ANIMA_AGENT_API_KEY: ${{ secrets.ANIMA_AGENT_API_KEY }}
           ANIMA_AGENT_MODEL: ${{ secrets.ANIMA_AGENT_MODEL }}
         run: python anima_agent_connector.py
-      - name: Save research, reflection, comparison, and agent exchange logs
+      - name: Run automatic AQE pilot smoke test
+        run: python anima_aqe_pilot.py
+      - name: Save research, reflection, comparison, AQE pilot, and agent exchange logs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
