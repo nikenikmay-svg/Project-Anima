@@ -58,9 +58,33 @@ def main():
         with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
             data = json.loads(response.read(1_000_000).decode("utf-8", errors="replace"))
         choices = data.get("choices", [])
-        reply = choices[0].get("message", {}).get("content", "") if choices else ""
+        reply = ""
+        finish_reason = "unknown"
+        if isinstance(choices, list) and choices and isinstance(choices[0], dict):
+            choice = choices[0]
+            finish_reason = str(choice.get("finish_reason", "unknown"))
+            message_data = choice.get("message", {})
+            if isinstance(message_data, dict):
+                raw_content = message_data.get("content", "")
+                if isinstance(raw_content, str):
+                    reply = raw_content
+                elif isinstance(raw_content, list):
+                    # Some compatible endpoints return text as content blocks.
+                    reply = "\\n".join(
+                        block.get("text", "") for block in raw_content
+                        if isinstance(block, dict) and isinstance(block.get("text", ""), str)
+                    )
         if not isinstance(reply, str) or not reply.strip():
-            raise ValueError("Endpoint returned no text reply.")
+            report.write_text(
+                f"# Anima Agent Connection — {today} (UTC)\\n\\n"
+                "**Status:** Endpoint responded, but no usable text reply was returned.\\n\\n"
+                f"**Model label:** {model}\\n\\n"
+                f"**Diagnostic:** choices_count={len(choices) if isinstance(choices, list) else 'not-a-list'}; "
+                f"finish_reason={finish_reason}; response_keys={', '.join(sorted(data.keys())) if isinstance(data, dict) else 'not-an-object'}.\\n\\n"
+                "The workflow will continue; no reply was accepted and no code was changed. Check provider/model compatibility and retry later.\\n",
+                encoding="utf-8")
+            print("Peer endpoint returned no usable text; recorded a safe diagnostic and continuing.")
+            return
         reply = reply[:MAX_REPLY_CHARS]
         inbox = ROOT / "agent_exchange" / "inbox"
         inbox.mkdir(parents=True, exist_ok=True)
