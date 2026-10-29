@@ -39,6 +39,7 @@ jobs:
       - name: Run fixed AQE benchmark diagnostic
         run: python anima_aqe_benchmark.py
       - name: Install optional semantic embedding dependency
+        continue-on-error: true
         run: python -m pip install --disable-pip-version-check fastembed
       - name: Compare lexical and semantic similarity
         run: python anima_semantic_compare.py
