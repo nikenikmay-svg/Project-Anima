@@ -7,9 +7,6 @@
 
 ## Topic overlap across sources
 
-### evidence and verification
-- [13. legendteddy/scan](https://github.com/legendteddy/scan) — terms: evidence
-
 ### reasoning and evaluation
 - [2. Enhancing Deep Learning Model Performance through Data Generation Strategies: Classification of Olive Tree Diseases](https://arxiv.org/abs/2610.35984) — terms: performance
 - [8. OmniBrain-0: A Unified Agentic Model for Embodied Intelligence](https://arxiv.org/abs/2610.36013) — terms: reasoning
@@ -18,10 +15,11 @@
 - [3. The Trinity:Capability-Driven Recursive Self-Improvement for Multimodal Agents](https://arxiv.org/abs/2610.36077) — terms: agents
 - [4. CohortFlow: A Steerable Clinical Cohort Curation Agent with Localized Semantic Correction](https://arxiv.org/abs/2610.36100) — terms: agent, agents
 - [8. OmniBrain-0: A Unified Agentic Model for Embodied Intelligence](https://arxiv.org/abs/2610.36013) — terms: agent, agents
-- [11. wisechef-ai/loopskill-api](https://github.com/wisechef-ai/loopskill-api) — terms: agent, agents
-- [13. legendteddy/scan](https://github.com/legendteddy/scan) — terms: agents
-- [14. creatorriver/skills](https://github.com/creatorriver/skills) — terms: agent
-- [15. theastraway/daebot](https://github.com/theastraway/daebot) — terms: agent
+- [11. aniolgamarie/rotom](https://github.com/aniolgamarie/rotom) — terms: agents, tool
+- [12. math280h/diagrams](https://github.com/math280h/diagrams) — terms: agents
+- [13. tangx2872-svg/weekend-agent-demo](https://github.com/tangx2872-svg/weekend-agent-demo) — terms: agent
+- [14. godot-fun/gai](https://github.com/godot-fun/gai) — terms: agent
+- [15. ydflow/ydflow](https://github.com/ydflow/ydflow) — terms: agent, agents
 
 ### safety and reliability
 - [8. OmniBrain-0: A Unified Agentic Model for Embodied Intelligence](https://arxiv.org/abs/2610.36013) — terms: reliability
