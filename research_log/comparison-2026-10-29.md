@@ -47,16 +47,16 @@
 - [28. Replication or Corroboration? An Axiomatic Framework for Evidential Dependence in Multi-Agent Debate](https://arxiv.org/abs/2610.36151) — terms: agent, agents
 - [29. EREBOTS 4.0: A framework for conversational assistants with A2A agents and MCP tools](https://arxiv.org/abs/2610.36221) — terms: agent, agents
 - [30. The Inbox as a Coordination Primitive for LLM Agent Societies](https://arxiv.org/abs/2610.36264) — terms: agent, agents
-- [31. NapkinStack/engineering-os](https://github.com/NapkinStack/engineering-os) — terms: agents
-- [32. HKUDS/nanobot](https://github.com/HKUDS/nanobot) — terms: agent
-- [33. jahonn/ProAgent-OS](https://github.com/jahonn/ProAgent-OS) — terms: agent
-- [34. rr-develop/deep-worker](https://github.com/rr-develop/deep-worker) — terms: agent, agents
-- [35. MervinPraison/PraisonAI](https://github.com/MervinPraison/PraisonAI) — terms: agents, autonomous
-- [36. kiazh/Machina-Harness](https://github.com/kiazh/Machina-Harness) — terms: agent, orchestration
-- [37. langchain-ai/langchain](https://github.com/langchain-ai/langchain) — terms: agent
-- [38. jaydenqiu51/AutoAgent-VersionCode](https://github.com/jaydenqiu51/AutoAgent-VersionCode) — terms: agent, agents
-- [39. Raccoon-Office/Box-Agent](https://github.com/Raccoon-Office/Box-Agent) — terms: agent
-- [40. devrochy/agent-core](https://github.com/devrochy/agent-core) — terms: agent, agents
+- [31. Preponderous-Software/artificial-consciousness-simulation-framework](https://github.com/Preponderous-Software/artificial-consciousness-simulation-framework) — terms: agent, autonomous
+- [32. jahonn/ProAgent-OS](https://github.com/jahonn/ProAgent-OS) — terms: agent
+- [33. HKUDS/nanobot](https://github.com/HKUDS/nanobot) — terms: agent
+- [34. NapkinStack/engineering-os](https://github.com/NapkinStack/engineering-os) — terms: agents
+- [35. rr-develop/deep-worker](https://github.com/rr-develop/deep-worker) — terms: agent, agents
+- [36. MervinPraison/PraisonAI](https://github.com/MervinPraison/PraisonAI) — terms: agents, autonomous
+- [37. kiazh/Machina-Harness](https://github.com/kiazh/Machina-Harness) — terms: agent, orchestration
+- [38. langchain-ai/langchain](https://github.com/langchain-ai/langchain) — terms: agent
+- [39. jaydenqiu51/AutoAgent-VersionCode](https://github.com/jaydenqiu51/AutoAgent-VersionCode) — terms: agent, agents
+- [40. Raccoon-Office/Box-Agent](https://github.com/Raccoon-Office/Box-Agent) — terms: agent
 - [41. foolzzz/looper](https://github.com/foolzzz/looper) — terms: agent
 - [42. deepset-ai/haystack](https://github.com/deepset-ai/haystack) — terms: agent, agents, orchestration
 - [43. the-magi-system/magi](https://github.com/the-magi-system/magi) — terms: agent
@@ -102,7 +102,7 @@
 - [5. Why and How to Do Science When AI Is Better at It: A Framework Grounded in Human Understanding and Direction](https://arxiv.org/abs/2610.36116) — terms: human, direction
 - [8. Learning Human Sports Motion Feasibility via Quantile Regression on Tracking Data](https://arxiv.org/abs/2610.36183) — terms: human
 - [9. Skill Dreaming: Evolving Repository Skills through Pull Request Streams](https://arxiv.org/abs/2610.36188) — terms: review
-- [38. jaydenqiu51/AutoAgent-VersionCode](https://github.com/jaydenqiu51/AutoAgent-VersionCode) — terms: review
+- [39. jaydenqiu51/AutoAgent-VersionCode](https://github.com/jaydenqiu51/AutoAgent-VersionCode) — terms: review
 - [53. samugit83/redamon](https://github.com/samugit83/redamon) — terms: human
 - [63. bladeszasza/OFPlayground](https://github.com/bladeszasza/OFPlayground) — terms: human
 - [67. hannsxpeter/mythify](https://github.com/hannsxpeter/mythify) — terms: human
@@ -121,11 +121,10 @@
 - [23. PASS Is a Claim, Not an Observation: Mechanical Re-verification of 10 Self-Asserted Fix Claims in a Live Multi-Agent Audit Layer](https://arxiv.org/abs/2610.35950) — terms: knowledge
 - [26. EMMA: Structured Episodic Memory for Multi-Agent Workflow Synthesis](https://arxiv.org/abs/2610.35966) — terms: memory, knowledge, context
 - [30. The Inbox as a Coordination Primitive for LLM Agent Societies](https://arxiv.org/abs/2610.36264) — terms: context
-- [32. HKUDS/nanobot](https://github.com/HKUDS/nanobot) — terms: memory
-- [35. MervinPraison/PraisonAI](https://github.com/MervinPraison/PraisonAI) — terms: memory
-- [36. kiazh/Machina-Harness](https://github.com/kiazh/Machina-Harness) — terms: memory, context
-- [38. jaydenqiu51/AutoAgent-VersionCode](https://github.com/jaydenqiu51/AutoAgent-VersionCode) — terms: context
-- [40. devrochy/agent-core](https://github.com/devrochy/agent-core) — terms: memory
+- [33. HKUDS/nanobot](https://github.com/HKUDS/nanobot) — terms: memory
+- [36. MervinPraison/PraisonAI](https://github.com/MervinPraison/PraisonAI) — terms: memory
+- [37. kiazh/Machina-Harness](https://github.com/kiazh/Machina-Harness) — terms: memory, context
+- [39. jaydenqiu51/AutoAgent-VersionCode](https://github.com/jaydenqiu51/AutoAgent-VersionCode) — terms: context
 - [42. deepset-ai/haystack](https://github.com/deepset-ai/haystack) — terms: memory, retrieval, context
 - [46. AutomatosAI/automatos-ai](https://github.com/AutomatosAI/automatos-ai) — terms: knowledge
 - [52. Vishalsng112/VIRA](https://github.com/Vishalsng112/VIRA) — terms: context
