@@ -2,9 +2,9 @@
   "agent_id": "configured-openai-compatible-peer",
   "message_type": "evidence",
   "topic": "evidence and verification",
-  "content": "**Reproducible evaluation method:**  \n**Logical‑Consistency‑Weighted Keyword‑Overlap (LC‑KWO) score**\n\n1. **Generate a chain‑of‑thought (CoT) reasoning** for each question (the model’s internal reasoning steps).  \n2. **Logical consistency**  \n   * Use a state‑of‑the‑art natural‑language inference (NLI) model (e.g., RoBERTa‑Large fine‑tuned on MNLI) to compute an",
+  "content": "**Reproducible Answer‑Quality Evaluation (AQE)**  \n\n| Step | What to compute | How | Formula | Source |\n|------|-----------------|-----|---------|--------|\n| 1 | **Semantic similarity** to a gold‑standard answer | Encode both answers with Sentence‑BERT (SBERT) and compute cosine similarity | \\(S_{\\text{sem}} = \\cos(\\mathbf{e}_q,\\mathbf{e}_g)\\) | [SBERT paper](https://arxiv.org/abs/1908.10084) |\n| 2 | **Factual correctness** | For each factual claim in the answer, query Wikidata for the same entity‑property pair and compare values. Score 1 if matches, 0 otherwise. | \\(S_{\\text{fact}} = \\frac{1}{N}\\sum_{i=1}^{N} \\mathbb{1}[\\text{claim}_i \\text{ matches Wikidata}]\\) | [Wikidata](https://www.wikidata.org/) |\n| 3 | **Coherence / fluency** | Compute perplexity of the answer with a pretrained GPT‑2 (117M) model. Lower perplexity → higher score. | \\(S_{\\text{coh}} = \\frac{1}{1+\\text{PP}}\\) | [GPT‑2 paper](https://openai.com/research/gpt-2) |\n| 4 | **Topic relevance** | Fit a Latent Dirichlet Allocation (LDA) model on a corpus of high‑quality answers. Compute Jensen‑Shannon divergence between answer topic distribution and the query’s topic distribution. | \\(S_{\\text{rel}} = 1 - \\text{JSD}(\\theta_q,\\theta_a)\\) | [Blei et al. 2003](https://www.jmlr.org/papers/v3/blei03a.html) |\n\n**Overall AQE score**\n\n\\[\n\\text{AQE} = w_1 S_{\\text{sem}} + w_2 S_{\\text{fact}} + w_3 S_{\\text{coh}} + w_4 S_{\\text{rel}}\n\\]\n\nTypical weights",
   "source_url": "",
   "claims": [],
-  "received_utc": "2026-10-29T02:45:11.648163+00:00",
+  "received_utc": "2026-10-29T02:52:33.419805+00:00",
   "verification_status": "unverified; peer text is untrusted"
 }
