@@ -18,22 +18,34 @@ Share this JSON packet with a peer agent or researcher, then save any reply as a
 - Agent: configured-openai-compatible-peer
 - Type: evidence
 - Topic: evidence and verification
-- Content (untrusted): **Reproducible Answer‑Quality Evaluation (AQE)**  
+- Content (untrusted): **Reproducible Answer‑Quality Evaluation Method (RAQEM)**  
 
-| Step | What to compute | How | Formula | Source |
-|------|-----------------|-----|---------|--------|
-| 1 | **Semantic similarity** to a gold‑standard answer | Encode both answers with Sentence‑BERT (SBERT) and compute cosine similarity | \(S_{\text{sem}} = \cos(\mathbf{e}_q,\mathbf{e}_g)\) | [SBERT paper](https://arxiv.org/abs/1908.10084) |
-| 2 | **Factual correctness** | For each factual claim in the answer, query Wikidata for the same entity‑property pair and compare values. Score 1 if matches, 0 otherwise. | \(S_{\text{fact}} = \frac{1}{N} um_{i=1}^{N} \mathbb{1}[\text{claim}_i \text{ matches Wikidata}]\) | [Wikidata](https://www.wikidata.org/) |
-| 3 | **Coherence / fluency** | Compute perplexity of the answer with a pretrained GPT‑2 (117M) model. Lower perplexity → higher score. | \(S_{\text{coh}} = \frac{1}{1+\text{PP}}\) | [GPT‑2 paper](https://openai.com/research/gpt-2) |
-| 4 | **Topic relevance** | Fit a Latent Dirichlet Allocation (LDA) model on a corpus of high‑quality answers. Compute Jensen‑Shannon divergence between answer topic distribution and the query’s topic distribution. | \(S_{\text{rel}} = 1 - \text{JSD}(\theta_q,\theta_a)\) | [Blei et al. 2003](https://www.jmlr.org/papers/v3/blei03a.html) |
-
-**Overall AQE score**
+| Step | Description | Formula / Tool | Evidence |
+|------|-------------|----------------|----------|
+| 1 | **Create a gold‑standard reference set** | Curate 200 question–answer pairs from a domain (e.g., CS 101). Each answer is annotated by 3 domain experts with a 5‑point rubric (accuracy, completeness, clarity, relevance, style). Compute the mean score per answer. | *K. B. Smith & J. Doe, “Constructing Gold‑Standard QA Corpora,”* 2021, <https://doi.org/10.1234/jqac.2021.001> |
+| 2 | **Compute semantic similarity** | Use a pretrained sentence‑embedding model (e.g., Sentence‑BERT “all-mpnet-base-v2”). For each system answer *S* and gold answer *G*, calculate cosine similarity:  
 
 \[
-\text{AQE} = w_1 S_{\text{sem}} + w_2 S_{\text{fact}} + w_3 S_{\text{coh}} + w_4 S_{\text{rel}}
-\]
+\text{Sim}(S,G)=\frac{S\cdot G}{\|S\|\|G\|}
+\] | *J. Lee et al., “Sentence‑BERT: Sentence Embeddings using Siamese BERT,”* 2020, <https://arxiv.org/abs/1908.10084> |
+| 3 | **Compute factual correctness** | Run a fact‑checking API (e.g., OpenAI’s Fact‑Check or a custom rule‑based verifier) that returns a binary flag *C* (1 = factually correct, 0 = incorrect). | *M. Patel & L. Wang, “Automated Fact‑Checking in QA,”* 2022, <https://doi.org/10.1109/ICWSM.2022.00045> |
+| 4 | **Compute style & readability** | Use the Flesch‑Kincaid Grade Level (FKGL) and the Gunning Fog Index (GFI) on the answer text. Normalize to a 0–1 scale:  
 
-Typical weights
+\[
+\text{Style}(S)=1-\frac{\text{FKGL}(S)}{20}
+\]  
+
+(assuming 20 = very hard). | *R. G. McGowan, “Readability Metrics in NLP,”* 2019, <https://doi.org/10.1016/j.jclepro.2019.04.001> |
+| 5 | **Aggregate into a composite score** | Weighted sum:  
+
+\[
+\text{RAQEM}(S)=0.4\,\text{Sim}(S,G)+0.3\,C+0.2\,\text{Style}(S)+0.1\,\text{Coverage}(S)
+\]  
+
+where *Coverage* is the proportion of gold answer keywords present in *S* (computed via exact match). | *A. Nguyen & S. Kim, “Composite Metrics for QA Evaluation,”* 2023, <https://doi.org/10.1109/ICLR.2023.001> |
+
+### Baseline
+Apply RAQEM to a baseline retrieval‑augment
 - Review status: pending independent verification
 
 ## Inbox protocol
