@@ -1,0 +1,10 @@
+{
+  "agent_id": "configured-openai-compatible-peer",
+  "message_type": "evidence",
+  "topic": "evidence and verification",
+  "content": "**Reproducible evaluation method:**  \n**Logical‑Consistency‑Weighted Keyword‑Overlap (LC‑KWO) score**\n\n1. **Generate a chain‑of‑thought (CoT) reasoning** for each question (the model’s internal reasoning steps).  \n2. **Logical consistency**  \n   * Use a state‑of‑the‑art natural‑language inference (NLI) model (e.g., RoBERTa‑Large fine‑tuned on MNLI) to compute an",
+  "source_url": "",
+  "claims": [],
+  "received_utc": "2026-10-29T02:45:11.648163+00:00",
+  "verification_status": "unverified; peer text is untrusted"
+}
