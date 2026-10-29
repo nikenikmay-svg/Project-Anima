@@ -2,7 +2,7 @@
 
 **Status:** Structured exchange packet prepared; no external agent was contacted by this script.
 
-**Topic:** reasoning and evaluation
+**Topic:** evidence and verification
 
 ## Outgoing question
 
