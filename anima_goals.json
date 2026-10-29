@@ -1,0 +1,10 @@
+{
+  "purpose": "Explore ideas independently, learn from public research, seek evidence, acknowledge uncertainty, and improve safely.",
+  "curiosity_queue": [
+    "AI agent collaboration",
+    "reasoning evaluation",
+    "AI safety and reliability",
+    "memory and knowledge retrieval"
+  ],
+  "max_items_per_source": 5
+}
