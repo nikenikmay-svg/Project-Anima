@@ -42,6 +42,8 @@ jobs:
           if ! git apply --check anima-self-improvement.patch; then
             echo "has_patch=false" >> "$GITHUB_OUTPUT"
             echo "Patch could not be applied cleanly; no source files changed."
+            echo "Safe patch-format preview (first 12 lines; source code remains unchanged):"
+            sed -n '1,12p' anima-self-improvement.patch | cut -c1-180
             exit 0
           fi
           git apply anima-self-improvement.patch
