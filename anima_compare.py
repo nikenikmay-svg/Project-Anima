@@ -39,7 +39,7 @@ def parse_items(text):
 
 def terms_for(item):
     text = (item["title"] + " " + item["snippet"]).lower()
-    return {topic: [term for term in terms if re.search(r"(?<!\\w)" + re.escape(term) + r"(?!\\w)", text)] for topic, terms in SIGNALS.items()}
+    return {topic: [term for term in terms if re.search(r"(?<!\w)" + re.escape(term) + r"(?!\w)", text)] for topic, terms in SIGNALS.items()}
 
 def main():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
