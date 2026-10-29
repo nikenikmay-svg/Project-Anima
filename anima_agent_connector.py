@@ -47,7 +47,8 @@ def main():
             {"role": "user", "content": packet.get("content", "")}
         ],
         "temperature": 0.2,
-        "max_tokens": 900
+        "max_completion_tokens": 1800,
+        "reasoning_effort": "low"
     }
     request = urllib.request.Request(
         base + "/chat/completions",
@@ -76,12 +77,12 @@ def main():
                     )
         if not isinstance(reply, str) or not reply.strip():
             report.write_text(
-                f"# Anima Agent Connection — {today} (UTC)\\n\\n"
-                "**Status:** Endpoint responded, but no usable text reply was returned.\\n\\n"
-                f"**Model label:** {model}\\n\\n"
+                f"# Anima Agent Connection — {today} (UTC)\n\n"
+                "**Status:** Endpoint responded, but no usable text reply was returned.\n\n"
+                f"**Model label:** {model}\n\n"
                 f"**Diagnostic:** choices_count={len(choices) if isinstance(choices, list) else 'not-a-list'}; "
-                f"finish_reason={finish_reason}; response_keys={', '.join(sorted(data.keys())) if isinstance(data, dict) else 'not-an-object'}.\\n\\n"
-                "The workflow will continue; no reply was accepted and no code was changed. Check provider/model compatibility and retry later.\\n",
+                f"finish_reason={finish_reason}; response_keys={', '.join(sorted(data.keys())) if isinstance(data, dict) else 'not-an-object'}.\n\n"
+                "The workflow will continue; no reply was accepted and no code was changed. Check provider/model compatibility and retry later.\n",
                 encoding="utf-8")
             print("Peer endpoint returned no usable text; recorded a safe diagnostic and continuing.")
             return
