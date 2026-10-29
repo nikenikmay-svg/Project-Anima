@@ -27,7 +27,7 @@ def main():
     source = (ROOT / TARGET).read_text(encoding="utf-8")
     system = (
         "Return only a standard unified git diff changing only anima_aqe_pilot.py. "
-        "Make one small, safe improvement to clarity or robustness. No dependencies, "
+        "Make one small, concrete improvement to clarity or robustness, preferably improving input validation or evaluator edge-case handling. Do not return NO_CHANGE merely because the improvement is modest; return NO_CHANGE only if no safe change can be represented as a valid unified diff. No dependencies, "
         "network calls, file access, subprocesses, secrets, or code execution. "
         "Preserve command-line behavior. If no useful safe change is clear, return NO_CHANGE. "
         "This evaluator is experimental keyword matching, not fact verification."
