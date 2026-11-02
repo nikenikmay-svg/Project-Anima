@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anima — Your AI Companion</title>
+<style>
+:root{color-scheme:light;--ink:#30243c;--purple:#76508f;--soft:#f5eff9;--line:#eadff0}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(145deg,#faf7fc,#eee5f4);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);display:grid;place-items:center;padding:16px}
+.app{width:min(100%,760px);height:min(900px,94vh);min-height:600px;background:#fff;border:1px solid var(--line);border-radius:25px;box-shadow:0 20px 60px #4c31521c;display:flex;flex-direction:column;overflow:hidden}
+header{display:flex;align-items:center;gap:14px;padding:13px 18px;border-bottom:1px solid var(--line);background:#fff}
+.mini{width:50px;height:50px;border-radius:50%;background:var(--soft);display:grid;place-items:center;overflow:hidden}.mini svg{width:55px}
+.brand{flex:1}h1{font-size:1.25rem;margin:0;color:#503866}.sub{font-size:.8rem;color:#807487}.state{font-size:.75rem;background:var(--soft);padding:6px 10px;border-radius:20px}
+main{flex:1;overflow:auto;padding:20px;background:linear-gradient(#fff,#fdfbfe)}
+.welcome{text-align:center;padding:10px 0 20px}.portrait{width:145px;height:154px;margin:auto auto 8px;display:block;transition:transform .2s}.portrait.thinking{animation:bob .7s ease-in-out infinite alternate}.portrait.speaking{animation:talk .22s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-5px) rotate(2deg)}}@keyframes talk{to{transform:scale(1.025)}}
+.welcome h2{margin:0;color:#503866}.welcome p{margin:4px 0;color:#807487;font-size:.9rem}
+.msg{max-width:85%;padding:11px 14px;margin:10px 0;border-radius:17px;white-space:pre-wrap;overflow-wrap:anywhere}.anima{background:#f3edf8;border-bottom-left-radius:5px}.you{background:#76508f;color:white;margin-left:auto;border-bottom-right-radius:5px}.error{background:#fff0ee;color:#873a32}
+form{display:flex;gap:9px;padding:14px;border-top:1px solid var(--line);background:#fff}
+textarea{flex:1;resize:none;max-height:120px;min-height:46px;border:1px solid #ded2e6;border-radius:15px;padding:12px;font:inherit;outline:none}textarea:focus{border-color:#9270aa}
+button{border:0;border-radius:14px;background:#76508f;color:#fff;font-weight:600;padding:0 19px;cursor:pointer}button:disabled{opacity:.55;cursor:wait}
+.foot{text-align:center;font-size:.72rem;color:#93899a;padding:0 10px 10px}
+@media(max-width:520px){.app{height:96vh;min-height:520px;border-radius:18px}.state{display:none}.msg{max-width:92%}}
+</style>
+</head>
+<body><section class="app">
+<header><div class="mini" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#eadcf2"/><path d="M18 48Q14 8 51 8Q88 8 84 49L80 88H20Z" fill="#392629"/><ellipse cx="50" cy="49" rx="27" ry="34" fill="#ffc18e"/><path d="M23 45Q24 8 54 12Q79 14 78 43Q59 39 49 27Q42 42 23 45" fill="#50352d"/><circle cx="40" cy="49" r="4" fill="#2c2025"/><circle cx="60" cy="49" r="4" fill="#2c2025"/><path d="M40 65Q50 77 62 64" fill="none" stroke="#783b42" stroke-width="4" stroke-linecap="round"/></svg></div><div class="brand"><h1>Anima</h1><div class="sub">Project Anima · Conversational prototype</div></div><span class="state" id="state">Ready to chat</span></header>
+<main id="messages" aria-live="polite">
+<div class="welcome" id="welcome">
+<svg class="portrait" id="portrait" viewBox="0 0 160 170" role="img" aria-label="Anima cartoon avatar">
+<path d="M13 166Q20 124 55 119H105Q141 125 147 166Z" fill="#76508f" stroke="#30243c" stroke-width="3"/>
+<path d="M29 76Q18 7 78 5Q144 3 132 83L127 132Q111 151 99 136H54Q30 151 24 127Z" fill="#392629" stroke="#30243c" stroke-width="3"/>
+<path d="M43 49Q44 20 80 20Q119 20 119 57L113 103Q108 132 80 137Q50 132 45 103Z" fill="#ffc18e" stroke="#30243c" stroke-width="2.5"/>
+<path d="M39 62Q35 18 76 11Q115 7 125 48Q105 49 91 30Q72 52 39 62" fill="#50352d"/>
+<path d="M50 65Q62 57 70 64M91 64Q102 57 111 65" fill="none" stroke="#392629" stroke-width="5" stroke-linecap="round"/>
+<ellipse cx="62" cy="78" rx="9" ry="12" fill="white"/><ellipse cx="99" cy="78" rx="9" ry="12" fill="white"/><circle cx="64" cy="79" r="5" fill="#302126"/><circle cx="97" cy="79" r="5" fill="#302126"/><circle cx="66" cy="76" r="2" fill="white"/><circle cx="99" cy="76" r="2" fill="white"/>
+<path d="M80 82L76 94L82 96" fill="none" stroke="#c47b55" stroke-width="2.5" stroke-linecap="round"/>
+<ellipse cx="49" cy="98" rx="8" ry="4" fill="#e98f82" opacity=".45"/><ellipse cx="111" cy="98" rx="8" ry="4" fill="#e98f82" opacity=".45"/>
+<path d="M63 105Q80 122 98 104Q94 128 80 128Q66 126 63 105Z" fill="#642b32"/><path d="M67 108Q80 113 94 108Q90 117 80 117Q72 116 67 108Z" fill="white"/>
+</svg>
+<h2>Hello! I'm Anima.</h2><p>It's nice to see you. What shall we explore today?</p>
+</div>
+</main>
+<form id="chatForm"><textarea id="prompt" rows="1" maxlength="8000" placeholder="Write a message to Anima…" aria-label="Message Anima"></textarea><button id="send" type="submit">Send</button></form>
+<div class="foot">Prototype · Replies require your configured provider API key · Chat history is held in server memory only</div>
+</section>
+<script>
+const form=document.getElementById('chatForm'),input=document.getElementById('prompt'),messages=document.getElementById('messages'),send=document.getElementById('send'),state=document.getElementById('state'),portrait=document.getElementById('portrait'),welcome=document.getElementById('welcome');
+function addMessage(text,who,extra=''){const el=document.createElement('div');el.className='msg '+who+' '+extra;el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;return el}
+function mood(name,label){portrait.classList.remove('thinking','speaking');if(name)portrait.classList.add(name);state.textContent=label}
+form.addEventListener('submit',async e=>{e.preventDefault();const text=input.value.trim();if(!text||send.disabled)return;welcome?.remove();addMessage(text,'you');input.value='';send.disabled=true;mood('thinking','Anima is thinking…');const wait=addMessage('Let me think…','anima');try{const response=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});const data=await response.json();if(!response.ok)throw new Error(data.error||'The server could not complete the request.');wait.remove();mood('speaking','Anima is replying');addMessage(data.reply,'anima');setTimeout(()=>mood('','Ready to chat'),900)}catch(err){wait.remove();addMessage('I could not reply: '+err.message,'anima','error');mood('','Connection issue')}finally{send.disabled=false;input.focus()}});
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
+</script></body></html>
