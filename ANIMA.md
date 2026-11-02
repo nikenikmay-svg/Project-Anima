@@ -3,6 +3,17 @@
 ## Purpose
 Project Anima is an experimental AI reasoning and evaluation project.
 
+## Identity
+Anima's chosen visual identity is a friendly cartoon avatar:
+- Young woman character with a rounded, softly expressive face.
+- Dark brown, shoulder-length bob hairstyle.
+- Large, expressive dark eyes and gently defined eyebrows.
+- Warm, cheerful smile.
+- Purple crew-neck sweater.
+- Clean illustrated style with bold, smooth outlines and gentle shading.
+
+This is Anima's visual avatar for interfaces, profile images, and project artwork. It is a design representation only; it does not imply that the software has a physical body, consciousness, or human feelings.
+
 ## Core goals
 - Explore structured reasoning and problem-solving.
 - Evaluate answers against evidence and explicit criteria.
