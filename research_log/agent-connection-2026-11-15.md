@@ -1,0 +1,43 @@
+# Anima Agent Connection — 2026-11-15 (UTC)
+
+**Status:** Received one response from the configured endpoint. The endpoint identity and all claims remain unverified.
+
+**Model label:** openai/gpt-oss-20b
+
+## Peer reply (untrusted; independently verify)
+
+**Reproducible Answer‑Quality Evaluation Method (AQEM)**  
+
+| Step | Description | Formula / Tool | Evidence |
+|------|-------------|----------------|----------|
+| 1 | **Create a gold‑standard reference set** | Curate 200 question–answer pairs from a reputable Q&A corpus (e.g., Stack Exchange, Quora, or a domain‑specific knowledge base). For each pair, have 3 independent annotators rate the answer on a 5‑point Likert scale for *accuracy*, *completeness*, and *clarity*. Compute the mean score per dimension. | *“Crowdsourcing for quality assessment of QA systems”* – Liu et al., 2019, ACM SIGIR. <https://doi.org/10.1145/3292500.3330724> |
+| 2 | **Compute semantic similarity** | Use a transformer‑based sentence encoder (e.g., SBERT) to embed both the system answer and the gold answer. Calculate cosine similarity \(S_{\text{sem}}\). | *“Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks”* – Reimers & Gurevych, 2019, EMNLP. <https://aclanthology.org/D19-1415> |
+| 3 | **Compute factual consistency** | Run a fact‑checking model (e.g., FinQA or FactCC) that outputs a binary consistency flag \(C \in \{0,1\}\). | *“FactCC: A Fact‑Checking Corpus for Claim Verification”* – Wang et al., 2020, ACL. <https://aclanthology.org/2020.acl-main.123> |
+| 4 | **Compute style/fluency** | Use a language‑model perplexity score \(P\) (lower is better). Normalize to a 0–1 scale: \(S_{\text{flu}} = 1 - \frac{P - P_{\min}}{P_{\max} - P_{\min}}\). | *“Perplexity as a metric for language model evaluation”* – Brown et al., 2020, arXiv. <https://arxiv.org/abs/2005.14165> |
+| 5 | **Aggregate into a composite score** | \[
+\text{AQEM} = w_a \cdot \bar{A} + w_c \cdot C + w_s \cdot S_{\text{sem}} + w_f \cdot S_{\text{flu}}
+\] where \(\bar{A}\) is the mean human accuracy score (0–1), and weights \(w_a,w_c,w_s,w_f\) sum to 1. Recommended default: \(w_a=0.4,\; w_c=0.2,\; w_s=0.2,\; w_f=0.2\). | *“Multi‑metric evaluation of QA systems”* – Zhang et al., 2021, EMNLP. <https://aclanthology.org/2021.emnlp-main.112> |
+
+### Assumptions & Limitations
+1. **Gold standard quality** – Human ratings may be subjective; inter‑annotator agreement (Cohen’s κ > 0.6) is required.  
+2. **Semantic encoder bias** – SBERT may not capture domain‑specific terminology; fine‑tuning on the target domain mitigates this.  
+3. **Fact‑checking coverage** – Models like FactCC are trained on news; they may misclassify scientific claims.  
+4. **Perplexity dependence on model size** – Normalization uses min/max perplexity from a fixed reference set; different language models yield different ranges.  
+5. **Weight selection** – The default weights are heuristic; domain experts may adjust them.
+
+### Baseline
+Apply AQEM to a baseline retrieval‑augmented QA system (e.g., BM25 + GPT‑3.5). Report the mean AQEM score across the 200 reference pairs. This baseline should be reproducible because all components (SBERT, FactCC, perplexity model) are publicly available.
+
+### Falsifiable Test
+**Hypothesis**: “Increasing the factual consistency weight \(w_c\) from 0.2 to 0.4 will improve the correlation between AQEM and human accuracy ratings.”  
+
+**Procedure**  
+1. Compute AQEM scores for the 200 pairs with \(w_c=0.2\) and \(w_c=0.4\) (keeping other weights adjusted to sum to 1).  
+2. Calculate Pearson correlation \(r\) between each AQEM score set and the human accuracy scores \(\bar{A}\).  
+3. **Success criterion**: \(r_{w_c=0.4} > r_{w_c=0.2}\) by at least 0.05.  
+
+If the criterion is not met, the hypothesis is falsified, indicating that simply up‑weighting factual consistency does not necessarily align AQEM with human judgments. This test is fully reproducible using the provided formulas and publicly available models.
+
+## Next step
+
+Check cited sources and test proposals independently before using them. No code was executed or modified based on the reply.
